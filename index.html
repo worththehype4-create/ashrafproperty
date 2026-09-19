@@ -329,14 +329,15 @@ function renderUnits(){
   if(term)rows=rows.filter(u=>[u.code,u.client_name,u.project,u.unit_no].some(x=>(x||'').includes(term)));
   document.querySelector('#uTbl').closest('.card').querySelector('.cnt')?.remove();
   document.getElementById('uTbl').innerHTML=`<table><thead><tr>
-    <th>الكود</th><th>النوع</th><th>المشروع</th><th>العميل</th><th class="num">قيمة العقد</th>
+    <th>الكود</th><th>النوع</th><th>المساحة</th><th>الحديقة</th><th>المشروع</th><th>العميل</th><th class="num">قيمة العقد</th>
     <th class="num">المحصّل</th><th class="num">المتبقي</th><th>أقساط</th><th></th></tr></thead><tbody>
    ${rows.length?rows.map(u=>`<tr>
      <td><span class="link" onclick="unitProfile('${u.id}')">${esc(u.code)}</span></td>
-     <td>${esc(u.type)}</td><td>${esc(u.project)}</td><td>${esc(u.client_name)||'—'}</td>
+     <td>${esc(u.type)}</td><td>${u.area?fmt(u.area)+' م²':'—'}</td><td>${u.has_garden?'🌿'+(u.garden_area?' '+fmt(u.garden_area)+' م²':''):'—'}</td>
+     <td>${esc(u.project)}</td><td>${esc(u.client_name)||'—'}</td>
      <td class="num">${money(u.contract_value)}</td><td class="num">${money(u.collected)}</td>
      <td class="num">${money(u.remaining)}</td><td>${fmt(u.installments_count)}</td>
-     <td><button class="btn neutral sm" onclick="unitForm('${u.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">لا توجد وحدات</td></tr>`}
+     <td><button class="btn neutral sm" onclick="unitForm('${u.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="11" class="empty">لا توجد وحدات</td></tr>`}
    </tbody></table>`;
 }
 function unitForm(id){
@@ -353,11 +354,16 @@ function unitForm(id){
      <div class="field"><label>المقدم</label><input id="f_dp" type="number" value="${u.down_payment??''}"></div>
      <div class="field"><label>تاريخ التعاقد</label><input id="f_cd" type="date" value="${u.contract_date??''}"></div>
      <div class="field"><label>مدة التقسيط (شهور)</label><input id="f_m" type="number" value="${u.months??''}"></div>
+     <div class="field"><label>مساحة الشقة (م²)</label><input id="f_area" type="number" step="0.01" value="${u.area??''}"></div>
+     <div class="field"><label>بحديقة؟</label><select id="f_garden" onchange="document.getElementById('gardenBox').style.display=this.value==='نعم'?'block':'none'"><option ${!u.has_garden?'selected':''}>لا</option><option ${u.has_garden?'selected':''}>نعم</option></select></div>
+     <div class="field full" id="gardenBox" style="display:${u.has_garden?'block':'none'}"><label>مساحة الحديقة (م²)</label><input id="f_garea" type="number" step="0.01" value="${u.garden_area??''}"></div>
      <div class="field full"><label>ملاحظات</label><input id="f_notes" value="${esc(u.notes)}"></div>
    </div>`,async()=>{
+     const garden=val('f_garden')==='نعم';
      const rec={code:val('f_code'),type:val('f_type'),unit_no:val('f_unitno'),project:val('f_project'),
        client_id:val('f_client')||null,contract_value:num('f_cv'),down_payment:num('f_dp'),
-       contract_date:val('f_cd')||null,months:num('f_m'),notes:val('f_notes')};
+       contract_date:val('f_cd')||null,months:num('f_m'),area:num('f_area'),
+       has_garden:garden,garden_area:garden?num('f_garea'):null,notes:val('f_notes')};
      if(!rec.code){toast('الكود مطلوب',true);return false;}
      const {error}=id?await sb.from('units').update(rec).eq('id',id):await sb.from('units').insert(rec);
      if(error){toast(error.message,true);return false;}
@@ -379,13 +385,15 @@ async function unitProfile(id){
        <div class="f"><div class="l">الهاتف</div><div class="v">${esc(u.client_phone)||'—'}</div></div>
        <div class="f"><div class="l">النوع</div><div class="v">${esc(u.type)}</div></div>
        <div class="f"><div class="l">المشروع</div><div class="v">${esc(u.project)||'—'}</div></div>
+       <div class="f"><div class="l">المساحة</div><div class="v">${u.area?fmt(u.area)+' م²':'—'}</div></div>
+       <div class="f"><div class="l">الحديقة</div><div class="v">${u.has_garden?'نعم'+(u.garden_area?' ('+fmt(u.garden_area)+' م²)':''):'لا'}</div></div>
        <div class="f"><div class="l">قيمة العقد</div><div class="v">${money(u.contract_value)}</div></div>
        <div class="f"><div class="l">المقدم</div><div class="v">${money(u.down_payment)}</div></div>
        <div class="f"><div class="l">المحصّل</div><div class="v" style="color:var(--green)">${money(u.collected)}</div></div>
        <div class="f"><div class="l">المتبقي</div><div class="v" style="color:var(--amber)">${money(u.remaining)}</div></div>
      </div>
    </div>
-   <div class="card">${cardHead('inst','الأقساط',inst.length,`<button class="btn sm" onclick="instForm(null,'${u.id}')">جديد</button>`)}
+   <div class="card">${cardHead('inst','الأقساط',inst.length,`<button class="btn neutral sm" onclick="importInst('${u.id}')">⬆ استيراد جدول</button><button class="btn sm" onclick="instForm(null,'${u.id}')">جديد</button>`)}
      <div class="tbl-wrap"><table><thead><tr><th>#</th><th>الاستحقاق</th><th class="num">القيمة</th><th class="num">المدفوع</th><th class="num">المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
      ${inst.length?inst.map(i=>`<tr><td>${esc(i.no)}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.amount)}</td>
        <td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td>
@@ -475,6 +483,60 @@ async function instForm(id,unitId){
      if(error){toast(error.message,true);return false;}
      toast('تم الحفظ');(CUR==='units'?unitProfile(rec.unit_id):viewInst());return true;
    }, id?()=>delRec('installments',id,viewInst):null);
+}
+
+/* ---------- bulk import installments (paste from Excel or CSV) ---------- */
+function importInst(unitId){
+  modal('استيراد جدول الأقساط',`
+   <p style="margin-top:0;color:var(--muted);font-size:13px;line-height:1.7">
+     الصق الجدول من Excel، أو اختر ملف CSV. كل سطر = <b>تاريخ الاستحقاق</b> ثم <b>القيمة</b>.<br>
+     تُقبل التواريخ مثل 2026-11-15 أو 15/11/2026، وكل قسط ممكن يكون بقيمة مختلفة.</p>
+   <div class="field"><label>اختيار ملف CSV / Excel (اختياري)</label><input type="file" id="f_file" accept=".csv,.txt,.tsv" onchange="fillFromFile()"></div>
+   <div class="field"><label>الأقساط</label>
+     <textarea id="f_rows" oninput="previewRows('${unitId}')" placeholder="2026-11-15\t99000
+2027-04-15\t161700
+2027-11-15\t99000" style="width:100%;min-height:170px;padding:10px;border:1px solid var(--line2);border-radius:.35rem;font-family:monospace;direction:ltr;font-size:13px"></textarea></div>
+   <div id="importPrev" style="font-size:13px;color:var(--muted);min-height:20px"></div>
+  `,async()=>{
+     const rows=parseRows(document.getElementById('f_rows').value, unitId);
+     if(!rows.length){toast('لا توجد صفوف صحيحة',true);return false;}
+     const {error}=await sb.from('installments').insert(rows);
+     if(error){toast(error.message,true);return false;}
+     toast('تم استيراد '+rows.length+' قسط');(CUR==='units'?unitProfile(unitId):viewInst());return true;
+  });
+}
+function fillFromFile(){
+  const f=document.getElementById('f_file').files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{document.getElementById('f_rows').value=r.result;previewRows();};r.readAsText(f);
+}
+function previewRows(){
+  const rows=parseRows(document.getElementById('f_rows').value,'x');
+  const total=rows.reduce((s,r)=>s+r.amount,0);
+  document.getElementById('importPrev').innerHTML=rows.length?`✓ ${rows.length} قسط — إجمالي ${fmt(total)} ج.م`:'';
+}
+function parseDate(s){
+  s=s.trim();
+  let m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+  if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);
+  if(m){let y=m[3];if(y.length===2)y='20'+y;return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;}
+  const d=new Date(s);return isNaN(d)?null:d.toISOString().slice(0,10);
+}
+function parseRows(text,unitId){
+  const nd=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+  const out=[];let n=0;
+  (text||'').split(/\r?\n/).forEach(raw=>{
+    const line=nd(raw).trim();if(!line)return;
+    const dm=line.match(/(\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2})|(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4})/);
+    if(!dm)return;
+    const due=parseDate(dm[0]);if(!due)return;
+    const post=line.slice(dm.index+dm[0].length), pre=line.slice(0,dm.index);
+    const amtStr=(post.replace(/[^\d]/g,'')?post:pre);
+    const amt=Number(amtStr.replace(/[^\d]/g,''));
+    if(!amt)return;
+    n++;out.push({unit_id:unitId,no:n,due_date:due,amount:amt,paid:0});
+  });
+  return out;
 }
 
 /* ============================================================ CHEQUES */
