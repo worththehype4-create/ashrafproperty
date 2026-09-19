@@ -3,346 +3,346 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نظام متابعة الأملاك</title>
+<title>متابعة الأملاك</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ===== Salesforce Lightning–inspired theme (RTL) ===== */
 :root{
-  --bg:#0f1420; --surface:#1a2130; --surface2:#222b3d; --line:#2d384d;
-  --text:#eaf0f7; --muted:#93a1b7; --brand:#2f6df6; --brand2:#1e4fd0;
-  --green:#22c55e; --amber:#f59e0b; --red:#ef4444; --teal:#14b8a6;
-  --radius:14px; --shadow:0 6px 24px rgba(0,0,0,.28);
+  --brand:#0176d3; --brand-dark:#014486; --brand-light:#1b96ff;
+  --page:#f3f3f3; --card:#ffffff; --header:#ffffff;
+  --line:#e5e5e5; --line2:#dddbda; --row-hover:#f3f2f2; --th-bg:#fafaf9;
+  --ink:#080707; --ink2:#3e3e3c; --muted:#706e6b;
+  --green:#2e844a; --green-bg:#eafbec; --amber:#a86403; --amber-bg:#fef8f0;
+  --red:#ba0517; --red-bg:#fef1f1; --blue-bg:#eef4ff;
+  --radius:.35rem; --shadow:0 2px 3px rgba(0,0,0,.08); --shadow2:0 4px 12px rgba(0,0,0,.12);
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:'Cairo',system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:15px}
-h1,h2,h3{margin:0;font-weight:800}
+body{margin:0;font-family:'Cairo',system-ui,Arial,sans-serif;background:var(--page);color:var(--ink);font-size:14px}
+h1,h2,h3{margin:0}
 button{font-family:inherit;cursor:pointer}
-a{color:var(--brand)}
+a,.link{color:var(--brand);text-decoration:none;cursor:pointer}
+.link:hover,a:hover{text-decoration:underline}
 input,select{font-family:inherit}
 .hidden{display:none!important}
+.num{font-variant-numeric:tabular-nums}
 
-/* ---------- Login ---------- */
-#login{min-height:100vh;display:grid;place-items:center;padding:20px}
-.login-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:34px;width:100%;max-width:380px;box-shadow:var(--shadow)}
-.login-card h1{font-size:22px;text-align:center;margin-bottom:6px}
-.login-card p{color:var(--muted);text-align:center;margin:0 0 22px;font-size:13px}
+/* ---------- Buttons (SLDS) ---------- */
+.btn{background:var(--brand);color:#fff;border:1px solid var(--brand);border-radius:var(--radius);
+  padding:7px 16px;font-weight:600;font-size:13px;line-height:1.4;transition:.12s}
+.btn:hover{background:var(--brand-dark);border-color:var(--brand-dark)}
+.btn.neutral{background:#fff;color:var(--brand);border-color:var(--line2)}
+.btn.neutral:hover{background:#f4f6f9}
+.btn.block{width:100%;justify-content:center}
+.btn.sm{padding:4px 11px;font-size:12px}
+.btn.danger{background:var(--red);border-color:var(--red)}
+.btn.danger:hover{filter:brightness(.92)}
+
+/* ---------- Setup / Login ---------- */
+.center{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(180deg,#eef4fb,#f3f3f3)}
+.auth-card{background:#fff;border:1px solid var(--line2);border-radius:8px;padding:34px;width:100%;max-width:400px;box-shadow:var(--shadow2)}
+.auth-logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-light));
+  display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;margin:0 auto 14px}
+.auth-card h1{font-size:20px;text-align:center;margin-bottom:4px;color:var(--ink)}
+.auth-card p{color:var(--muted);text-align:center;margin:0 0 22px;font-size:13px}
 .field{margin-bottom:14px}
-.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-.field input,.field select{width:100%;padding:11px 13px;background:var(--surface2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:15px}
-.field input:focus,.field select:focus{outline:none;border-color:var(--brand)}
-.btn{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-weight:700;font-size:15px;transition:.15s}
-.btn:hover{background:var(--brand2)}
-.btn.block{width:100%}
-.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
-.btn.ghost:hover{background:var(--surface2)}
-.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
-.btn.danger{background:var(--red)}
-.err{color:var(--red);font-size:13px;text-align:center;min-height:18px;margin-top:6px}
+.field label{display:block;font-size:12px;color:var(--ink2);margin-bottom:5px;font-weight:600}
+.field input,.field select{width:100%;padding:9px 12px;background:#fff;border:1px solid var(--line2);border-radius:var(--radius);color:var(--ink);font-size:14px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(1,118,211,.25)}
+.err{color:var(--red);font-size:13px;text-align:center;min-height:18px;margin-top:8px}
 
-/* ---------- App shell ---------- */
-#app{display:flex;min-height:100vh}
-.sidebar{width:230px;background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px;position:sticky;top:0;height:100vh}
-.brand{display:flex;align-items:center;gap:10px;padding:6px 10px 18px}
-.brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--teal));display:grid;place-items:center;font-weight:800;color:#fff}
-.brand b{font-size:15px}
-.nav{display:flex;flex-direction:column;gap:3px;flex:1}
-.nav button{display:flex;align-items:center;gap:11px;background:transparent;border:none;color:var(--muted);padding:11px 13px;border-radius:10px;font-size:14.5px;font-weight:600;text-align:right;width:100%}
-.nav button:hover{background:var(--surface2);color:var(--text)}
-.nav button.active{background:var(--brand);color:#fff}
-.nav .ico{width:20px;text-align:center}
-.sidebar .foot{border-top:1px solid var(--line);padding-top:12px;font-size:12px;color:var(--muted)}
-.main{flex:1;padding:22px 26px;overflow-x:hidden;min-width:0}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap}
-.topbar h2{font-size:22px}
-.mobile-nav{display:none}
+/* ---------- Global header + tabs ---------- */
+.gheader{background:var(--header);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.gtop{display:flex;align-items:center;gap:14px;padding:9px 20px}
+.applogo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-light));
+  display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex:none}
+.appname{font-weight:700;font-size:16px;color:var(--ink)}
+.appname small{display:block;font-size:11px;color:var(--muted);font-weight:500}
+.gtop .spacer{flex:1}
+.userchip{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink2)}
+.avatar{width:30px;height:30px;border-radius:50%;background:#5867e8;color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+.tabs{display:flex;gap:2px;padding:0 14px;overflow-x:auto}
+.tab{display:flex;align-items:center;gap:8px;background:transparent;border:none;border-bottom:3px solid transparent;
+  padding:11px 14px;font-size:13.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
+.tab:hover{background:#f4f6f9;color:var(--brand)}
+.tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+.tab .ti{width:22px;height:22px;border-radius:5px;display:grid;place-items:center;font-size:12px;color:#fff;flex:none}
 
-/* ---------- Cards / KPIs ---------- */
-.grid{display:grid;gap:14px}
-.kpis{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
-.kpi .k{font-size:13px;color:var(--muted);margin-bottom:8px}
-.kpi .v{font-size:23px;font-weight:800;letter-spacing:.3px}
-.kpi .v small{font-size:13px;font-weight:600;color:var(--muted)}
-.kpi.brand{background:linear-gradient(135deg,#1d3a7a,#20305a);border-color:#2b4a9a}
-.kpi.green .v{color:var(--green)} .kpi.red .v{color:var(--red)} .kpi.amber .v{color:var(--amber)}
-
-.section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-top:18px;overflow:hidden}
-.section .head{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--line);gap:10px;flex-wrap:wrap}
-.section .head h3{font-size:16px}
+/* ---------- Page body ---------- */
+.main{padding:18px 22px;max-width:1400px;margin:0 auto}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.page-head .pt{display:flex;align-items:center;gap:12px}
+.page-head .pt .ti{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:17px}
+.page-head h2{font-size:19px;color:var(--ink)}
+.page-head .sub{font-size:12px;color:var(--muted)}
 .tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.search{padding:8px 12px;background:var(--surface2);border:1px solid var(--line);border-radius:9px;color:var(--text);font-size:14px;min-width:170px}
+.search{padding:7px 12px;background:#fff;border:1px solid var(--line2);border-radius:var(--radius);color:var(--ink);font-size:13px;min-width:190px}
+.search:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(1,118,211,.2)}
 
-/* ---------- Tables ---------- */
+/* ---------- KPI tiles ---------- */
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.kpi{background:#fff;border:1px solid var(--line2);border-top:3px solid var(--brand);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.kpi .k{font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:600}
+.kpi .v{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:.2px}
+.kpi .v small{font-size:12px;font-weight:600;color:var(--muted)}
+.kpi.green{border-top-color:var(--green)} .kpi.green .v{color:var(--green)}
+.kpi.red{border-top-color:var(--red)} .kpi.red .v{color:var(--red)}
+.kpi.amber{border-top-color:var(--amber)} .kpi.amber .v{color:var(--amber)}
+
+/* ---------- Card / list panel ---------- */
+.card{background:#fff;border:1px solid var(--line2);border-radius:var(--radius);margin-top:16px;box-shadow:var(--shadow);overflow:hidden}
+.card .chead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.card .chead h3{font-size:15px;color:var(--ink);display:flex;align-items:center;gap:9px}
+.card .chead .ti{width:26px;height:26px;border-radius:6px;display:grid;place-items:center;color:#fff;font-size:13px}
+.cnt{color:var(--muted);font-weight:600;font-size:12px}
+
+/* ---------- Tables (SLDS) ---------- */
 .tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px;white-space:nowrap}
-th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line)}
-th{color:var(--muted);font-weight:700;font-size:12.5px;position:sticky;top:0;background:var(--surface)}
-tbody tr:hover{background:var(--surface2)}
-td.num,th.num{font-variant-numeric:tabular-nums}
-.empty{padding:34px;text-align:center;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
+th,td{padding:9px 14px;text-align:right;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px;background:var(--th-bg);position:sticky;top:0}
+tbody tr:hover{background:var(--row-hover)}
+.empty{padding:40px;text-align:center;color:var(--muted)}
 
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
-.b-green{background:rgba(34,197,94,.15);color:#4ade80}
-.b-amber{background:rgba(245,158,11,.15);color:#fbbf24}
-.b-red{background:rgba(239,68,68,.15);color:#f87171}
-.b-blue{background:rgba(47,109,246,.15);color:#7aa5ff}
-.b-gray{background:rgba(147,161,183,.15);color:#b6c2d6}
-.link{color:#7aa5ff;cursor:pointer;font-weight:700}
-.link:hover{text-decoration:underline}
+/* ---------- Badges (SLDS status) ---------- */
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11.5px;font-weight:700;border:1px solid transparent}
+.b-green{background:var(--green-bg);color:var(--green);border-color:#b6e6c1}
+.b-amber{background:var(--amber-bg);color:var(--amber);border-color:#f6d9a8}
+.b-red{background:var(--red-bg);color:var(--red);border-color:#f5b9bd}
+.b-blue{background:var(--blue-bg);color:var(--brand);border-color:#bcd7fb}
+.b-gray{background:#f3f2f2;color:var(--ink2);border-color:#e0dede}
+
+/* ---------- Highlights panel (record home) ---------- */
+.highlights{background:#fff;border:1px solid var(--line2);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 18px;margin-bottom:4px}
+.hl-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.hl-top .ti{width:40px;height:40px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:19px}
+.hl-top .t{font-size:12px;color:var(--muted)}
+.hl-top .n{font-size:18px;font-weight:700;color:var(--ink)}
+.hl-fields{display:flex;gap:30px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px}
+.hl-fields .f{font-size:13px}
+.hl-fields .f .l{color:var(--muted);font-size:11px;margin-bottom:2px}
+.hl-fields .f .v{font-weight:700;color:var(--ink)}
 
 /* ---------- Modal ---------- */
-.overlay{position:fixed;inset:0;background:rgba(6,10,18,.66);display:grid;place-items:center;padding:16px;z-index:50}
-.modal{background:var(--surface);border:1px solid var(--line);border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
-.modal .mhead{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
-.modal .mhead h3{font-size:17px}
+.overlay{position:fixed;inset:0;background:rgba(8,7,7,.45);display:grid;place-items:center;padding:16px;z-index:60}
+.modal{background:#fff;border-radius:8px;width:100%;max-width:540px;max-height:92vh;overflow:auto;box-shadow:var(--shadow2)}
+.modal .mhead{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;border-bottom:1px solid var(--line);background:var(--th-bg);border-radius:8px 8px 0 0}
+.modal .mhead h3{font-size:16px;color:var(--ink)}
 .modal .mbody{padding:20px}
 .modal .x{background:none;border:none;color:var(--muted);font-size:22px;line-height:1}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .form-grid .full{grid-column:1/-1}
-.mfoot{display:flex;justify-content:flex-start;gap:10px;padding:16px 20px;border-top:1px solid var(--line)}
+.mfoot{display:flex;gap:10px;padding:14px 20px;border-top:1px solid var(--line);background:var(--th-bg);border-radius:0 0 8px 8px}
 
-/* profile */
-.pf-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}
-.pf-meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:14px}
-.pf-meta b{color:var(--text)}
-
-.toast{position:fixed;bottom:22px;left:22px;background:var(--surface2);border:1px solid var(--line);border-right:4px solid var(--green);padding:13px 18px;border-radius:10px;box-shadow:var(--shadow);z-index:80;font-size:14px}
+.toast{position:fixed;bottom:22px;left:22px;background:#fff;border:1px solid var(--line2);border-right:4px solid var(--green);
+  padding:12px 18px;border-radius:var(--radius);box-shadow:var(--shadow2);z-index:90;font-size:13px;color:var(--ink)}
 .toast.err{border-right-color:var(--red)}
 
-@media(max-width:860px){
-  .sidebar{display:none}
-  .mobile-nav{display:flex;overflow-x:auto;gap:6px;background:var(--surface);padding:10px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
-  .mobile-nav button{white-space:nowrap;background:transparent;border:1px solid var(--line);color:var(--muted);padding:8px 13px;border-radius:20px;font-size:13px;font-weight:600}
-  .mobile-nav button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-  .main{padding:16px}
+@media(max-width:720px){
+  .main{padding:14px}
   .form-grid{grid-template-columns:1fr}
+  .appname small{display:none}
 }
 @media print{
-  .sidebar,.mobile-nav,.tools,.nav,.no-print{display:none!important}
-  body{background:#fff;color:#000} .section,.kpi{border-color:#ccc;background:#fff}
-  th{background:#fff;color:#000}
+  .gheader,.tools,.no-print{display:none!important}
+  body{background:#fff} .card,.kpi{box-shadow:none;border-color:#ccc}
 }
 </style>
 </head>
 <body>
 
-<!-- ============ SETUP BANNER (shown until configured) ============ -->
-<div id="setup" class="overlay hidden">
-  <div class="modal" style="max-width:560px">
-    <div class="mhead"><h3>ربط قاعدة البيانات</h3></div>
-    <div class="mbody">
-      <p style="color:var(--muted);margin-top:0">أدخل رابط مشروع Supabase والمفتاح العام (Publishable / anon key). تجدهما في: Supabase → Project Settings → API.</p>
-      <div class="field"><label>Project URL</label><input id="cfgUrl" placeholder="https://xxxx.supabase.co"></div>
-      <div class="field"><label>Publishable / anon key</label><input id="cfgKey" placeholder="sb_publishable_... أو eyJ..."></div>
-      <div class="err" id="cfgErr"></div>
-    </div>
-    <div class="mfoot"><button class="btn" onclick="saveCfg()">حفظ واتصال</button></div>
+<!-- ===== SETUP (only if not configured) ===== -->
+<div id="setup" class="center hidden">
+  <div class="auth-card">
+    <div class="auth-logo">أ</div>
+    <h1>ربط قاعدة البيانات</h1>
+    <p>أدخل رابط Supabase والمفتاح العام</p>
+    <div class="field"><label>Project URL</label><input id="cfgUrl" placeholder="https://xxxx.supabase.co"></div>
+    <div class="field"><label>Publishable / anon key</label><input id="cfgKey" placeholder="sb_publishable_..."></div>
+    <button class="btn block" onclick="saveCfg()">حفظ واتصال</button>
+    <div class="err" id="cfgErr"></div>
   </div>
 </div>
 
-<!-- ============ LOGIN ============ -->
-<div id="login" class="hidden">
-  <form class="login-card" onsubmit="doLogin(event)">
-    <div class="brand" style="justify-content:center"><div class="logo">أ</div></div>
-    <h1>نظام متابعة الأملاك</h1>
+<!-- ===== LOGIN ===== -->
+<div id="login" class="center hidden">
+  <form class="auth-card" onsubmit="doLogin(event)">
+    <div class="auth-logo">أ</div>
+    <h1>متابعة الأملاك</h1>
     <p>تسجيل دخول الموظفين</p>
     <div class="field"><label>البريد الإلكتروني</label><input id="email" type="email" required></div>
     <div class="field"><label>كلمة المرور</label><input id="password" type="password" required></div>
-    <button class="btn block" type="submit">دخول</button>
+    <button class="btn block" type="submit">تسجيل الدخول</button>
     <div class="err" id="loginErr"></div>
   </form>
 </div>
 
-<!-- ============ APP ============ -->
+<!-- ===== APP ===== -->
 <div id="app" class="hidden">
-  <aside class="sidebar">
-    <div class="brand"><div class="logo">أ</div><b>متابعة الأملاك</b></div>
-    <nav class="nav" id="nav"></nav>
-    <div class="foot">
-      <div id="who" style="margin-bottom:8px"></div>
-      <button class="btn ghost sm block" onclick="logout()">تسجيل الخروج</button>
+  <header class="gheader">
+    <div class="gtop">
+      <div class="applogo">أ</div>
+      <div class="appname">متابعة الأملاك<small>م. أشرف عصمت</small></div>
+      <div class="spacer"></div>
+      <div class="userchip"><span id="who"></span><div class="avatar" id="avatar">؟</div>
+        <button class="btn neutral sm" onclick="logout()">خروج</button></div>
     </div>
-  </aside>
-  <div class="main">
-    <div class="mobile-nav" id="mnav"></div>
-    <div id="view"></div>
-  </div>
+    <nav class="tabs" id="tabs"></nav>
+  </header>
+  <main class="main"><div id="view"></div></main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-/* ============================================================
-   CONFIG — filled automatically if baked; else asks on screen
-   ============================================================ */
+/* ============================================================ CONFIG */
 const BAKED = { url: "https://wextfkewnnykljriqfsy.supabase.co", key: "sb_publishable_aZ10ul4aedqXxSpTFfiIlw_jcffQ7rq" };
-
 let sb=null, CFG=null, ME=null;
-
 function getCfg(){
   if(BAKED.url && !BAKED.url.startsWith("__")) return {url:BAKED.url,key:BAKED.key};
   try{const s=localStorage.getItem('amlak_cfg');if(s)return JSON.parse(s);}catch(e){}
   return null;
 }
 function saveCfg(){
-  const url=document.getElementById('cfgUrl').value.trim();
-  const key=document.getElementById('cfgKey').value.trim();
+  const url=document.getElementById('cfgUrl').value.trim(),key=document.getElementById('cfgKey').value.trim();
   if(!url||!key){document.getElementById('cfgErr').textContent='من فضلك أدخل الرابط والمفتاح';return;}
   try{localStorage.setItem('amlak_cfg',JSON.stringify({url,key}));}catch(e){}
   location.reload();
 }
 
-/* ---------- number / date helpers ---------- */
+/* ---------- helpers ---------- */
 const fmt = n => (n==null||n==='')?'—':Number(n).toLocaleString('ar-EG',{maximumFractionDigits:0});
 const money = n => fmt(n)+' ج.م';
 const fdate = d => d? new Date(d).toLocaleDateString('ar-EG',{year:'numeric',month:'short',day:'numeric'}) : '—';
 const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(msg,isErr){const t=document.createElement('div');t.className='toast'+(isErr?' err':'');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);}
 
-function toast(msg,isErr){
-  const t=document.createElement('div');t.className='toast'+(isErr?' err':'');t.textContent=msg;
-  document.body.appendChild(t);setTimeout(()=>t.remove(),2800);
-}
-
-/* ============================================================ */
+/* ============================================================ boot/auth */
 async function boot(){
   CFG=getCfg();
   if(!CFG){document.getElementById('setup').classList.remove('hidden');return;}
   sb=supabase.createClient(CFG.url,CFG.key);
   const {data:{session}}=await sb.auth.getSession();
-  if(session){ ME=session.user; showApp(); } else { showLogin(); }
-  sb.auth.onAuthStateChange((_e,s)=>{ if(!s){showLogin();} });
+  if(session){ME=session.user;showApp();}else{showLogin();}
+  sb.auth.onAuthStateChange((_e,s)=>{if(!s)showLogin();});
 }
 function showLogin(){document.getElementById('app').classList.add('hidden');document.getElementById('login').classList.remove('hidden');}
 async function doLogin(e){
   e.preventDefault();
-  const email=document.getElementById('email').value, password=document.getElementById('password').value;
+  const email=document.getElementById('email').value,password=document.getElementById('password').value;
   const {data,error}=await sb.auth.signInWithPassword({email,password});
   if(error){document.getElementById('loginErr').textContent='بيانات الدخول غير صحيحة';return;}
-  ME=data.user; document.getElementById('login').classList.add('hidden'); showApp();
+  ME=data.user;document.getElementById('login').classList.add('hidden');showApp();
 }
 async function logout(){await sb.auth.signOut();location.reload();}
 
-/* ---------- navigation ---------- */
+/* ---------- tabs / navigation ---------- */
 const TABS=[
-  {id:'dash',  name:'لوحة التحكم', ico:'📊'},
-  {id:'units', name:'الوحدات',     ico:'🏢'},
-  {id:'clients',name:'العملاء',    ico:'👥'},
-  {id:'inst',  name:'الأقساط',     ico:'💳'},
-  {id:'chk',   name:'الشيكات',     ico:'🧾'},
-  {id:'reports',name:'التقارير',   ico:'📈'},
+  {id:'dash',   name:'لوحة التحكم', ico:'📊', c:'#5867e8'},
+  {id:'units',  name:'الوحدات',     ico:'🏢', c:'#0176d3'},
+  {id:'clients',name:'العملاء',     ico:'👥', c:'#04844b'},
+  {id:'inst',   name:'الأقساط',     ico:'💳', c:'#9050e9'},
+  {id:'chk',    name:'الشيكات',     ico:'🧾', c:'#ff9a3c'},
+  {id:'reports',name:'التقارير',    ico:'📈', c:'#c23934'},
 ];
+const tabColor=id=>TABS.find(t=>t.id===id)?.c||'#0176d3';
+const tabIco =id=>TABS.find(t=>t.id===id)?.ico||'●';
 let CUR='dash';
 function showApp(){
   document.getElementById('app').classList.remove('hidden');
   document.getElementById('who').textContent=ME?.email||'';
-  const nav=document.getElementById('nav'), mnav=document.getElementById('mnav');
-  nav.innerHTML=''; mnav.innerHTML='';
+  document.getElementById('avatar').textContent=(ME?.email||'؟').trim().charAt(0).toUpperCase();
+  const tabs=document.getElementById('tabs');tabs.innerHTML='';
   TABS.forEach(t=>{
-    const b=document.createElement('button');b.innerHTML=`<span class="ico">${t.ico}</span> ${t.name}`;
-    b.onclick=()=>go(t.id);b.dataset.id=t.id;nav.appendChild(b);
-    const mb=document.createElement('button');mb.textContent=t.name;mb.onclick=()=>go(t.id);mb.dataset.id=t.id;mnav.appendChild(mb);
+    const b=document.createElement('button');b.className='tab';b.dataset.id=t.id;
+    b.innerHTML=`<span class="ti" style="background:${t.c}">${t.ico}</span>${t.name}`;
+    b.onclick=()=>go(t.id);tabs.appendChild(b);
   });
   go('dash');
 }
 function go(id){
   CUR=id;
-  document.querySelectorAll('.nav button,.mobile-nav button').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
   ({dash:viewDash,units:viewUnits,clients:viewClients,inst:viewInst,chk:viewChk,reports:viewReports}[id])();
 }
+const pageHead=(id,title,sub,tools='')=>`<div class="page-head">
+  <div class="pt"><div class="ti" style="background:${tabColor(id)}">${tabIco(id)}</div>
+    <div><h2>${title}</h2>${sub?`<div class="sub">${sub}</div>`:''}</div></div>
+  <div class="tools">${tools}</div></div>`;
 
-/* ---------- data helpers ---------- */
-async function q(table,opts=''){const {data,error}=await sb.from(table).select('*'+ (opts?','+opts:'')); if(error){toast(error.message,true);return[];} return data;}
-async function view(v){const {data,error}=await sb.from(v).select('*'); if(error){toast(error.message,true);return[];} return data;}
-
+/* ---------- data ---------- */
+async function q(table){const {data,error}=await sb.from(table).select('*');if(error){toast(error.message,true);return[];}return data;}
+async function view(v){const {data,error}=await sb.from(v).select('*');if(error){toast(error.message,true);return[];}return data;}
 const statusBadge = s => {
   const m={'مدفوع':'b-green','مدفوع جزئي':'b-amber','متأخر':'b-red','قادم':'b-blue',
            'تم التحصيل':'b-green','مستحق اليوم':'b-amber','مرتجع':'b-gray','ملغي':'b-gray'};
   return `<span class="badge ${m[s]||'b-gray'}">${esc(s)}</span>`;
 };
+const kpi=(k,v,cls)=>`<div class="kpi ${cls||''}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+const cardHead=(id,title,cnt,tools='')=>`<div class="chead"><h3><span class="ti" style="background:${tabColor(id)}">${tabIco(id)}</span>${title} ${cnt!=null?`<span class="cnt">(${cnt})</span>`:''}</h3><div class="tools">${tools}</div></div>`;
 
-/* ============================================================
-   DASHBOARD
-   ============================================================ */
+/* ============================================================ DASHBOARD */
 async function viewDash(){
   const V=document.getElementById('view');
-  V.innerHTML=`<div class="topbar"><h2>لوحة التحكم</h2></div><div id="dk"></div>`;
-  const rows=await view('v_dashboard'); const d=rows[0]||{};
-  const chk=await view('v_cheques'); const inst=await view('v_installments');
+  V.innerHTML=pageHead('dash','لوحة التحكم','نظرة عامة على المحفظة')+`<div id="dk"></div>`;
+  const d=(await view('v_dashboard'))[0]||{};
+  const chk=await view('v_cheques'),inst=await view('v_installments');
   const upcoming=chk.filter(c=>c.status!=='تم التحصيل'&&c.days_remaining>=0).sort((a,b)=>a.days_remaining-b.days_remaining).slice(0,10);
   const lateInst=inst.filter(i=>i.status==='متأخر').sort((a,b)=>b.days_late-a.days_late);
-
   document.getElementById('dk').innerHTML=`
    <div class="grid kpis">
-    ${kpi('عدد الوحدات',fmt(d.units_count),'brand')}
-    ${kpi('إجمالي العقود',money(d.total_contracts),'')}
+    ${kpi('عدد الوحدات',fmt(d.units_count))}
+    ${kpi('إجمالي العقود',money(d.total_contracts))}
     ${kpi('إجمالي المحصّل',money(d.total_collected),'green')}
     ${kpi('إجمالي المتبقي',money(d.total_remaining),'amber')}
     ${kpi('أقساط متأخرة',fmt(d.inst_late)+' <small>('+money(d.inst_late_val)+')</small>','red')}
     ${kpi('شيكات متأخرة',fmt(d.chk_late)+' <small>('+money(d.chk_late_val)+')</small>','red')}
     ${kpi('شيكات خلال ٧ أيام',fmt(d.chk_7d)+' <small>('+money(d.chk_7d_val)+')</small>','amber')}
-    ${kpi('شيكات خلال ٣٠ يوم',fmt(d.chk_30d)+' <small>('+money(d.chk_30d_val)+')</small>','')}
+    ${kpi('شيكات خلال ٣٠ يوم',fmt(d.chk_30d)+' <small>('+money(d.chk_30d_val)+')</small>')}
    </div>
-
-   <div class="section">
-     <div class="head"><h3>🔔 أقرب الشيكات استحقاقًا</h3></div>
+   <div class="card">${cardHead('chk','أقرب الشيكات استحقاقًا',upcoming.length)}
      <div class="tbl-wrap"><table><thead><tr>
-       <th>رقم الشيك</th><th>العميل</th><th>الوحدة</th><th>الاستحقاق</th><th class="num">القيمة</th><th>المتبقي للاستحقاق</th><th>الحالة</th>
-     </tr></thead><tbody>
-     ${upcoming.length?upcoming.map(c=>`<tr>
-        <td>${esc(c.cheque_no)}</td><td>${esc(c.client_name)}</td><td>${esc(c.unit_code)}</td>
-        <td>${fdate(c.due_date)}</td><td class="num">${money(c.amount)}</td><td>${esc(c.countdown)}</td><td>${statusBadge(c.status)}</td>
-     </tr>`).join(''):`<tr><td colspan="7" class="empty">لا توجد شيكات قادمة</td></tr>`}
-     </tbody></table></div>
-   </div>
-
-   <div class="section">
-     <div class="head"><h3>⚠️ أقساط متأخرة</h3></div>
+       <th>رقم الشيك</th><th>العميل</th><th>الوحدة</th><th>الاستحقاق</th><th class="num">القيمة</th><th>المتبقي للاستحقاق</th><th>الحالة</th></tr></thead><tbody>
+     ${upcoming.length?upcoming.map(c=>`<tr><td>${esc(c.cheque_no)}</td><td>${esc(c.client_name)}</td><td>${esc(c.unit_code)}</td>
+        <td>${fdate(c.due_date)}</td><td class="num">${money(c.amount)}</td><td>${esc(c.countdown)}</td><td>${statusBadge(c.status)}</td></tr>`).join(''):`<tr><td colspan="7" class="empty">لا توجد شيكات قادمة</td></tr>`}
+     </tbody></table></div></div>
+   <div class="card">${cardHead('inst','أقساط متأخرة',lateInst.length)}
      <div class="tbl-wrap"><table><thead><tr>
-       <th>العميل</th><th>الوحدة</th><th>القسط</th><th>الاستحقاق</th><th class="num">المتبقي</th><th>أيام التأخير</th>
-     </tr></thead><tbody>
-     ${lateInst.length?lateInst.map(i=>`<tr>
-        <td>${esc(i.client_name)}</td><td>${esc(i.unit_code)}</td><td>#${esc(i.no)}</td>
-        <td>${fdate(i.due_date)}</td><td class="num">${money(i.remaining)}</td><td><span class="badge b-red">${fmt(i.days_late)} يوم</span></td>
-     </tr>`).join(''):`<tr><td colspan="6" class="empty">لا توجد أقساط متأخرة 🎉</td></tr>`}
-     </tbody></table></div>
-   </div>`;
+       <th>العميل</th><th>الوحدة</th><th>القسط</th><th>الاستحقاق</th><th class="num">المتبقي</th><th>أيام التأخير</th></tr></thead><tbody>
+     ${lateInst.length?lateInst.map(i=>`<tr><td>${esc(i.client_name)}</td><td>${esc(i.unit_code)}</td><td>#${esc(i.no)}</td>
+        <td>${fdate(i.due_date)}</td><td class="num">${money(i.remaining)}</td><td><span class="badge b-red">${fmt(i.days_late)} يوم</span></td></tr>`).join(''):`<tr><td colspan="6" class="empty">لا توجد أقساط متأخرة 🎉</td></tr>`}
+     </tbody></table></div></div>`;
 }
-const kpi=(k,v,cls)=>`<div class="kpi ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
 
-/* ============================================================
-   UNITS
-   ============================================================ */
+/* ============================================================ UNITS */
 let _units=[],_clients=[];
 async function viewUnits(){
   const V=document.getElementById('view');
-  V.innerHTML=`<div class="topbar"><h2>الوحدات</h2><button class="btn" onclick="unitForm()">+ إضافة وحدة</button></div>
-   <div class="section"><div class="head"><h3>كل الوحدات</h3>
-     <div class="tools"><input class="search" id="uSearch" placeholder="بحث بالكود / العميل / المشروع" oninput="renderUnits()"></div></div>
-     <div class="tbl-wrap" id="uTbl"></div></div>`;
-  _units=await view('v_units'); _clients=await q('clients');
-  renderUnits();
+  V.innerHTML=pageHead('units','الوحدات','','<input class="search" id="uSearch" placeholder="بحث..." oninput="renderUnits()"><button class="btn" onclick="unitForm()">جديد</button>')+
+    `<div class="card">${cardHead('units','كل الوحدات',null)}<div class="tbl-wrap" id="uTbl"></div></div>`;
+  _units=await view('v_units');_clients=await q('clients');renderUnits();
 }
 function renderUnits(){
   const term=(document.getElementById('uSearch')?.value||'').trim();
   let rows=_units;
-  if(term) rows=rows.filter(u=>[u.code,u.client_name,u.project,u.unit_no].some(x=>(x||'').includes(term)));
+  if(term)rows=rows.filter(u=>[u.code,u.client_name,u.project,u.unit_no].some(x=>(x||'').includes(term)));
+  document.querySelector('#uTbl').closest('.card').querySelector('.cnt')?.remove();
   document.getElementById('uTbl').innerHTML=`<table><thead><tr>
     <th>الكود</th><th>النوع</th><th>المشروع</th><th>العميل</th><th class="num">قيمة العقد</th>
-    <th class="num">المحصّل</th><th class="num">المتبقي</th><th>أقساط</th><th></th>
-   </tr></thead><tbody>
+    <th class="num">المحصّل</th><th class="num">المتبقي</th><th>أقساط</th><th></th></tr></thead><tbody>
    ${rows.length?rows.map(u=>`<tr>
      <td><span class="link" onclick="unitProfile('${u.id}')">${esc(u.code)}</span></td>
      <td>${esc(u.type)}</td><td>${esc(u.project)}</td><td>${esc(u.client_name)||'—'}</td>
      <td class="num">${money(u.contract_value)}</td><td class="num">${money(u.collected)}</td>
      <td class="num">${money(u.remaining)}</td><td>${fmt(u.installments_count)}</td>
-     <td><button class="btn ghost sm" onclick="unitForm('${u.id}')">تعديل</button></td>
-   </tr>`).join(''):`<tr><td colspan="9" class="empty">لا توجد وحدات</td></tr>`}
+     <td><button class="btn neutral sm" onclick="unitForm('${u.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">لا توجد وحدات</td></tr>`}
    </tbody></table>`;
 }
 function unitForm(id){
   const u=id?_units.find(x=>x.id===id):{};
   const opts=_clients.map(c=>`<option value="${c.id}" ${u.client_id===c.id?'selected':''}>${esc(c.name)}</option>`).join('');
-  modal(id?'تعديل وحدة':'إضافة وحدة',`
+  modal(id?'تعديل وحدة':'وحدة جديدة',`
    <div class="form-grid">
      <div class="field"><label>كود الوحدة *</label><input id="f_code" value="${esc(u.code)}"></div>
      <div class="field"><label>النوع</label><select id="f_type">${['شقة','محل','مكتب','فيلا','أرض','أخرى'].map(t=>`<option ${u.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
@@ -359,74 +359,67 @@ function unitForm(id){
        client_id:val('f_client')||null,contract_value:num('f_cv'),down_payment:num('f_dp'),
        contract_date:val('f_cd')||null,months:num('f_m'),notes:val('f_notes')};
      if(!rec.code){toast('الكود مطلوب',true);return false;}
-     const {error}= id? await sb.from('units').update(rec).eq('id',id) : await sb.from('units').insert(rec);
+     const {error}=id?await sb.from('units').update(rec).eq('id',id):await sb.from('units').insert(rec);
      if(error){toast(error.message,true);return false;}
-     toast('تم الحفظ'); viewUnits(); return true;
+     toast('تم الحفظ');viewUnits();return true;
    }, id?()=>delRec('units',id,viewUnits):null);
 }
-
 async function unitProfile(id){
   const u=_units.find(x=>x.id===id)||(await view('v_units')).find(x=>x.id===id);
   const inst=(await view('v_installments')).filter(i=>i.unit_id===id).sort((a,b)=>(a.no||0)-(b.no||0));
   const chk=(await view('v_cheques')).filter(c=>c.unit_id===id);
-  const V=document.getElementById('view');
-  V.innerHTML=`<div class="topbar"><h2>🏢 وحدة ${esc(u.code)}</h2>
-     <div class="tools"><button class="btn ghost" onclick="viewUnits()">← رجوع</button><button class="btn" onclick="unitForm('${u.id}')">تعديل</button></div></div>
-   <div class="section"><div class="mbody" style="padding:18px">
-     <div class="pf-meta">
-       <div>العميل: <b>${esc(u.client_name)||'—'}</b></div><div>الهاتف: <b>${esc(u.client_phone)||'—'}</b></div>
-       <div>النوع: <b>${esc(u.type)}</b></div><div>المشروع: <b>${esc(u.project)||'—'}</b></div>
-       <div>قيمة العقد: <b>${money(u.contract_value)}</b></div><div>المقدم: <b>${money(u.down_payment)}</b></div>
-       <div>المحصّل: <b style="color:var(--green)">${money(u.collected)}</b></div><div>المتبقي: <b style="color:var(--amber)">${money(u.remaining)}</b></div>
-     </div></div></div>
-
-   <div class="section"><div class="head"><h3>💳 الأقساط</h3><button class="btn sm" onclick="instForm(null,'${u.id}')">+ قسط</button></div>
+  document.getElementById('view').innerHTML=`
+   <div class="page-head"><div class="pt"></div><div class="tools">
+     <button class="btn neutral" onclick="viewUnits()">← رجوع</button><button class="btn" onclick="unitForm('${u.id}')">تعديل</button></div></div>
+   <div class="highlights">
+     <div class="hl-top"><div class="ti" style="background:${tabColor('units')}">🏢</div>
+       <div><div class="t">وحدة</div><div class="n">${esc(u.code)}</div></div></div>
+     <div class="hl-fields">
+       <div class="f"><div class="l">العميل</div><div class="v">${esc(u.client_name)||'—'}</div></div>
+       <div class="f"><div class="l">الهاتف</div><div class="v">${esc(u.client_phone)||'—'}</div></div>
+       <div class="f"><div class="l">النوع</div><div class="v">${esc(u.type)}</div></div>
+       <div class="f"><div class="l">المشروع</div><div class="v">${esc(u.project)||'—'}</div></div>
+       <div class="f"><div class="l">قيمة العقد</div><div class="v">${money(u.contract_value)}</div></div>
+       <div class="f"><div class="l">المقدم</div><div class="v">${money(u.down_payment)}</div></div>
+       <div class="f"><div class="l">المحصّل</div><div class="v" style="color:var(--green)">${money(u.collected)}</div></div>
+       <div class="f"><div class="l">المتبقي</div><div class="v" style="color:var(--amber)">${money(u.remaining)}</div></div>
+     </div>
+   </div>
+   <div class="card">${cardHead('inst','الأقساط',inst.length,`<button class="btn sm" onclick="instForm(null,'${u.id}')">جديد</button>`)}
      <div class="tbl-wrap"><table><thead><tr><th>#</th><th>الاستحقاق</th><th class="num">القيمة</th><th class="num">المدفوع</th><th class="num">المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
      ${inst.length?inst.map(i=>`<tr><td>${esc(i.no)}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.amount)}</td>
        <td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td>
-       <td><button class="btn ghost sm" onclick="instForm('${i.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">لا أقساط</td></tr>`}
+       <td><button class="btn neutral sm" onclick="instForm('${i.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">لا أقساط</td></tr>`}
      </tbody></table></div></div>
-
-   <div class="section"><div class="head"><h3>🧾 الشيكات</h3><button class="btn sm" onclick="chkForm(null,'${u.id}')">+ شيك</button></div>
+   <div class="card">${cardHead('chk','الشيكات',chk.length,`<button class="btn sm" onclick="chkForm(null,'${u.id}')">جديد</button>`)}
      <div class="tbl-wrap"><table><thead><tr><th>رقم الشيك</th><th>البنك</th><th>الاستحقاق</th><th class="num">القيمة</th><th>المتبقي للاستحقاق</th><th>الحالة</th><th></th></tr></thead><tbody>
      ${chk.length?chk.map(c=>`<tr><td>${esc(c.cheque_no)}</td><td>${esc(c.bank)||'—'}</td><td>${fdate(c.due_date)}</td>
        <td class="num">${money(c.amount)}</td><td>${esc(c.countdown)}</td><td>${statusBadge(c.status)}</td>
-       <td><button class="btn ghost sm" onclick="chkForm('${c.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">لا شيكات</td></tr>`}
+       <td><button class="btn neutral sm" onclick="chkForm('${c.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">لا شيكات</td></tr>`}
      </tbody></table></div></div>`;
 }
 
-/* ============================================================
-   CLIENTS
-   ============================================================ */
+/* ============================================================ CLIENTS */
 let _clist=[];
 async function viewClients(){
-  const V=document.getElementById('view');
-  V.innerHTML=`<div class="topbar"><h2>العملاء</h2><button class="btn" onclick="clientForm()">+ إضافة عميل</button></div>
-   <div class="section"><div class="head"><h3>كل العملاء</h3>
-     <div class="tools"><input class="search" id="cSearch" placeholder="بحث بالاسم / الهاتف" oninput="renderClients()"></div></div>
-     <div class="tbl-wrap" id="cTbl"></div></div>`;
-  _clist=await view('v_units'); // units to count per client
-  _clients=await q('clients');
-  renderClients();
+  document.getElementById('view').innerHTML=pageHead('clients','العملاء','','<input class="search" id="cSearch" placeholder="بحث..." oninput="renderClients()"><button class="btn" onclick="clientForm()">جديد</button>')+
+    `<div class="card">${cardHead('clients','كل العملاء',null)}<div class="tbl-wrap" id="cTbl"></div></div>`;
+  _clist=await view('v_units');_clients=await q('clients');renderClients();
 }
 function renderClients(){
   const term=(document.getElementById('cSearch')?.value||'').trim();
   let rows=_clients;
-  if(term) rows=rows.filter(c=>[c.name,c.phone].some(x=>(x||'').includes(term)));
+  if(term)rows=rows.filter(c=>[c.name,c.phone].some(x=>(x||'').includes(term)));
   document.getElementById('cTbl').innerHTML=`<table><thead><tr>
     <th>الاسم</th><th>الهاتف</th><th>عدد الوحدات</th><th class="num">إجمالي المتبقي</th><th></th></tr></thead><tbody>
-   ${rows.length?rows.map(c=>{
-     const us=_clist.filter(u=>u.client_id===c.id);
-     const rem=us.reduce((s,u)=>s+Number(u.remaining||0),0);
+   ${rows.length?rows.map(c=>{const us=_clist.filter(u=>u.client_id===c.id);const rem=us.reduce((s,u)=>s+Number(u.remaining||0),0);
      return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.phone)||'—'}</td><td>${us.length}</td>
-       <td class="num">${money(rem)}</td>
-       <td><button class="btn ghost sm" onclick="clientForm('${c.id}')">تعديل</button></td></tr>`;
-   }).join(''):`<tr><td colspan="5" class="empty">لا يوجد عملاء</td></tr>`}
+       <td class="num">${money(rem)}</td><td><button class="btn neutral sm" onclick="clientForm('${c.id}')">تعديل</button></td></tr>`;}).join(''):`<tr><td colspan="5" class="empty">لا يوجد عملاء</td></tr>`}
    </tbody></table>`;
 }
 function clientForm(id){
   const c=id?_clients.find(x=>x.id===id):{};
-  modal(id?'تعديل عميل':'إضافة عميل',`
+  modal(id?'تعديل عميل':'عميل جديد',`
    <div class="form-grid">
      <div class="field full"><label>الاسم *</label><input id="f_name" value="${esc(c.name)}"></div>
      <div class="field"><label>الهاتف</label><input id="f_phone" value="${esc(c.phone)}"></div>
@@ -435,50 +428,39 @@ function clientForm(id){
    </div>`,async()=>{
      const rec={name:val('f_name'),phone:val('f_phone'),national_id:val('f_nid'),notes:val('f_notes')};
      if(!rec.name){toast('الاسم مطلوب',true);return false;}
-     const {error}= id? await sb.from('clients').update(rec).eq('id',id) : await sb.from('clients').insert(rec);
+     const {error}=id?await sb.from('clients').update(rec).eq('id',id):await sb.from('clients').insert(rec);
      if(error){toast(error.message,true);return false;}
-     toast('تم الحفظ'); viewClients(); return true;
+     toast('تم الحفظ');viewClients();return true;
    }, id?()=>delRec('clients',id,viewClients):null);
 }
 
-/* ============================================================
-   INSTALLMENTS
-   ============================================================ */
+/* ============================================================ INSTALLMENTS */
 let _inst=[];
 async function viewInst(){
-  const V=document.getElementById('view');
-  V.innerHTML=`<div class="topbar"><h2>الأقساط</h2></div>
-   <div class="section"><div class="head"><h3>كل الأقساط</h3>
-     <div class="tools">
-       <select class="search" id="iFilter" onchange="renderInst()">
-         <option value="">كل الحالات</option><option>قادم</option><option>متأخر</option><option>مدفوع جزئي</option><option>مدفوع</option>
-       </select>
-       <input class="search" id="iSearch" placeholder="بحث بالعميل / الوحدة" oninput="renderInst()"></div></div>
-     <div class="tbl-wrap" id="iTbl"></div></div>`;
-  _inst=await view('v_installments'); _units=await view('v_units');
-  renderInst();
+  document.getElementById('view').innerHTML=pageHead('inst','الأقساط','',
+    `<select class="search" id="iFilter" onchange="renderInst()"><option value="">كل الحالات</option><option>قادم</option><option>متأخر</option><option>مدفوع جزئي</option><option>مدفوع</option></select><input class="search" id="iSearch" placeholder="بحث..." oninput="renderInst()">`)+
+    `<div class="card">${cardHead('inst','كل الأقساط',null)}<div class="tbl-wrap" id="iTbl"></div></div>`;
+  _inst=await view('v_installments');_units=await view('v_units');renderInst();
 }
 function renderInst(){
-  const term=(document.getElementById('iSearch')?.value||'').trim();
-  const fs=document.getElementById('iFilter')?.value||'';
+  const term=(document.getElementById('iSearch')?.value||'').trim();const fs=document.getElementById('iFilter')?.value||'';
   let rows=_inst.slice().sort((a,b)=>new Date(a.due_date)-new Date(b.due_date));
-  if(term) rows=rows.filter(i=>[i.client_name,i.unit_code].some(x=>(x||'').includes(term)));
-  if(fs) rows=rows.filter(i=>i.status===fs);
+  if(term)rows=rows.filter(i=>[i.client_name,i.unit_code].some(x=>(x||'').includes(term)));
+  if(fs)rows=rows.filter(i=>i.status===fs);
   document.getElementById('iTbl').innerHTML=`<table><thead><tr>
     <th>العميل</th><th>الوحدة</th><th>#</th><th>الاستحقاق</th><th class="num">القيمة</th><th class="num">المدفوع</th>
     <th class="num">المتبقي</th><th>الحالة</th><th>تأخير</th><th></th></tr></thead><tbody>
-   ${rows.length?rows.map(i=>`<tr>
-     <td>${esc(i.client_name)}</td><td>${esc(i.unit_code)}</td><td>${esc(i.no)}</td><td>${fdate(i.due_date)}</td>
+   ${rows.length?rows.map(i=>`<tr><td>${esc(i.client_name)}</td><td>${esc(i.unit_code)}</td><td>${esc(i.no)}</td><td>${fdate(i.due_date)}</td>
      <td class="num">${money(i.amount)}</td><td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td>
      <td>${statusBadge(i.status)}</td><td>${i.days_late>0?'<span class="badge b-red">'+fmt(i.days_late)+' يوم</span>':'—'}</td>
-     <td><button class="btn ghost sm" onclick="instForm('${i.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="10" class="empty">لا أقساط</td></tr>`}
+     <td><button class="btn neutral sm" onclick="instForm('${i.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="10" class="empty">لا أقساط</td></tr>`}
    </tbody></table>`;
 }
 async function instForm(id,unitId){
   if(!_units.length)_units=await view('v_units');
   const i=id?_inst.find(x=>x.id===id)||(await view('v_installments')).find(x=>x.id===id):{unit_id:unitId,paid:0};
   const opts=_units.map(u=>`<option value="${u.id}" ${i.unit_id===u.id?'selected':''}>${esc(u.code)} — ${esc(u.client_name)||''}</option>`).join('');
-  modal(id?'تعديل قسط':'إضافة قسط',`
+  modal(id?'تعديل قسط':'قسط جديد',`
    <div class="form-grid">
      <div class="field full"><label>الوحدة *</label><select id="f_unit">${opts}</select></div>
      <div class="field"><label>رقم القسط</label><input id="f_no" type="number" value="${i.no??''}"></div>
@@ -489,49 +471,38 @@ async function instForm(id,unitId){
    </div>`,async()=>{
      const rec={unit_id:val('f_unit'),no:num('f_no'),due_date:val('f_due'),amount:num('f_amt')||0,paid:num('f_paid')||0,notes:val('f_notes')};
      if(!rec.unit_id||!rec.due_date){toast('الوحدة وتاريخ الاستحقاق مطلوبان',true);return false;}
-     const {error}= id? await sb.from('installments').update(rec).eq('id',id) : await sb.from('installments').insert(rec);
+     const {error}=id?await sb.from('installments').update(rec).eq('id',id):await sb.from('installments').insert(rec);
      if(error){toast(error.message,true);return false;}
-     toast('تم الحفظ'); (CUR==='units'?unitProfile(rec.unit_id):viewInst()); return true;
+     toast('تم الحفظ');(CUR==='units'?unitProfile(rec.unit_id):viewInst());return true;
    }, id?()=>delRec('installments',id,viewInst):null);
 }
 
-/* ============================================================
-   CHEQUES
-   ============================================================ */
+/* ============================================================ CHEQUES */
 let _chk=[];
 async function viewChk(){
-  const V=document.getElementById('view');
-  V.innerHTML=`<div class="topbar"><h2>الشيكات</h2></div>
-   <div class="section"><div class="head"><h3>كل الشيكات</h3>
-     <div class="tools">
-       <select class="search" id="kFilter" onchange="renderChk()">
-         <option value="">كل الحالات</option><option>قادم</option><option>مستحق اليوم</option><option>تم التحصيل</option><option>مرتجع</option><option>ملغي</option>
-       </select>
-       <input class="search" id="kSearch" placeholder="بحث بالرقم / العميل / الوحدة" oninput="renderChk()"></div></div>
-     <div class="tbl-wrap" id="kTbl"></div></div>`;
-  _chk=await view('v_cheques'); _units=await view('v_units');
-  renderChk();
+  document.getElementById('view').innerHTML=pageHead('chk','الشيكات','',
+    `<select class="search" id="kFilter" onchange="renderChk()"><option value="">كل الحالات</option><option>قادم</option><option>مستحق اليوم</option><option>تم التحصيل</option><option>مرتجع</option><option>ملغي</option></select><input class="search" id="kSearch" placeholder="بحث..." oninput="renderChk()">`)+
+    `<div class="card">${cardHead('chk','كل الشيكات',null)}<div class="tbl-wrap" id="kTbl"></div></div>`;
+  _chk=await view('v_cheques');_units=await view('v_units');renderChk();
 }
 function renderChk(){
-  const term=(document.getElementById('kSearch')?.value||'').trim();
-  const fs=document.getElementById('kFilter')?.value||'';
+  const term=(document.getElementById('kSearch')?.value||'').trim();const fs=document.getElementById('kFilter')?.value||'';
   let rows=_chk.slice().sort((a,b)=>a.days_remaining-b.days_remaining);
-  if(term) rows=rows.filter(c=>[c.cheque_no,c.client_name,c.unit_code].some(x=>(x||'').includes(term)));
-  if(fs) rows=rows.filter(c=>c.status===fs);
+  if(term)rows=rows.filter(c=>[c.cheque_no,c.client_name,c.unit_code].some(x=>(x||'').includes(term)));
+  if(fs)rows=rows.filter(c=>c.status===fs);
   document.getElementById('kTbl').innerHTML=`<table><thead><tr>
     <th>رقم الشيك</th><th>العميل</th><th>الوحدة</th><th>البنك</th><th>الاستحقاق</th>
     <th class="num">القيمة</th><th>المتبقي للاستحقاق</th><th>الحالة</th><th></th></tr></thead><tbody>
-   ${rows.length?rows.map(c=>`<tr>
-     <td>${esc(c.cheque_no)}</td><td>${esc(c.client_name)}</td><td>${esc(c.unit_code)}</td><td>${esc(c.bank)||'—'}</td>
+   ${rows.length?rows.map(c=>`<tr><td>${esc(c.cheque_no)}</td><td>${esc(c.client_name)}</td><td>${esc(c.unit_code)}</td><td>${esc(c.bank)||'—'}</td>
      <td>${fdate(c.due_date)}</td><td class="num">${money(c.amount)}</td><td>${esc(c.countdown)}</td><td>${statusBadge(c.status)}</td>
-     <td><button class="btn ghost sm" onclick="chkForm('${c.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">لا شيكات</td></tr>`}
+     <td><button class="btn neutral sm" onclick="chkForm('${c.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">لا شيكات</td></tr>`}
    </tbody></table>`;
 }
 async function chkForm(id,unitId){
   if(!_units.length)_units=await view('v_units');
   const c=id?_chk.find(x=>x.id===id)||(await view('v_cheques')).find(x=>x.id===id):{unit_id:unitId,status:'قادم'};
   const opts=_units.map(u=>`<option value="${u.id}" ${c.unit_id===u.id?'selected':''}>${esc(u.code)} — ${esc(u.client_name)||''}</option>`).join('');
-  modal(id?'تعديل شيك':'إضافة شيك',`
+  modal(id?'تعديل شيك':'شيك جديد',`
    <div class="form-grid">
      <div class="field full"><label>الوحدة *</label><select id="f_unit">${opts}</select></div>
      <div class="field"><label>رقم الشيك</label><input id="f_no" value="${esc(c.cheque_no)}"></div>
@@ -545,37 +516,29 @@ async function chkForm(id,unitId){
      const rec={unit_id:val('f_unit'),cheque_no:val('f_no'),bank:val('f_bank'),received_date:val('f_rec')||null,
        due_date:val('f_due'),amount:num('f_amt')||0,status:val('f_status'),notes:val('f_notes')};
      if(!rec.unit_id||!rec.due_date){toast('الوحدة وتاريخ الاستحقاق مطلوبان',true);return false;}
-     const {error}= id? await sb.from('cheques').update(rec).eq('id',id) : await sb.from('cheques').insert(rec);
+     const {error}=id?await sb.from('cheques').update(rec).eq('id',id):await sb.from('cheques').insert(rec);
      if(error){toast(error.message,true);return false;}
-     toast('تم الحفظ'); (CUR==='units'?unitProfile(rec.unit_id):viewChk()); return true;
+     toast('تم الحفظ');(CUR==='units'?unitProfile(rec.unit_id):viewChk());return true;
    }, id?()=>delRec('cheques',id,viewChk):null);
 }
 
-/* ============================================================
-   REPORTS
-   ============================================================ */
+/* ============================================================ REPORTS */
 async function viewReports(){
-  const V=document.getElementById('view');
   const d=(await view('v_dashboard'))[0]||{};
-  V.innerHTML=`<div class="topbar"><h2>التقارير</h2>
-     <div class="tools no-print">
-       <button class="btn ghost" onclick="window.print()">🖨️ طباعة</button>
-       <button class="btn" onclick="exportAll()">⬇️ تصدير CSV</button>
-     </div></div>
-   <div class="grid kpis">
-    ${kpi('عدد الوحدات',fmt(d.units_count),'brand')}
-    ${kpi('عدد العملاء','—','')}
-    ${kpi('إجمالي العقود',money(d.total_contracts),'')}
-    ${kpi('إجمالي الأقساط',money(d.total_installments),'')}
+  document.getElementById('view').innerHTML=pageHead('reports','التقارير','',
+    '<button class="btn neutral" onclick="window.print()">🖨️ طباعة</button><button class="btn" onclick="exportAll()">⬇️ تصدير CSV</button>')+
+   `<div class="grid kpis">
+    ${kpi('عدد الوحدات',fmt(d.units_count))}
+    ${kpi('عدد العملاء','—')}
+    ${kpi('إجمالي العقود',money(d.total_contracts))}
+    ${kpi('إجمالي الأقساط',money(d.total_installments))}
     ${kpi('إجمالي المحصّل',money(d.total_collected),'green')}
     ${kpi('إجمالي المتبقي',money(d.total_remaining),'amber')}
-    ${kpi('قيمة الشيكات',money(d.cheques_value),'')}
+    ${kpi('قيمة الشيكات',money(d.cheques_value))}
     ${kpi('شيكات متأخرة (قيمة)',money(d.chk_late_val),'red')}
    </div>
-   <div class="section"><div class="head"><h3>ملخص لكل وحدة</h3></div>
-     <div class="tbl-wrap" id="rTbl"></div></div>`;
-  const clients=await q('clients');
-  document.querySelectorAll('.kpi .v')[1].textContent=fmt(clients.length);
+   <div class="card">${cardHead('reports','ملخص لكل وحدة',null)}<div class="tbl-wrap" id="rTbl"></div></div>`;
+  const clients=await q('clients');document.querySelectorAll('.kpi .v')[1].textContent=fmt(clients.length);
   const units=await view('v_units');
   document.getElementById('rTbl').innerHTML=`<table><thead><tr>
     <th>الكود</th><th>العميل</th><th>المشروع</th><th class="num">العقد</th><th class="num">المقدم</th>
@@ -586,34 +549,30 @@ async function viewReports(){
    </tbody></table>`;
 }
 async function exportAll(){
-  const units=await view('v_units'), inst=await view('v_installments'), chk=await view('v_cheques');
+  const units=await view('v_units'),inst=await view('v_installments'),chk=await view('v_cheques');
   csv('units.csv',units,['code','type','project','client_name','contract_value','down_payment','collected','remaining']);
   csv('installments.csv',inst,['unit_code','client_name','no','due_date','amount','paid','remaining','status','days_late']);
   csv('cheques.csv',chk,['cheque_no','unit_code','client_name','bank','due_date','amount','status','days_remaining']);
   toast('تم تصدير 3 ملفات');
 }
 function csv(name,rows,cols){
-  const head=cols.join(',');
   const body=rows.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob=new Blob(['﻿'+head+'\n'+body],{type:'text/csv;charset=utf-8'});
+  const blob=new Blob(['﻿'+cols.join(',')+'\n'+body],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
 }
 
-/* ============================================================
-   MODAL + small utils
-   ============================================================ */
+/* ============================================================ modal + utils */
 function val(id){return document.getElementById(id).value.trim();}
 function num(id){const v=document.getElementById(id).value;return v===''?null:Number(v);}
 function modal(title,body,onSave,onDelete){
   const o=document.createElement('div');o.className='overlay';
   o.innerHTML=`<div class="modal"><div class="mhead"><h3>${title}</h3><button class="x">×</button></div>
     <div class="mbody">${body}</div>
-    <div class="mfoot"><button class="btn" id="mSave">حفظ</button>
-      <button class="btn ghost" id="mCancel">إلغاء</button>
+    <div class="mfoot"><button class="btn" id="mSave">حفظ</button><button class="btn neutral" id="mCancel">إلغاء</button>
       ${onDelete?'<button class="btn danger" id="mDel" style="margin-inline-start:auto">حذف</button>':''}</div></div>`;
   document.body.appendChild(o);
   const close=()=>o.remove();
-  o.querySelector('.x').onclick=close; o.querySelector('#mCancel').onclick=close;
+  o.querySelector('.x').onclick=close;o.querySelector('#mCancel').onclick=close;
   o.querySelector('#mSave').onclick=async()=>{const ok=await onSave();if(ok!==false)close();};
   if(onDelete)o.querySelector('#mDel').onclick=async()=>{if(confirm('تأكيد الحذف؟')){await onDelete();close();}};
   o.onclick=e=>{if(e.target===o)close();};
@@ -621,9 +580,8 @@ function modal(title,body,onSave,onDelete){
 async function delRec(table,id,after){
   const {error}=await sb.from(table).delete().eq('id',id);
   if(error){toast(error.message,true);return;}
-  toast('تم الحذف'); after();
+  toast('تم الحذف');after();
 }
-
 boot();
 </script>
 </body>
