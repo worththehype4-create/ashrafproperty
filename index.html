@@ -151,7 +151,7 @@ const TR={
   dash_overview:'نظرة عامة على المحفظة',
   s_inst_due:'أقساط شراء مستحقة / متأخرة',s_rent_due:'إيجارات مستحقة / متأخرة',s_expiring:'عقود قرب انتهائها',s_vacant:'وحدات شاغرة أو غير مُستلمة',
   k_units:'عدد الوحدات',k_purchase:'إجمالي الشراء',k_paid:'المسدّد من الأقساط',k_remaining:'المتبقي على الأقساط',k_rented:'مؤجّرة',k_vacant:'شاغرة',k_undeliv:'غير مُستلمة',k_rentcol:'إيجار محصّل',
-  f_code:'كود',f_type:'النوع',f_compound:'الكمبوند / المشروع',f_location:'الموقع',f_unitno:'رقم الوحدة',f_floor:'الدور',f_area:'المساحة (م²)',f_garden:'حديقة؟',f_gardenA:'مساحة الحديقة (م²)',f_seller:'المطور / البائع',f_pdate:'تاريخ الشراء',f_price:'سعر الشراء',f_down:'المقدم',f_deliv:'تم الاستلام؟',f_ddate:'تاريخ الاستلام',f_vac:'سبب عدم التأجير',f_notes:'ملاحظات',
+  f_code:'كود',f_type:'النوع',f_owner:'اسم المالك',f_compound:'الكمبوند / المشروع',f_location:'الموقع',f_unitno:'رقم الوحدة',f_floor:'الدور',f_area:'المساحة (م²)',f_garden:'حديقة؟',f_gardenA:'مساحة الحديقة (م²)',f_seller:'المطور / البائع',f_pdate:'تاريخ الشراء',f_price:'سعر الشراء',f_down:'المقدم',f_deliv:'تم الاستلام؟',f_ddate:'تاريخ الاستلام',f_vac:'سبب عدم التأجير',f_notes:'ملاحظات',
   yes:'نعم',no:'لا',occupancy:'الإشغال',client:'العميل',
   col_unit:'الوحدة',col_tenant:'المستأجر',col_due:'الاستحقاق',col_amount:'القيمة',col_paid:'المدفوع',col_remaining:'المتبقي',col_status:'الحالة',col_no:'#',col_countdown:'المتبقي للاستحقاق',col_end:'نهاية العقد',col_renew:'التجديد',col_phone:'الهاتف',col_start:'البداية',col_rent:'الإيجار',col_cheque:'رقم الشيك',
   gen_schedule:'توليد جدول الدفعات تلقائيًا',pay_amount:'قيمة الدفعة الواحدة',rep_pick:'اختر وحدة لعرض تقريرها التفصيلي',rep_all:'التقرير الإجمالي',rep_unit:'تقرير وحدة',print_contract:'طباعة العقد',mark_paid:'تحديد كمدفوع',dl_template:'تحميل قالب Excel',
@@ -170,7 +170,7 @@ const TR={
   dash_overview:'Portfolio overview',
   s_inst_due:'Purchase installments due / overdue',s_rent_due:'Rent due / overdue',s_expiring:'Contracts expiring soon',s_vacant:'Vacant or not-delivered units',
   k_units:'Units',k_purchase:'Total purchase',k_paid:'Installments paid',k_remaining:'Installments remaining',k_rented:'Rented',k_vacant:'Vacant',k_undeliv:'Not delivered',k_rentcol:'Rent collected',
-  f_code:'Code',f_type:'Type',f_compound:'Compound / Project',f_location:'Location',f_unitno:'Unit no.',f_floor:'Floor',f_area:'Area (m²)',f_garden:'Garden?',f_gardenA:'Garden area (m²)',f_seller:'Developer / Seller',f_pdate:'Purchase date',f_price:'Purchase price',f_down:'Down payment',f_deliv:'Delivered?',f_ddate:'Delivery date',f_vac:'Reason not rented',f_notes:'Notes',
+  f_code:'Code',f_type:'Type',f_owner:'Owner name',f_compound:'Compound / Project',f_location:'Location',f_unitno:'Unit no.',f_floor:'Floor',f_area:'Area (m²)',f_garden:'Garden?',f_gardenA:'Garden area (m²)',f_seller:'Developer / Seller',f_pdate:'Purchase date',f_price:'Purchase price',f_down:'Down payment',f_deliv:'Delivered?',f_ddate:'Delivery date',f_vac:'Reason not rented',f_notes:'Notes',
   yes:'Yes',no:'No',occupancy:'Occupancy',client:'Owner',
   col_unit:'Unit',col_tenant:'Tenant',col_due:'Due date',col_amount:'Amount',col_paid:'Paid',col_remaining:'Remaining',col_status:'Status',col_no:'#',col_countdown:'Time to due',col_end:'Contract end',col_renew:'Renewal',col_phone:'Phone',col_start:'Start',col_rent:'Rent',col_cheque:'Cheque no.',
   gen_schedule:'Auto-generate payment schedule',pay_amount:'Amount per payment',rep_pick:'Choose a unit for its detailed report',rep_all:'Overall report',rep_unit:'Unit report',print_contract:'Print contract',mark_paid:'Mark paid',dl_template:'Download Excel template',
@@ -336,13 +336,13 @@ function renderUnits(){
   const term=(document.getElementById('uSearch')?.value||'').trim();
   let rows=_units;if(term)rows=rows.filter(u=>[u.compound,u.unit_number,u.code,u.location,u.tenant_name].some(x=>(x||'').includes(term)));
   document.getElementById('uTbl').innerHTML=`<table><thead><tr>
-    <th>${T('f_compound')}</th><th>${T('f_unitno')}</th><th>${T('f_type')}</th><th>${T('f_area')}</th><th>${T('occupancy')}</th><th class="num">${T('f_price')}</th><th class="num">${T('col_remaining')}</th><th>${T('purchase_inst')}</th><th></th></tr></thead><tbody>
+    <th>${T('f_compound')}</th><th>${T('f_unitno')}</th><th>${T('f_owner')}</th><th>${T('f_type')}</th><th>${T('f_area')}</th><th>${T('occupancy')}</th><th class="num">${T('f_price')}</th><th class="num">${T('col_remaining')}</th><th>${T('purchase_inst')}</th><th></th></tr></thead><tbody>
    ${rows.length?rows.map(u=>`<tr>
      <td><span class="link" onclick="unitProfile('${u.id}')">${esc(u.compound)||'—'}</span></td>
-     <td>${esc(u.unit_number)||esc(u.code)||'—'}</td><td>${esc(lv(u.type))}</td><td>${u.area?fmt(u.area)+' '+AU():'—'}</td>
+     <td>${esc(u.unit_number)||esc(u.code)||'—'}</td><td>${esc(u.owner_name)||'—'}</td><td>${esc(lv(u.type))}</td><td>${u.area?fmt(u.area)+' '+AU():'—'}</td>
      <td>${statusBadge(u.occupancy)}</td><td class="num">${money(u.purchase_price)}</td><td class="num">${money(u.inst_remaining)}</td>
      <td>${fmt(u.inst_paid_count)}/${fmt(u.inst_count)}</td>
-     <td><button class="btn neutral sm" onclick="unitForm('${u.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">${T('noRows')}</td></tr>`}
+     <td><button class="btn neutral sm" onclick="unitForm('${u.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="10" class="empty">${T('noRows')}</td></tr>`}
    </tbody></table>`;
 }
 function unitForm(id){
@@ -352,6 +352,7 @@ function unitForm(id){
    <div class="form-grid">
      <div class="field"><label>${T('f_type')}</label><select id="f_type">${typeOpts}</select></div>
      <div class="field"><label>${T('f_unitno')}</label><input id="f_unitno" value="${esc(u.unit_number)}"></div>
+     <div class="field"><label>${T('f_owner')}</label><input id="f_owner" value="${esc(u.owner_name)}"></div>
      <div class="field"><label>${T('f_compound')}</label><input id="f_compound" value="${esc(u.compound)}"></div>
      <div class="field"><label>${T('f_location')}</label><input id="f_location" value="${esc(u.location)}"></div>
      <div class="field"><label>${T('f_floor')}</label><input id="f_floor" value="${esc(u.floor)}"></div>
@@ -368,7 +369,7 @@ function unitForm(id){
      <div class="field full"><label>${T('f_notes')}</label><input id="f_notes" value="${esc(u.notes)}"></div>
    </div>`,async()=>{
      const g=val('f_garden')==='y',dl=val('f_deliv')==='y';
-     const rec={type:val('f_type'),unit_number:val('f_unitno'),compound:val('f_compound'),location:val('f_location'),floor:val('f_floor'),
+     const rec={type:val('f_type'),unit_number:val('f_unitno'),owner_name:val('f_owner'),compound:val('f_compound'),location:val('f_location'),floor:val('f_floor'),
        area:num('f_area'),has_garden:g,garden_area:g?num('f_garea'):null,seller:val('f_seller'),purchase_date:val('f_pdate')||null,
        purchase_price:moneyVal('f_price'),down_payment:moneyVal('f_down'),delivered:dl,delivery_date:dl?(val('f_ddate')||null):null,
        vacancy_reason:val('f_vac'),notes:val('f_notes')};
@@ -387,6 +388,7 @@ async function unitProfile(id){
    <div class="highlights">
      <div class="hl-top"><div class="ti" style="background:${tabColor('units')}">🏢</div><div><div class="t">${T('unit')} — ${esc(lv(u.type))}</div><div class="n">${esc(u.compound)||''} ${esc(u.unit_number)||esc(u.code)||''}</div></div></div>
      <div class="hl-fields">
+       <div class="f"><div class="l">${T('f_owner')}</div><div class="v">${esc(u.owner_name)||'—'}</div></div>
        <div class="f"><div class="l">${T('occupancy')}</div><div class="v">${statusBadge(u.occupancy)}</div></div>
        <div class="f"><div class="l">${T('f_location')}</div><div class="v">${esc(u.location)||'—'}</div></div>
        <div class="f"><div class="l">${T('f_area')}</div><div class="v">${u.area?fmt(u.area)+' '+AU():'—'}${u.has_garden?' 🌿'+(u.garden_area?' '+fmt(u.garden_area)+' '+AU():''):''}</div></div>
