@@ -132,6 +132,7 @@ tbody tr:hover{background:var(--row-hover)}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* ===================== CONFIG ===================== */
 const BAKED={url:"https://wextfkewnnykljriqfsy.supabase.co",key:"sb_publishable_aZ10ul4aedqXxSpTFfiIlw_jcffQ7rq"};
@@ -154,6 +155,7 @@ const TR={
   yes:'نعم',no:'لا',occupancy:'الإشغال',client:'العميل',
   col_unit:'الوحدة',col_tenant:'المستأجر',col_due:'الاستحقاق',col_amount:'القيمة',col_paid:'المدفوع',col_remaining:'المتبقي',col_status:'الحالة',col_no:'#',col_countdown:'المتبقي للاستحقاق',col_end:'نهاية العقد',col_renew:'التجديد',col_phone:'الهاتف',col_start:'البداية',col_rent:'الإيجار',col_cheque:'رقم الشيك',
   gen_schedule:'توليد جدول الدفعات تلقائيًا',pay_amount:'قيمة الدفعة الواحدة',rep_pick:'اختر وحدة لعرض تقريرها التفصيلي',rep_all:'التقرير الإجمالي',rep_unit:'تقرير وحدة',print_contract:'طباعة العقد',mark_paid:'تحديد كمدفوع',dl_template:'تحميل قالب Excel',
+  r_upfront:'مقدم الإيجار',r_upfront_by:'المقدم بـ',by_months:'عدد شهور',by_amount:'مبلغ',r_increase:'الزيادة السنوية (%)',
   contract_title:'عقد إيجار',c_landlord:'الطرف الأول (المالك)',c_tenant:'الطرف الثاني (المستأجر)',c_intro:'اتفق الطرفان على تأجير الوحدة المبيّنة بياناتها أدناه، بالشروط الآتية:',c_unit:'بيانات الوحدة',c_terms:'شروط العقد',c_schedule:'جدول دفعات الإيجار',c_sign:'التوقيع',c_name:'الاسم',c_date_sign:'التاريخ',c_print_date:'تاريخ الطباعة',
   units_all:'كل الوحدات',unit:'وحدة',purchase_inst:'أقساط الشراء',rentals:'الإيجارات',documents:'المستندات',delays_hist:'سجل التأجيلات',
   add_rental:'عقد إيجار جديد',rental:'عقد إيجار',tenant:'المستأجر',t_name:'اسم المستأجر',t_phone:'الهاتف',t_addr:'العنوان',t_id:'الرقم القومي',r_start:'بداية العقد',r_end:'نهاية العقد',r_renew:'موعد التجديد',r_total:'إجمالي العقد',r_deposit:'التأمين',r_freq:'الدورية',r_status:'حالة العقد',rent_pay:'دفعات الإيجار',
@@ -172,6 +174,7 @@ const TR={
   yes:'Yes',no:'No',occupancy:'Occupancy',client:'Owner',
   col_unit:'Unit',col_tenant:'Tenant',col_due:'Due date',col_amount:'Amount',col_paid:'Paid',col_remaining:'Remaining',col_status:'Status',col_no:'#',col_countdown:'Time to due',col_end:'Contract end',col_renew:'Renewal',col_phone:'Phone',col_start:'Start',col_rent:'Rent',col_cheque:'Cheque no.',
   gen_schedule:'Auto-generate payment schedule',pay_amount:'Amount per payment',rep_pick:'Choose a unit for its detailed report',rep_all:'Overall report',rep_unit:'Unit report',print_contract:'Print contract',mark_paid:'Mark paid',dl_template:'Download Excel template',
+  r_upfront:'Rent upfront',r_upfront_by:'Upfront by',by_months:'No. of months',by_amount:'Amount',r_increase:'Annual increase (%)',
   contract_title:'RENTAL CONTRACT',c_landlord:'First party (Landlord)',c_tenant:'Second party (Tenant)',c_intro:'Both parties have agreed to rent the unit described below under the following terms:',c_unit:'Unit details',c_terms:'Contract terms',c_schedule:'Rent payment schedule',c_sign:'Signature',c_name:'Name',c_date_sign:'Date',c_print_date:'Print date',
   units_all:'All units',unit:'Unit',purchase_inst:'Purchase installments',rentals:'Rentals',documents:'Documents',delays_hist:'Postponement history',
   add_rental:'New rental contract',rental:'Rental contract',tenant:'Tenant',t_name:'Tenant name',t_phone:'Phone',t_addr:'Address',t_id:'National ID',r_start:'Contract start',r_end:'Contract end',r_renew:'Renewal date',r_total:'Contract total',r_deposit:'Deposit',r_freq:'Frequency',r_status:'Contract status',rent_pay:'Rent payments',
@@ -259,7 +262,8 @@ function buildSchedule(rec,payAmt){
   while(cur<=end&&guard<600){dates.push(new Date(cur));cur=addMonths(start,step*dates.length);guard++;}
   if(!dates.length)dates.push(new Date(start));
   const per=payAmt||(rec.rent_total?Math.round(rec.rent_total/dates.length):0);
-  return dates.map((d,ix)=>({no:ix+1,due_date:d.toISOString().slice(0,10),amount:per,paid:0}));
+  const pct=Number(rec.annual_increase||0);
+  return dates.map((d,ix)=>{const yr=Math.floor((step*ix)/12);const amt=pct?Math.round(per*Math.pow(1+pct/100,yr)):per;return {no:ix+1,due_date:d.toISOString().slice(0,10),amount:amt,paid:0};});
 }
 
 /* ===================== DASHBOARD ===================== */
@@ -457,27 +461,38 @@ function importInst(unitId){
   modal(T('importT'),`
    <p style="margin-top:0;color:var(--muted);font-size:13px">${T('paste_hint')} — <a class="link" onclick="downloadInstTemplate()">${T('dl_template')}</a><br>
      <span style="direction:ltr;display:inline-block">${T('col_due')} , ${T('col_amount')} , ${T('col_paid')} , ${T('col_cheque')}</span></p>
-   <div class="field"><label>CSV / Excel</label><input type="file" id="f_file" accept=".csv,.txt,.tsv" onchange="fillFromFile()"></div>
+   <div class="field"><label>CSV / Excel</label><input type="file" id="f_file" accept=".csv,.txt,.tsv,.xlsx,.xls" onchange="fillFromFile()"></div>
    <div class="field"><textarea id="f_rows" oninput="previewInst()" style="width:100%;min-height:160px;font-family:monospace;direction:ltr;padding:10px;border:1px solid var(--line2);border-radius:.35rem" placeholder="2026-11-15,99000,0,CHQ-001&#10;2027-04-15,161700,0,CHQ-002"></textarea></div>
    <div id="importPrev" style="font-size:13px;color:var(--muted);min-height:20px"></div>
   `,async()=>{const rows=parseInstRows(document.getElementById('f_rows').value).map(r=>Object.assign({unit_id:unitId},r));if(!rows.length){toast(T('noRows'),true);return false;}
      const {error}=await sb.from('installments').insert(rows);if(error){toast(error.message,true);return false;}toast(T('imported')+' '+rows.length);unitProfile(unitId);return true;});
 }
 function downloadInstTemplate(){const rows=[['تاريخ الاستحقاق / Due (YYYY-MM-DD)','القيمة / Amount','المدفوع / Paid','رقم الشيك / Cheque no.'],['2026-11-15','99000','0','CHQ-001'],['2027-04-15','161700','0','CHQ-002']];const blob=new Blob(['﻿'+rows.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='installments-template.csv';a.click();}
-function fillFromFile(){const f=document.getElementById('f_file').files[0];if(!f)return;const r=new FileReader();r.onload=()=>{document.getElementById('f_rows').value=r.result;previewInst();};r.readAsText(f);}
+function fillFromFile(){
+  const f=document.getElementById('f_file').files[0];if(!f)return;
+  const ext=(f.name.split('.').pop()||'').toLowerCase();
+  if((ext==='xlsx'||ext==='xls')&&window.XLSX){
+    const r=new FileReader();
+    r.onload=()=>{try{const wb=XLSX.read(r.result,{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true});
+      const tsv=rows.map(row=>(row||[]).map(c=>c instanceof Date?c.toISOString().slice(0,10):(c==null?'':c)).join('\t')).join('\n');
+      document.getElementById('f_rows').value=tsv;previewInst();}catch(e){toast('Excel read error',true);}};
+    r.readAsArrayBuffer(f);
+  }else{const r=new FileReader();r.onload=()=>{document.getElementById('f_rows').value=r.result;previewInst();};r.readAsText(f);}
+}
 function previewInst(){const rows=parseInstRows(document.getElementById('f_rows').value);const total=rows.reduce((s,r)=>s+r.amount,0);document.getElementById('importPrev').innerHTML=rows.length?`✓ ${rows.length} ${T('rowsN')} — ${T('totalN')} ${money(total)}`:'';}
+function splitCSV(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(q){if(c==='"'){if(line[i+1]==='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c==='"')q=true;else if(c===','){out.push(cur);cur='';}else cur+=c;}}out.push(cur);return out;}
 function parseInstRows(text){
-  const nd=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+  const nd=s=>(s||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
   const out=[];
   (text||'').split(/\r?\n/).forEach(raw=>{
-    const line=nd(raw).trim();if(!line)return;
-    const cells=line.split(line.includes('\t')?'\t':',').map(c=>c.trim());
+    if(!raw.trim())return;
+    const cells=(raw.includes('\t')?raw.split('\t'):splitCSV(raw)).map(c=>nd(c).trim());
     const d0=parseDate(cells[0]);
     if(d0){
       const amount=Number((cells[1]||'').replace(/[^\d]/g,''))||0;
       const paid=Number((cells[2]||'').replace(/[^\d]/g,''))||0;
       const cheque=(cells[3]||'').trim()||null;
-      if(!amount&&!paid)return;
+      if(!amount&&!paid&&!cheque)return;
       out.push({due_date:d0,amount,paid,cheque_no:cheque});
     }else{
       const di=cells.findIndex(c=>parseDate(c));if(di<0)return;const due=parseDate(cells[di]);
@@ -522,6 +537,10 @@ async function rentalForm(id,unitId){
      <div class="field"><label>${T('r_renew')}</label><input id="f_renew" type="date" value="${r.renewal_date??''}"></div>
      <div class="field"><label>${T('r_total')}</label>${moneyInput('f_rtotal',r.rent_total)}</div>
      <div class="field"><label>${T('r_deposit')}</label>${moneyInput('f_dep',r.deposit)}</div>
+     <div class="field"><label>${T('r_upfront_by')}</label><select id="f_upby" onchange="document.getElementById('upM').style.display=this.value==='m'?'block':'none';document.getElementById('upA').style.display=this.value==='a'?'block':'none'"><option value="">${T('none')}</option><option value="m" ${r.upfront_months?'selected':''}>${T('by_months')}</option><option value="a" ${r.upfront_amount?'selected':''}>${T('by_amount')}</option></select></div>
+     <div class="field" id="upM" style="display:${r.upfront_months?'block':'none'}"><label>${T('r_upfront')} — ${T('by_months')}</label><input id="f_upm" type="number" step="0.5" value="${r.upfront_months??''}"></div>
+     <div class="field" id="upA" style="display:${r.upfront_amount?'block':'none'}"><label>${T('r_upfront')} — ${T('by_amount')}</label>${moneyInput('f_upa',r.upfront_amount)}</div>
+     <div class="field"><label>${T('r_increase')}</label><input id="f_inc" type="number" step="0.1" value="${r.annual_increase??''}"></div>
      <div class="field"><label>${T('r_freq')}</label><select id="f_freq">${fopts}</select></div>
      <div class="field"><label>${T('r_status')}</label><select id="f_status">${sopts}</select></div>
      ${id?'':`<div class="field full" style="background:var(--blue-bg);padding:10px;border-radius:.35rem"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="f_gen" checked style="width:auto"> ${T('gen_schedule')}</label>
@@ -530,6 +549,7 @@ async function rentalForm(id,unitId){
    </div>`,async()=>{
      const rec={unit_id:val('f_unit'),tenant_name:val('f_tname'),tenant_phone:val('f_tphone'),tenant_address:val('f_taddr'),tenant_id_no:val('f_tid'),
        start_date:val('f_start')||null,end_date:val('f_end')||null,renewal_date:val('f_renew')||null,rent_total:moneyVal('f_rtotal'),deposit:moneyVal('f_dep'),
+       upfront_months:val('f_upby')==='m'?num('f_upm'):null,upfront_amount:val('f_upby')==='a'?moneyVal('f_upa'):null,annual_increase:num('f_inc'),
        frequency:val('f_freq'),status:val('f_status'),notes:val('f_notes')};
      if(!rec.unit_id||!rec.tenant_name){toast(T('required'),true);return false;}
      let res;
@@ -559,6 +579,8 @@ async function rentalProfile(id){
        <div class="f"><div class="l">${T('r_renew')}</div><div class="v">${fdate(r.renewal_date)}</div></div>
        <div class="f"><div class="l">${T('r_total')}</div><div class="v">${money(r.rent_total)}</div></div>
        <div class="f"><div class="l">${T('r_deposit')}</div><div class="v">${money(r.deposit)}</div></div>
+       <div class="f"><div class="l">${T('r_upfront')}</div><div class="v">${r.upfront_months?fmt(r.upfront_months)+' × '+(L==='ar'?'شهر':'mo'):(r.upfront_amount?money(r.upfront_amount):'—')}</div></div>
+       <div class="f"><div class="l">${T('r_increase')}</div><div class="v">${r.annual_increase?fmt(r.annual_increase)+'%':'—'}</div></div>
        <div class="f"><div class="l">${T('r_freq')}</div><div class="v">${esc(lv(r.frequency))}</div></div>
        <div class="f"><div class="l">${T('k_rentcol')}</div><div class="v" style="color:var(--green)">${money(r.rent_collected)}</div></div>
        <div class="f"><div class="l">${T('col_remaining')}</div><div class="v" style="color:var(--amber)">${money(r.rent_remaining)}</div></div>
@@ -618,7 +640,7 @@ async function printContract(rentalId){
    <h2>${T('c_landlord')}</h2><table>${row(T('c_name'),esc(rtl?LANDLORD.name_ar:LANDLORD.name_en))}${LANDLORD.phone?row(T('col_phone'),esc(LANDLORD.phone)):''}${LANDLORD.id_no?row(T('t_id'),esc(LANDLORD.id_no)):''}</table>
    <h2>${T('c_tenant')}</h2><table>${row(T('c_name'),esc(r.tenant_name))}${row(T('col_phone'),esc(r.tenant_phone)||'—')}${row(T('t_addr'),esc(r.tenant_address)||'—')}${row(T('t_id'),esc(r.tenant_id_no)||'—')}</table>
    <h2>${T('c_unit')}</h2><table>${row(T('f_type'),esc(lv(u.type)))}${row(T('f_compound'),esc(u.compound)||'—')}${row(T('f_unitno'),esc(u.unit_number)||'—')}${row(T('f_location'),esc(u.location)||'—')}${row(T('f_area'),u.area?fmt(u.area)+' '+AU():'—')}</table>
-   <h2>${T('c_terms')}</h2><table>${row(T('r_start'),fdate(r.start_date))}${row(T('r_end'),fdate(r.end_date))}${row(T('r_total'),money(r.rent_total))}${row(T('r_deposit'),money(r.deposit))}${row(T('r_freq'),esc(lv(r.frequency)))}</table>
+   <h2>${T('c_terms')}</h2><table>${row(T('r_start'),fdate(r.start_date))}${row(T('r_end'),fdate(r.end_date))}${row(T('r_total'),money(r.rent_total))}${row(T('r_deposit'),money(r.deposit))}${(r.upfront_months||r.upfront_amount)?row(T('r_upfront'),r.upfront_months?fmt(r.upfront_months)+' '+(rtl?'شهر':'months'):money(r.upfront_amount)):''}${r.annual_increase?row(T('r_increase'),fmt(r.annual_increase)+'%'):''}${row(T('r_freq'),esc(lv(r.frequency)))}</table>
    ${pays.length?`<h2>${T('c_schedule')}</h2><table><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th>${T('col_amount')}</th></tr>${pays.map(p=>`<tr><td>${esc(p.no)}</td><td>${fdate(p.due_date)}</td><td>${money(p.amount)}</td></tr>`).join('')}</table>`:''}
    <div class="sign"><div>${T('c_landlord')}<br>${T('c_sign')}</div><div>${T('c_tenant')}<br>${T('c_sign')}</div></div>
    </body></html>`;
