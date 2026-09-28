@@ -155,7 +155,7 @@ const TR={
   yes:'نعم',no:'لا',occupancy:'الإشغال',client:'العميل',
   col_unit:'الوحدة',col_tenant:'المستأجر',col_due:'الاستحقاق',col_amount:'القيمة',col_paid:'المدفوع',col_remaining:'المتبقي',col_status:'الحالة',col_no:'#',col_countdown:'المتبقي للاستحقاق',col_end:'نهاية العقد',col_renew:'التجديد',col_phone:'الهاتف',col_start:'البداية',col_rent:'الإيجار',col_cheque:'رقم الشيك',
   gen_schedule:'توليد جدول الدفعات تلقائيًا',pay_amount:'قيمة الدفعة الواحدة',rep_pick:'اختر وحدة لعرض تقريرها التفصيلي',rep_all:'التقرير الإجمالي',rep_unit:'تقرير وحدة',print_contract:'طباعة العقد',mark_paid:'تحديد كمدفوع',dl_template:'تحميل قالب Excel',
-  r_upfront:'مقدم الإيجار',r_upfront_by:'المقدم بـ',by_months:'عدد شهور',by_amount:'مبلغ',r_increase:'الزيادة السنوية',r_increases:'زيادة كل سنة (%) — افصل بفاصلة',calc_total:'الإجمالي المحسوب',first_inst:'قيمة القسط الأول (المرجع)',regen:'إعادة توليد الجدول',total_auto:'إجمالي العقد (محسوب تلقائيًا)',calc_from:'احسب من',from_pay:'قيمة الدفعة (السنة الأولى)',from_total:'إجمالي العقد',
+  r_upfront:'مقدم الإيجار',r_upfront_by:'المقدم بـ',by_months:'عدد شهور',by_amount:'مبلغ',r_increase:'الزيادة السنوية',r_increases:'زيادة كل سنة (%) — افصل بفاصلة',calc_total:'الإجمالي المحسوب',first_inst:'قيمة القسط الأول (المرجع)',regen:'إعادة توليد الجدول',total_auto:'إجمالي العقد (محسوب تلقائيًا)',pay_record:'تسجيل دفعة',pay_history:'سجل الدفعات',pay_date:'تاريخ الدفع',pay_amt:'المبلغ المدفوع',calc_from:'احسب من',from_pay:'قيمة الدفعة (السنة الأولى)',from_total:'إجمالي العقد',
   contract_title:'عقد إيجار',c_landlord:'الطرف الأول (المالك)',c_tenant:'الطرف الثاني (المستأجر)',c_intro:'اتفق الطرفان على تأجير الوحدة المبيّنة بياناتها أدناه، بالشروط الآتية:',c_unit:'بيانات الوحدة',c_terms:'شروط العقد',c_schedule:'جدول دفعات الإيجار',c_sign:'التوقيع',c_name:'الاسم',c_date_sign:'التاريخ',c_print_date:'تاريخ الطباعة',
   units_all:'كل الوحدات',unit:'وحدة',purchase_inst:'أقساط الشراء',rentals:'الإيجارات',documents:'المستندات',delays_hist:'سجل التأجيلات',
   add_rental:'عقد إيجار جديد',rental:'عقد إيجار',tenant:'المستأجر',t_name:'اسم المستأجر',t_phone:'الهاتف',t_addr:'العنوان',t_id:'الرقم القومي',r_start:'بداية العقد',r_end:'نهاية العقد',r_renew:'موعد التجديد',r_total:'إجمالي العقد',r_deposit:'التأمين',r_freq:'الدورية',r_status:'حالة العقد',rent_pay:'دفعات الإيجار',
@@ -174,7 +174,7 @@ const TR={
   yes:'Yes',no:'No',occupancy:'Occupancy',client:'Owner',
   col_unit:'Unit',col_tenant:'Tenant',col_due:'Due date',col_amount:'Amount',col_paid:'Paid',col_remaining:'Remaining',col_status:'Status',col_no:'#',col_countdown:'Time to due',col_end:'Contract end',col_renew:'Renewal',col_phone:'Phone',col_start:'Start',col_rent:'Rent',col_cheque:'Cheque no.',
   gen_schedule:'Auto-generate payment schedule',pay_amount:'Amount per payment',rep_pick:'Choose a unit for its detailed report',rep_all:'Overall report',rep_unit:'Unit report',print_contract:'Print contract',mark_paid:'Mark paid',dl_template:'Download Excel template',
-  r_upfront:'Rent upfront',r_upfront_by:'Upfront by',by_months:'No. of months',by_amount:'Amount',r_increase:'Annual increase',r_increases:'Increase per year (%) — comma separated',calc_total:'Calculated total',first_inst:'First installment amount (base)',regen:'Regenerate schedule',total_auto:'Contract total (auto-calculated)',calc_from:'Calculate from',from_pay:'Payment amount (year 1)',from_total:'Contract total',
+  r_upfront:'Rent upfront',r_upfront_by:'Upfront by',by_months:'No. of months',by_amount:'Amount',r_increase:'Annual increase',r_increases:'Increase per year (%) — comma separated',calc_total:'Calculated total',first_inst:'First installment amount (base)',regen:'Regenerate schedule',total_auto:'Contract total (auto-calculated)',pay_record:'Record payment',pay_history:'Payment history',pay_date:'Payment date',pay_amt:'Amount paid',calc_from:'Calculate from',from_pay:'Payment amount (year 1)',from_total:'Contract total',
   contract_title:'RENTAL CONTRACT',c_landlord:'First party (Landlord)',c_tenant:'Second party (Tenant)',c_intro:'Both parties have agreed to rent the unit described below under the following terms:',c_unit:'Unit details',c_terms:'Contract terms',c_schedule:'Rent payment schedule',c_sign:'Signature',c_name:'Name',c_date_sign:'Date',c_print_date:'Print date',
   units_all:'All units',unit:'Unit',purchase_inst:'Purchase installments',rentals:'Rentals',documents:'Documents',delays_hist:'Postponement history',
   add_rental:'New rental contract',rental:'Rental contract',tenant:'Tenant',t_name:'Tenant name',t_phone:'Phone',t_addr:'Address',t_id:'National ID',r_start:'Contract start',r_end:'Contract end',r_renew:'Renewal date',r_total:'Contract total',r_deposit:'Deposit',r_freq:'Frequency',r_status:'Contract status',rent_pay:'Rent payments',
@@ -415,7 +415,7 @@ async function unitProfile(id){
    ${u.rental_id?`<div class="card">${cardHead('rentals',T('rent_pay')+' — '+esc(u.tenant_name||''),activePays.length,`<button class="btn neutral sm" onclick="rentalProfile('${u.rental_id}')">${T('view')}</button>`)}
      <div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
      ${activePays.length?activePays.map(p=>`<tr><td>${esc(p.no)}</td><td>${fdate(p.due_date)}</td><td class="num">${money(p.amount)}</td><td class="num">${money(p.paid)}</td><td>${statusBadge(p.status)}</td>
-       <td style="text-align:end">${p.status!=='مدفوع'?`<button class="btn sm" onclick="markRentPaid('${p.id}',${p.amount},'U','${id}')">${T('mark_paid')}</button> `:''}<button class="btn neutral sm" onclick="rentPayForm('${p.id}','${u.rental_id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="6" class="empty">${T('noRows')}</td></tr>`}
+       <td style="text-align:end">${p.status!=='مدفوع'?`<button class="btn sm" onclick="recordRentPayment('${p.id}',${p.remaining},'U','${id}')">${T('pay_record')}</button> `:''}<button class="btn neutral sm" onclick="payHistory('${p.id}','U','${id}')">🧾</button> <button class="btn neutral sm" onclick="rentPayForm('${p.id}','${u.rental_id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="6" class="empty">${T('noRows')}</td></tr>`}
      </tbody></table></div></div>`:''}
    ${docsCard(docs,{unit_id:id})}`;
 }
@@ -612,7 +612,7 @@ async function rentalProfile(id){
    <div class="card">${cardHead('rentals',T('rent_pay'),pays.length,`<button class="btn neutral sm" onclick="importRent('${r.id}')">⬆ ${T('importT')}</button><button class="btn sm" onclick="rentPayForm(null,'${r.id}')">${T('new')}</button>`)}
      <div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
      ${pays.length?pays.map(p=>`<tr><td>${esc(p.no)}</td><td>${fdate(p.due_date)}</td><td class="num">${money(p.amount)}</td><td class="num">${money(p.paid)}</td><td class="num">${money(p.remaining)}</td><td>${statusBadge(p.status)}</td>
-       <td style="text-align:end">${p.status!=='مدفوع'?`<button class="btn sm" onclick="markRentPaid('${p.id}',${p.amount},'R','${r.id}')">${T('mark_paid')}</button> `:''}<button class="btn neutral sm" onclick="rentPayForm('${p.id}','${r.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
+       <td style="text-align:end">${p.status!=='مدفوع'?`<button class="btn sm" onclick="recordRentPayment('${p.id}',${p.remaining},'R','${r.id}')">${T('pay_record')}</button> `:''}<button class="btn neutral sm" onclick="payHistory('${p.id}','R','${r.id}')">🧾</button> <button class="btn neutral sm" onclick="rentPayForm('${p.id}','${r.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
      </tbody></table></div></div>
    ${docsCard(docs,{rental_id:id})}`;
 }
@@ -675,6 +675,37 @@ function regenPreview(){
   el.innerHTML=`<b>${T('calc_total')}: ${money(total)}</b> — ${sched.length} ${T('rowsN')}<br>`+Object.entries(py).map(([y,v])=>`${(L==='ar'?'سنة ':'Y')}${y}: ${money(v)}`).join('  ·  ');
 }
 async function markRentPaid(id,amount,mode,ref){await sb.from('rent_payments').update({paid:Number(amount),paid_date:new Date().toISOString().slice(0,10)}).eq('id',id);toast(T('saved'));mode==='U'?unitProfile(ref):rentalProfile(ref);}
+function recordRentPayment(id,remaining,mode,ref){
+  modal(T('pay_record'),`
+   <div class="form-grid">
+     <div class="field"><label>${T('pay_amt')} *</label><input id="p_amt" inputmode="numeric" value="${remaining?Number(remaining).toLocaleString('en-US'):''}" oninput="fmtMoneyInput(this)"></div>
+     <div class="field"><label>${T('pay_date')}</label><input id="p_date" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+     <div class="field full"><label>${T('f_notes')}</label><input id="p_note"></div>
+   </div>
+   <p style="font-size:12px;color:var(--muted)">${L==='ar'?'ادفع المبلغ كاملاً أو جزءاً منه، وسجّل الباقي لاحقاً بدفعة أخرى.':'Pay the full amount or part of it; record the rest later as another payment.'}</p>`,
+   async()=>{
+     const amt=moneyVal('p_amt');if(!amt){toast(T('required'),true);return false;}
+     const date=val('p_date')||new Date().toISOString().slice(0,10);
+     const t=await sb.from('rent_payment_txns').insert({rent_payment_id:id,amount:amt,pay_date:date,note:val('p_note')});
+     if(t.error){toast(t.error.message,true);return false;}
+     const cur=Number(((await sb.from('rent_payments').select('paid').eq('id',id)).data||[{}])[0].paid||0);
+     await sb.from('rent_payments').update({paid:cur+amt,paid_date:date}).eq('id',id);
+     toast(T('saved'));mode==='U'?unitProfile(ref):rentalProfile(ref);return true;
+   });
+}
+async function payHistory(id,mode,ref){
+  const tx=((await sb.from('rent_payment_txns').select('*').eq('rent_payment_id',id)).data||[]).sort((a,b)=>new Date(a.pay_date||0)-new Date(b.pay_date||0));
+  modal(T('pay_history'),`<div class="tbl-wrap"><table><thead><tr><th>${T('pay_date')}</th><th class="num">${T('pay_amt')}</th><th>${T('f_notes')}</th><th></th></tr></thead><tbody>
+   ${tx.length?tx.map(t=>`<tr><td>${fdate(t.pay_date)}</td><td class="num">${money(t.amount)}</td><td>${esc(t.note)||'—'}</td><td><button class="btn neutral sm" onclick="delTxn('${t.id}','${id}',${t.amount},'${mode}','${ref}')">${T('del')}</button></td></tr>`).join(''):`<tr><td colspan="4" class="empty">${T('noRows')}</td></tr>`}
+   </tbody></table></div>`,async()=>true);
+}
+async function delTxn(txnId,payId,amt,mode,ref){
+  await sb.from('rent_payment_txns').delete().eq('id',txnId);
+  const cur=Number(((await sb.from('rent_payments').select('paid').eq('id',payId)).data||[{}])[0].paid||0);
+  await sb.from('rent_payments').update({paid:Math.max(cur-Number(amt),0)}).eq('id',payId);
+  document.querySelectorAll('.overlay').forEach(o=>o.remove());
+  toast(T('deleted'));mode==='U'?unitProfile(ref):rentalProfile(ref);
+}
 async function printContract(rentalId){
   const r=(await view('v_rentals')).find(x=>x.id===rentalId);if(!r){toast(T('noRows'),true);return;}
   const u=(await view('v_units')).find(x=>x.id===r.unit_id)||{};
