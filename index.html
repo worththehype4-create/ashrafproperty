@@ -155,7 +155,7 @@ const TR={
   yes:'نعم',no:'لا',occupancy:'الإشغال',client:'العميل',
   col_unit:'الوحدة',col_tenant:'المستأجر',col_due:'الاستحقاق',col_amount:'القيمة',col_paid:'المدفوع',col_remaining:'المتبقي',col_status:'الحالة',col_no:'#',col_countdown:'المتبقي للاستحقاق',col_end:'نهاية العقد',col_renew:'التجديد',col_phone:'الهاتف',col_start:'البداية',col_rent:'الإيجار',col_cheque:'رقم الشيك',
   gen_schedule:'توليد جدول الدفعات تلقائيًا',pay_amount:'قيمة الدفعة الواحدة',rep_pick:'اختر وحدة لعرض تقريرها التفصيلي',rep_all:'التقرير الإجمالي',rep_unit:'تقرير وحدة',print_contract:'طباعة العقد',mark_paid:'تحديد كمدفوع',dl_template:'تحميل قالب Excel',
-  r_upfront:'مقدم الإيجار',r_upfront_by:'المقدم بـ',by_months:'عدد شهور',by_amount:'مبلغ',r_increase:'الزيادة السنوية (%)',
+  r_upfront:'مقدم الإيجار',r_upfront_by:'المقدم بـ',by_months:'عدد شهور',by_amount:'مبلغ',r_increase:'الزيادة السنوية',r_increases:'زيادة كل سنة (%) — افصل بفاصلة',calc_total:'الإجمالي المحسوب',
   contract_title:'عقد إيجار',c_landlord:'الطرف الأول (المالك)',c_tenant:'الطرف الثاني (المستأجر)',c_intro:'اتفق الطرفان على تأجير الوحدة المبيّنة بياناتها أدناه، بالشروط الآتية:',c_unit:'بيانات الوحدة',c_terms:'شروط العقد',c_schedule:'جدول دفعات الإيجار',c_sign:'التوقيع',c_name:'الاسم',c_date_sign:'التاريخ',c_print_date:'تاريخ الطباعة',
   units_all:'كل الوحدات',unit:'وحدة',purchase_inst:'أقساط الشراء',rentals:'الإيجارات',documents:'المستندات',delays_hist:'سجل التأجيلات',
   add_rental:'عقد إيجار جديد',rental:'عقد إيجار',tenant:'المستأجر',t_name:'اسم المستأجر',t_phone:'الهاتف',t_addr:'العنوان',t_id:'الرقم القومي',r_start:'بداية العقد',r_end:'نهاية العقد',r_renew:'موعد التجديد',r_total:'إجمالي العقد',r_deposit:'التأمين',r_freq:'الدورية',r_status:'حالة العقد',rent_pay:'دفعات الإيجار',
@@ -174,7 +174,7 @@ const TR={
   yes:'Yes',no:'No',occupancy:'Occupancy',client:'Owner',
   col_unit:'Unit',col_tenant:'Tenant',col_due:'Due date',col_amount:'Amount',col_paid:'Paid',col_remaining:'Remaining',col_status:'Status',col_no:'#',col_countdown:'Time to due',col_end:'Contract end',col_renew:'Renewal',col_phone:'Phone',col_start:'Start',col_rent:'Rent',col_cheque:'Cheque no.',
   gen_schedule:'Auto-generate payment schedule',pay_amount:'Amount per payment',rep_pick:'Choose a unit for its detailed report',rep_all:'Overall report',rep_unit:'Unit report',print_contract:'Print contract',mark_paid:'Mark paid',dl_template:'Download Excel template',
-  r_upfront:'Rent upfront',r_upfront_by:'Upfront by',by_months:'No. of months',by_amount:'Amount',r_increase:'Annual increase (%)',
+  r_upfront:'Rent upfront',r_upfront_by:'Upfront by',by_months:'No. of months',by_amount:'Amount',r_increase:'Annual increase',r_increases:'Increase per year (%) — comma separated',calc_total:'Calculated total',
   contract_title:'RENTAL CONTRACT',c_landlord:'First party (Landlord)',c_tenant:'Second party (Tenant)',c_intro:'Both parties have agreed to rent the unit described below under the following terms:',c_unit:'Unit details',c_terms:'Contract terms',c_schedule:'Rent payment schedule',c_sign:'Signature',c_name:'Name',c_date_sign:'Date',c_print_date:'Print date',
   units_all:'All units',unit:'Unit',purchase_inst:'Purchase installments',rentals:'Rentals',documents:'Documents',delays_hist:'Postponement history',
   add_rental:'New rental contract',rental:'Rental contract',tenant:'Tenant',t_name:'Tenant name',t_phone:'Phone',t_addr:'Address',t_id:'National ID',r_start:'Contract start',r_end:'Contract end',r_renew:'Renewal date',r_total:'Contract total',r_deposit:'Deposit',r_freq:'Frequency',r_status:'Contract status',rent_pay:'Rent payments',
@@ -252,18 +252,32 @@ const moneyInput=(id,v)=>`<input id="${id}" inputmode="numeric" value="${(v!=nul
 // auto installment numbering by due-date order, per unit
 function seqMap(list){const by={};list.forEach(i=>{(by[i.unit_id]=by[i.unit_id]||[]).push(i);});const m={};Object.values(by).forEach(arr=>{arr.slice().sort((a,b)=>new Date(a.due_date)-new Date(b.due_date)).forEach((i,ix)=>m[i.id]=ix+1);});return m;}
 function addMonths(d,m){const x=new Date(d);const day=x.getDate();x.setMonth(x.getMonth()+m);if(x.getDate()<day)x.setDate(0);return x;}
+function parseIncs(str,single){if(str&&String(str).trim()){return String(str).split(/[,،]/).map(s=>Number(String(s).replace(/[^\d.]/g,''))||0);}if(single!=null&&single!=='')return [Number(single)||0];return [];}
+function incFactor(incs,yr){let f=1;for(let k=0;k<yr;k++){const p=Number(incs.length?(incs[k]!=null?incs[k]:incs[incs.length-1]):0)||0;f*=(1+p/100);}return f;}
+const incShow=r=>{const a=parseIncs(r.annual_increases,r.annual_increase);return a.length?a.map(x=>x+'%').join('، '):'—';};
+const stepOf=f=>({'شهري':1,'ربع سنوي':3,'نصف سنوي':6,'سنوي':12}[f]);
 function buildSchedule(rec,payAmt){
   if(!rec.start_date)return [];
-  const step={'شهري':1,'ربع سنوي':3,'نصف سنوي':6,'سنوي':12}[rec.frequency];
+  const step=stepOf(rec.frequency);
   const start=new Date(rec.start_date);
   if(rec.frequency==='مرة واحدة'||!step)return [{no:1,due_date:rec.start_date,amount:payAmt||rec.rent_total||0,paid:0}];
   const end=rec.end_date?new Date(rec.end_date):addMonths(start,12);
   const dates=[];let guard=0;let cur=new Date(start);
   while(cur<=end&&guard<600){dates.push(new Date(cur));cur=addMonths(start,step*dates.length);guard++;}
   if(!dates.length)dates.push(new Date(start));
-  const per=payAmt||(rec.rent_total?Math.round(rec.rent_total/dates.length):0);
-  const pct=Number(rec.annual_increase||0);
-  return dates.map((d,ix)=>{const yr=Math.floor((step*ix)/12);const amt=pct?Math.round(per*Math.pow(1+pct/100,yr)):per;return {no:ix+1,due_date:d.toISOString().slice(0,10),amount:amt,paid:0};});
+  const base=payAmt||(rec.rent_total?Math.round(rec.rent_total/dates.length):0);
+  const incs=parseIncs(rec.annual_increases,rec.annual_increase);
+  return dates.map((d,ix)=>{const yr=Math.floor((step*ix)/12);const amt=Math.round(base*incFactor(incs,yr));return {no:ix+1,due_date:d.toISOString().slice(0,10),amount:amt,paid:0};});
+}
+function calcRentPreview(){
+  const el=document.getElementById('rentPrev');if(!el)return;
+  const rec={frequency:val('f_freq'),start_date:val('f_start')||null,end_date:val('f_end')||null,annual_increases:val('f_incs')};
+  const sched=buildSchedule(rec,moneyVal('f_payamt'));
+  if(!sched.length){el.innerHTML='';return;}
+  const total=sched.reduce((s,x)=>s+x.amount,0);
+  const step=stepOf(rec.frequency)||1;const perYear={};
+  sched.forEach((s,ix)=>{const y=Math.floor((step*ix)/12)+1;perYear[y]=(perYear[y]||0)+s.amount;});
+  el.innerHTML=`<b>${T('calc_total')}: ${money(total)}</b> — ${sched.length} ${T('rowsN')}<br>`+Object.entries(perYear).map(([y,v])=>`${(L==='ar'?'سنة ':'Y')}${y}: ${money(v)}`).join('  ·  ');
 }
 
 /* ===================== DASHBOARD ===================== */
@@ -532,34 +546,35 @@ async function rentalForm(id,unitId){
      <div class="field"><label>${T('t_phone')}</label><input id="f_tphone" value="${esc(r.tenant_phone)}"></div>
      <div class="field"><label>${T('t_addr')}</label><input id="f_taddr" value="${esc(r.tenant_address)}"></div>
      <div class="field"><label>${T('t_id')}</label><input id="f_tid" value="${esc(r.tenant_id_no)}"></div>
-     <div class="field"><label>${T('r_start')}</label><input id="f_start" type="date" value="${r.start_date??''}"></div>
-     <div class="field"><label>${T('r_end')}</label><input id="f_end" type="date" value="${r.end_date??''}"></div>
+     <div class="field"><label>${T('r_start')}</label><input id="f_start" type="date" value="${r.start_date??''}" onchange="calcRentPreview()"></div>
+     <div class="field"><label>${T('r_end')}</label><input id="f_end" type="date" value="${r.end_date??''}" onchange="calcRentPreview()"></div>
      <div class="field"><label>${T('r_renew')}</label><input id="f_renew" type="date" value="${r.renewal_date??''}"></div>
      <div class="field"><label>${T('r_total')}</label>${moneyInput('f_rtotal',r.rent_total)}</div>
      <div class="field"><label>${T('r_deposit')}</label>${moneyInput('f_dep',r.deposit)}</div>
      <div class="field"><label>${T('r_upfront_by')}</label><select id="f_upby" onchange="document.getElementById('upM').style.display=this.value==='m'?'block':'none';document.getElementById('upA').style.display=this.value==='a'?'block':'none'"><option value="">${T('none')}</option><option value="m" ${r.upfront_months?'selected':''}>${T('by_months')}</option><option value="a" ${r.upfront_amount?'selected':''}>${T('by_amount')}</option></select></div>
      <div class="field" id="upM" style="display:${r.upfront_months?'block':'none'}"><label>${T('r_upfront')} — ${T('by_months')}</label><input id="f_upm" type="number" step="0.5" value="${r.upfront_months??''}"></div>
      <div class="field" id="upA" style="display:${r.upfront_amount?'block':'none'}"><label>${T('r_upfront')} — ${T('by_amount')}</label>${moneyInput('f_upa',r.upfront_amount)}</div>
-     <div class="field"><label>${T('r_increase')}</label><input id="f_inc" type="number" step="0.1" value="${r.annual_increase??''}"></div>
-     <div class="field"><label>${T('r_freq')}</label><select id="f_freq">${fopts}</select></div>
+     <div class="field"><label>${T('r_increases')}</label><input id="f_incs" value="${esc(r.annual_increases||(r.annual_increase?String(r.annual_increase):''))}" placeholder="15، 20، 20" oninput="calcRentPreview()"></div>
+     <div class="field"><label>${T('r_freq')}</label><select id="f_freq" onchange="calcRentPreview()">${fopts}</select></div>
      <div class="field"><label>${T('r_status')}</label><select id="f_status">${sopts}</select></div>
      ${id?'':`<div class="field full" style="background:var(--blue-bg);padding:10px;border-radius:.35rem"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="f_gen" checked style="width:auto"> ${T('gen_schedule')}</label>
-       <div style="margin-top:8px"><label style="font-size:11px;color:var(--muted)">${T('pay_amount')}</label>${moneyInput('f_payamt','')}</div></div>`}
+       <div style="margin-top:8px"><label style="font-size:11px;color:var(--muted)">${T('pay_amount')} (${T('by_months')==='No. of months'?'year 1':'السنة الأولى'})</label><input id="f_payamt" inputmode="numeric" oninput="fmtMoneyInput(this);calcRentPreview()"></div>
+       <div id="rentPrev" style="margin-top:10px;font-size:13px;color:var(--ink)"></div></div>`}
      <div class="field full"><label>${T('f_notes')}</label><input id="f_notes" value="${esc(r.notes)}"></div>
    </div>`,async()=>{
+     const gen=!id && document.getElementById('f_gen')?.checked;
      const rec={unit_id:val('f_unit'),tenant_name:val('f_tname'),tenant_phone:val('f_tphone'),tenant_address:val('f_taddr'),tenant_id_no:val('f_tid'),
        start_date:val('f_start')||null,end_date:val('f_end')||null,renewal_date:val('f_renew')||null,rent_total:moneyVal('f_rtotal'),deposit:moneyVal('f_dep'),
-       upfront_months:val('f_upby')==='m'?num('f_upm'):null,upfront_amount:val('f_upby')==='a'?moneyVal('f_upa'):null,annual_increase:num('f_inc'),
+       upfront_months:val('f_upby')==='m'?num('f_upm'):null,upfront_amount:val('f_upby')==='a'?moneyVal('f_upa'):null,annual_increases:val('f_incs')||null,
        frequency:val('f_freq'),status:val('f_status'),notes:val('f_notes')};
      if(!rec.unit_id||!rec.tenant_name){toast(T('required'),true);return false;}
+     let sched=[];
+     if(gen){sched=buildSchedule(rec,moneyVal('f_payamt'));if(sched.length)rec.rent_total=sched.reduce((s,x)=>s+x.amount,0);}
      let res;
      if(id){res=await sb.from('rentals').update(rec).eq('id',id);}
      else{res=await sb.from('rentals').insert(rec).select();}
      if(res.error){toast(res.error.message,true);return false;}
-     if(!id&&document.getElementById('f_gen')?.checked){
-       const newId=res.data&&res.data[0]&&res.data[0].id;
-       if(newId){const sched=buildSchedule(rec,moneyVal('f_payamt'));if(sched.length){await sb.from('rent_payments').insert(sched.map(s=>Object.assign({rental_id:newId},s)));}}
-     }
+     if(gen&&sched.length){const newId=res.data&&res.data[0]&&res.data[0].id;if(newId)await sb.from('rent_payments').insert(sched.map(s=>Object.assign({rental_id:newId},s)));}
      toast(T('saved'));unitId?unitProfile(unitId):viewRentals();return true;
    }, id?()=>delRec('rentals',id,()=>unitId?unitProfile(unitId):viewRentals()):null);
 }
@@ -580,7 +595,7 @@ async function rentalProfile(id){
        <div class="f"><div class="l">${T('r_total')}</div><div class="v">${money(r.rent_total)}</div></div>
        <div class="f"><div class="l">${T('r_deposit')}</div><div class="v">${money(r.deposit)}</div></div>
        <div class="f"><div class="l">${T('r_upfront')}</div><div class="v">${r.upfront_months?fmt(r.upfront_months)+' × '+(L==='ar'?'شهر':'mo'):(r.upfront_amount?money(r.upfront_amount):'—')}</div></div>
-       <div class="f"><div class="l">${T('r_increase')}</div><div class="v">${r.annual_increase?fmt(r.annual_increase)+'%':'—'}</div></div>
+       <div class="f"><div class="l">${T('r_increase')}</div><div class="v">${incShow(r)}</div></div>
        <div class="f"><div class="l">${T('r_freq')}</div><div class="v">${esc(lv(r.frequency))}</div></div>
        <div class="f"><div class="l">${T('k_rentcol')}</div><div class="v" style="color:var(--green)">${money(r.rent_collected)}</div></div>
        <div class="f"><div class="l">${T('col_remaining')}</div><div class="v" style="color:var(--amber)">${money(r.rent_remaining)}</div></div>
@@ -640,7 +655,7 @@ async function printContract(rentalId){
    <h2>${T('c_landlord')}</h2><table>${row(T('c_name'),esc(rtl?LANDLORD.name_ar:LANDLORD.name_en))}${LANDLORD.phone?row(T('col_phone'),esc(LANDLORD.phone)):''}${LANDLORD.id_no?row(T('t_id'),esc(LANDLORD.id_no)):''}</table>
    <h2>${T('c_tenant')}</h2><table>${row(T('c_name'),esc(r.tenant_name))}${row(T('col_phone'),esc(r.tenant_phone)||'—')}${row(T('t_addr'),esc(r.tenant_address)||'—')}${row(T('t_id'),esc(r.tenant_id_no)||'—')}</table>
    <h2>${T('c_unit')}</h2><table>${row(T('f_type'),esc(lv(u.type)))}${row(T('f_compound'),esc(u.compound)||'—')}${row(T('f_unitno'),esc(u.unit_number)||'—')}${row(T('f_location'),esc(u.location)||'—')}${row(T('f_area'),u.area?fmt(u.area)+' '+AU():'—')}</table>
-   <h2>${T('c_terms')}</h2><table>${row(T('r_start'),fdate(r.start_date))}${row(T('r_end'),fdate(r.end_date))}${row(T('r_total'),money(r.rent_total))}${row(T('r_deposit'),money(r.deposit))}${(r.upfront_months||r.upfront_amount)?row(T('r_upfront'),r.upfront_months?fmt(r.upfront_months)+' '+(rtl?'شهر':'months'):money(r.upfront_amount)):''}${r.annual_increase?row(T('r_increase'),fmt(r.annual_increase)+'%'):''}${row(T('r_freq'),esc(lv(r.frequency)))}</table>
+   <h2>${T('c_terms')}</h2><table>${row(T('r_start'),fdate(r.start_date))}${row(T('r_end'),fdate(r.end_date))}${row(T('r_total'),money(r.rent_total))}${row(T('r_deposit'),money(r.deposit))}${(r.upfront_months||r.upfront_amount)?row(T('r_upfront'),r.upfront_months?fmt(r.upfront_months)+' '+(rtl?'شهر':'months'):money(r.upfront_amount)):''}${(r.annual_increases||r.annual_increase)?row(T('r_increase'),incShow(r)):''}${row(T('r_freq'),esc(lv(r.frequency)))}</table>
    ${pays.length?`<h2>${T('c_schedule')}</h2><table><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th>${T('col_amount')}</th></tr>${pays.map(p=>`<tr><td>${esc(p.no)}</td><td>${fdate(p.due_date)}</td><td>${money(p.amount)}</td></tr>`).join('')}</table>`:''}
    <div class="sign"><div>${T('c_landlord')}<br>${T('c_sign')}</div><div>${T('c_tenant')}<br>${T('c_sign')}</div></div>
    </body></html>`;
