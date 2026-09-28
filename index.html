@@ -135,6 +135,8 @@ tbody tr:hover{background:var(--row-hover)}
 <script>
 /* ===================== CONFIG ===================== */
 const BAKED={url:"https://wextfkewnnykljriqfsy.supabase.co",key:"sb_publishable_aZ10ul4aedqXxSpTFfiIlw_jcffQ7rq"};
+// بيانات المالك للعقد المطبوع — عدّلها هنا / Landlord info for the printed contract
+const LANDLORD={name_ar:'م. أشرف عصمت',name_en:'Eng. Ashraf Esmat',phone:'',id_no:''};
 let sb=null,CFG=null,ME=null;
 function getCfg(){if(BAKED.url&&!BAKED.url.startsWith("__"))return{url:BAKED.url,key:BAKED.key};try{const s=localStorage.getItem('re_cfg');if(s)return JSON.parse(s);}catch(e){}return null;}
 function saveCfg(){const url=document.getElementById('cfgUrl').value.trim(),key=document.getElementById('cfgKey').value.trim();if(!url||!key){document.getElementById('cfgErr').textContent='مطلوب';return;}try{localStorage.setItem('re_cfg',JSON.stringify({url,key}));}catch(e){}location.reload();}
@@ -150,7 +152,9 @@ const TR={
   k_units:'عدد الوحدات',k_purchase:'إجمالي الشراء',k_paid:'المسدّد من الأقساط',k_remaining:'المتبقي على الأقساط',k_rented:'مؤجّرة',k_vacant:'شاغرة',k_undeliv:'غير مُستلمة',k_rentcol:'إيجار محصّل',
   f_code:'كود',f_type:'النوع',f_compound:'الكمبوند / المشروع',f_location:'الموقع',f_unitno:'رقم الوحدة',f_floor:'الدور',f_area:'المساحة (م²)',f_garden:'حديقة؟',f_gardenA:'مساحة الحديقة (م²)',f_seller:'المطور / البائع',f_pdate:'تاريخ الشراء',f_price:'سعر الشراء',f_down:'المقدم',f_deliv:'تم الاستلام؟',f_ddate:'تاريخ الاستلام',f_vac:'سبب عدم التأجير',f_notes:'ملاحظات',
   yes:'نعم',no:'لا',occupancy:'الإشغال',client:'العميل',
-  col_unit:'الوحدة',col_tenant:'المستأجر',col_due:'الاستحقاق',col_amount:'القيمة',col_paid:'المدفوع',col_remaining:'المتبقي',col_status:'الحالة',col_no:'#',col_countdown:'المتبقي للاستحقاق',col_end:'نهاية العقد',col_renew:'التجديد',col_phone:'الهاتف',col_start:'البداية',col_rent:'الإيجار',
+  col_unit:'الوحدة',col_tenant:'المستأجر',col_due:'الاستحقاق',col_amount:'القيمة',col_paid:'المدفوع',col_remaining:'المتبقي',col_status:'الحالة',col_no:'#',col_countdown:'المتبقي للاستحقاق',col_end:'نهاية العقد',col_renew:'التجديد',col_phone:'الهاتف',col_start:'البداية',col_rent:'الإيجار',col_cheque:'رقم الشيك',
+  gen_schedule:'توليد جدول الدفعات تلقائيًا',pay_amount:'قيمة الدفعة الواحدة',rep_pick:'اختر وحدة لعرض تقريرها التفصيلي',rep_all:'التقرير الإجمالي',rep_unit:'تقرير وحدة',print_contract:'طباعة العقد',mark_paid:'تحديد كمدفوع',dl_template:'تحميل قالب Excel',
+  contract_title:'عقد إيجار',c_landlord:'الطرف الأول (المالك)',c_tenant:'الطرف الثاني (المستأجر)',c_intro:'اتفق الطرفان على تأجير الوحدة المبيّنة بياناتها أدناه، بالشروط الآتية:',c_unit:'بيانات الوحدة',c_terms:'شروط العقد',c_schedule:'جدول دفعات الإيجار',c_sign:'التوقيع',c_name:'الاسم',c_date_sign:'التاريخ',c_print_date:'تاريخ الطباعة',
   units_all:'كل الوحدات',unit:'وحدة',purchase_inst:'أقساط الشراء',rentals:'الإيجارات',documents:'المستندات',delays_hist:'سجل التأجيلات',
   add_rental:'عقد إيجار جديد',rental:'عقد إيجار',tenant:'المستأجر',t_name:'اسم المستأجر',t_phone:'الهاتف',t_addr:'العنوان',t_id:'الرقم القومي',r_start:'بداية العقد',r_end:'نهاية العقد',r_renew:'موعد التجديد',r_total:'إجمالي العقد',r_deposit:'التأمين',r_freq:'الدورية',r_status:'حالة العقد',rent_pay:'دفعات الإيجار',
   doc_name:'اسم المستند',doc_cat:'التصنيف',doc_file:'الملف',
@@ -166,7 +170,9 @@ const TR={
   k_units:'Units',k_purchase:'Total purchase',k_paid:'Installments paid',k_remaining:'Installments remaining',k_rented:'Rented',k_vacant:'Vacant',k_undeliv:'Not delivered',k_rentcol:'Rent collected',
   f_code:'Code',f_type:'Type',f_compound:'Compound / Project',f_location:'Location',f_unitno:'Unit no.',f_floor:'Floor',f_area:'Area (m²)',f_garden:'Garden?',f_gardenA:'Garden area (m²)',f_seller:'Developer / Seller',f_pdate:'Purchase date',f_price:'Purchase price',f_down:'Down payment',f_deliv:'Delivered?',f_ddate:'Delivery date',f_vac:'Reason not rented',f_notes:'Notes',
   yes:'Yes',no:'No',occupancy:'Occupancy',client:'Owner',
-  col_unit:'Unit',col_tenant:'Tenant',col_due:'Due date',col_amount:'Amount',col_paid:'Paid',col_remaining:'Remaining',col_status:'Status',col_no:'#',col_countdown:'Time to due',col_end:'Contract end',col_renew:'Renewal',col_phone:'Phone',col_start:'Start',col_rent:'Rent',
+  col_unit:'Unit',col_tenant:'Tenant',col_due:'Due date',col_amount:'Amount',col_paid:'Paid',col_remaining:'Remaining',col_status:'Status',col_no:'#',col_countdown:'Time to due',col_end:'Contract end',col_renew:'Renewal',col_phone:'Phone',col_start:'Start',col_rent:'Rent',col_cheque:'Cheque no.',
+  gen_schedule:'Auto-generate payment schedule',pay_amount:'Amount per payment',rep_pick:'Choose a unit for its detailed report',rep_all:'Overall report',rep_unit:'Unit report',print_contract:'Print contract',mark_paid:'Mark paid',dl_template:'Download Excel template',
+  contract_title:'RENTAL CONTRACT',c_landlord:'First party (Landlord)',c_tenant:'Second party (Tenant)',c_intro:'Both parties have agreed to rent the unit described below under the following terms:',c_unit:'Unit details',c_terms:'Contract terms',c_schedule:'Rent payment schedule',c_sign:'Signature',c_name:'Name',c_date_sign:'Date',c_print_date:'Print date',
   units_all:'All units',unit:'Unit',purchase_inst:'Purchase installments',rentals:'Rentals',documents:'Documents',delays_hist:'Postponement history',
   add_rental:'New rental contract',rental:'Rental contract',tenant:'Tenant',t_name:'Tenant name',t_phone:'Phone',t_addr:'Address',t_id:'National ID',r_start:'Contract start',r_end:'Contract end',r_renew:'Renewal date',r_total:'Contract total',r_deposit:'Deposit',r_freq:'Frequency',r_status:'Contract status',rent_pay:'Rent payments',
   doc_name:'Document name',doc_cat:'Category',doc_file:'File',
@@ -236,6 +242,25 @@ const kpi=(k,v,cls)=>`<div class="kpi ${cls||''}"><div class="k">${k}</div><div 
 async function view(v){const {data,error}=await sb.from(v).select('*');if(error){toast(error.message,true);return[];}return data;}
 function val(id){const e=document.getElementById(id);return e?e.value.trim():'';}
 function num(id){const v=document.getElementById(id)?.value;return v===''||v==null?null:Number(v);}
+// money inputs with thousands separators
+function moneyVal(id){const v=document.getElementById(id)?.value||'';const n=Number(v.replace(/[^\d.]/g,''));return v.trim()===''?null:(isNaN(n)?null:n);}
+function fmtMoneyInput(el){let d=el.value.replace(/[^\d]/g,'');el.value=d?Number(d).toLocaleString('en-US'):'';}
+const moneyInput=(id,v)=>`<input id="${id}" inputmode="numeric" value="${(v!=null&&v!=='')?Number(v).toLocaleString('en-US'):''}" oninput="fmtMoneyInput(this)">`;
+// auto installment numbering by due-date order, per unit
+function seqMap(list){const by={};list.forEach(i=>{(by[i.unit_id]=by[i.unit_id]||[]).push(i);});const m={};Object.values(by).forEach(arr=>{arr.slice().sort((a,b)=>new Date(a.due_date)-new Date(b.due_date)).forEach((i,ix)=>m[i.id]=ix+1);});return m;}
+function addMonths(d,m){const x=new Date(d);const day=x.getDate();x.setMonth(x.getMonth()+m);if(x.getDate()<day)x.setDate(0);return x;}
+function buildSchedule(rec,payAmt){
+  if(!rec.start_date)return [];
+  const step={'شهري':1,'ربع سنوي':3,'نصف سنوي':6,'سنوي':12}[rec.frequency];
+  const start=new Date(rec.start_date);
+  if(rec.frequency==='مرة واحدة'||!step)return [{no:1,due_date:rec.start_date,amount:payAmt||rec.rent_total||0,paid:0}];
+  const end=rec.end_date?new Date(rec.end_date):addMonths(start,12);
+  const dates=[];let guard=0;let cur=new Date(start);
+  while(cur<=end&&guard<600){dates.push(new Date(cur));cur=addMonths(start,step*dates.length);guard++;}
+  if(!dates.length)dates.push(new Date(start));
+  const per=payAmt||(rec.rent_total?Math.round(rec.rent_total/dates.length):0);
+  return dates.map((d,ix)=>({no:ix+1,due_date:d.toISOString().slice(0,10),amount:per,paid:0}));
+}
 
 /* ===================== DASHBOARD ===================== */
 async function viewDash(){
@@ -243,6 +268,7 @@ async function viewDash(){
   const [units,inst,rentp,rentals]=await Promise.all([view('v_units'),view('v_installments'),view('v_rent_payments'),view('v_rentals')]);
   const sum=(a,f)=>a.reduce((s,x)=>s+Number(x[f]||0),0);
   const rented=units.filter(u=>u.occupancy==='مؤجرة').length, vacant=units.filter(u=>u.occupancy==='شاغرة').length, undeliv=units.filter(u=>u.occupancy==='لم تُستلم').length;
+  const seqD=seqMap(inst);
   const instDue=inst.filter(i=>i.status!=='مدفوع'&&(i.days_remaining<0||i.days_remaining<=60)).sort((a,b)=>a.days_remaining-b.days_remaining);
   const rentDue=rentp.filter(p=>p.status!=='مدفوع'&&(p.days_remaining<0||p.days_remaining<=60)).sort((a,b)=>a.days_remaining-b.days_remaining);
   const expiring=rentals.filter(r=>r.status==='سارية'&&r.end_date&&r.days_to_end>=0&&r.days_to_end<=90).sort((a,b)=>a.days_to_end-b.days_to_end);
@@ -261,7 +287,7 @@ async function viewDash(){
    </div>
    <div class="card">${cardHead('inst',T('s_inst_due'),instDue.length)}<div class="tbl-wrap"><table><thead><tr>
      <th>${T('col_unit')}</th><th>${T('col_no')}</th><th>${T('col_due')}</th><th>${T('col_remaining')}</th><th>${T('col_countdown')}</th><th>${T('col_status')}</th></tr></thead><tbody>
-     ${instDue.length?instDue.map(i=>`<tr><td>${esc(i.compound)||''} ${esc(i.unit_number)||''}</td><td>${esc(i.no)}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.remaining)}</td><td>${cd(i.days_remaining)}</td><td>${statusBadge(i.status)}</td></tr>`).join(''):`<tr><td colspan="6" class="empty">${T('noRows')}</td></tr>`}
+     ${instDue.length?instDue.map(i=>`<tr><td>${esc(i.compound)||''} ${esc(i.unit_number)||''}</td><td>${seqD[i.id]||''}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.remaining)}</td><td>${cd(i.days_remaining)}</td><td>${statusBadge(i.status)}</td></tr>`).join(''):`<tr><td colspan="6" class="empty">${T('noRows')}</td></tr>`}
      </tbody></table></div></div>
    <div class="card">${cardHead('rentals',T('s_rent_due'),rentDue.length)}<div class="tbl-wrap"><table><thead><tr>
      <th>${T('col_tenant')}</th><th>${T('col_unit')}</th><th>${T('col_due')}</th><th>${T('col_remaining')}</th><th>${T('col_countdown')}</th><th>${T('col_status')}</th></tr></thead><tbody>
@@ -311,8 +337,8 @@ function unitForm(id){
      <div class="field" id="gbox" style="display:${u.has_garden?'block':'none'}"><label>${T('f_gardenA')}</label><input id="f_garea" type="number" step="0.01" value="${u.garden_area??''}"></div>
      <div class="field"><label>${T('f_seller')}</label><input id="f_seller" value="${esc(u.seller)}"></div>
      <div class="field"><label>${T('f_pdate')}</label><input id="f_pdate" type="date" value="${u.purchase_date??''}"></div>
-     <div class="field"><label>${T('f_price')}</label><input id="f_price" type="number" value="${u.purchase_price??''}"></div>
-     <div class="field"><label>${T('f_down')}</label><input id="f_down" type="number" value="${u.down_payment??''}"></div>
+     <div class="field"><label>${T('f_price')}</label>${moneyInput('f_price',u.purchase_price)}</div>
+     <div class="field"><label>${T('f_down')}</label>${moneyInput('f_down',u.down_payment)}</div>
      <div class="field"><label>${T('f_deliv')}</label><select id="f_deliv" onchange="document.getElementById('dbox').style.display=this.value==='y'?'block':'none'"><option value="n" ${!u.delivered?'selected':''}>${T('no')}</option><option value="y" ${u.delivered?'selected':''}>${T('yes')}</option></select></div>
      <div class="field" id="dbox" style="display:${u.delivered?'block':'none'}"><label>${T('f_ddate')}</label><input id="f_ddate" type="date" value="${u.delivery_date??''}"></div>
      <div class="field full"><label>${T('f_vac')}</label><input id="f_vac" value="${esc(u.vacancy_reason)}"></div>
@@ -321,7 +347,7 @@ function unitForm(id){
      const g=val('f_garden')==='y',dl=val('f_deliv')==='y';
      const rec={type:val('f_type'),unit_number:val('f_unitno'),compound:val('f_compound'),location:val('f_location'),floor:val('f_floor'),
        area:num('f_area'),has_garden:g,garden_area:g?num('f_garea'):null,seller:val('f_seller'),purchase_date:val('f_pdate')||null,
-       purchase_price:num('f_price'),down_payment:num('f_down'),delivered:dl,delivery_date:dl?(val('f_ddate')||null):null,
+       purchase_price:moneyVal('f_price'),down_payment:moneyVal('f_down'),delivered:dl,delivery_date:dl?(val('f_ddate')||null):null,
        vacancy_reason:val('f_vac'),notes:val('f_notes')};
      const {error}=id?await sb.from('units').update(rec).eq('id',id):await sb.from('units').insert(rec);
      if(error){toast(error.message,true);return false;}toast(T('saved'));viewUnits();return true;
@@ -329,9 +355,10 @@ function unitForm(id){
 }
 async function unitProfile(id){
   const u=(await view('v_units')).find(x=>x.id===id);_units=_units.length?_units:[u];
-  const inst=(await view('v_installments')).filter(i=>i.unit_id===id).sort((a,b)=>(a.no||0)-(b.no||0));
+  const inst=(await view('v_installments')).filter(i=>i.unit_id===id).sort((a,b)=>new Date(a.due_date)-new Date(b.due_date));
   const rentals=(await view('v_rentals')).filter(r=>r.unit_id===id).sort((a,b)=>new Date(b.start_date||0)-new Date(a.start_date||0));
   const docs=(await sb.from('documents').select('*').eq('unit_id',id)).data||[];
+  const activePays=u.rental_id?((await sb.from('v_rent_payments').select('*').eq('rental_id',u.rental_id)).data||[]).sort((a,b)=>(a.no||0)-(b.no||0)):[];
   document.getElementById('view').innerHTML=`
    <div class="page-head"><div class="pt"></div><div class="tools"><button class="btn neutral" onclick="viewUnits()">← ${T('back')}</button><button class="btn" onclick="unitForm('${u.id}')">${T('edit')}</button></div></div>
    <div class="highlights">
@@ -351,15 +378,20 @@ async function unitProfile(id){
      </div>
    </div>
    <div class="card">${cardHead('inst',T('purchase_inst'),inst.length,`<button class="btn neutral sm" onclick="importInst('${u.id}')">⬆ ${T('importT')}</button><button class="btn sm" onclick="instForm(null,'${u.id}')">${T('new')}</button>`)}
-     <div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
-     ${inst.length?inst.map(i=>`<tr><td>${esc(i.no)}${i.is_delayed?' ⏱':''}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.amount)}</td><td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td>
-       <td style="text-align:end"><button class="btn neutral sm" onclick="delayForm('${i.id}','${u.id}')">${T('delay')}</button> <button class="btn neutral sm" onclick="instForm('${i.id}','${u.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
+     <div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th>${T('col_cheque')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
+     ${inst.length?inst.map((i,ix)=>`<tr><td>${ix+1}${i.is_delayed?' ⏱':''}</td><td>${fdate(i.due_date)}</td><td>${esc(i.cheque_no)||'—'}</td><td class="num">${money(i.amount)}</td><td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td>
+       <td style="text-align:end"><button class="btn neutral sm" onclick="delayForm('${i.id}','${u.id}')">${T('delay')}</button> <button class="btn neutral sm" onclick="instForm('${i.id}','${u.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="8" class="empty">${T('noRows')}</td></tr>`}
      </tbody></table></div></div>
    <div class="card">${cardHead('rentals',T('rentals'),rentals.length,`<button class="btn sm" onclick="rentalForm(null,'${u.id}')">${T('add_rental')}</button>`)}
      <div class="tbl-wrap"><table><thead><tr><th>${T('t_name')}</th><th>${T('col_phone')}</th><th>${T('col_start')}</th><th>${T('col_end')}</th><th class="num">${T('r_total')}</th><th>${T('r_status')}</th><th></th></tr></thead><tbody>
      ${rentals.length?rentals.map(r=>`<tr><td><span class="link" onclick="rentalProfile('${r.id}')">${esc(r.tenant_name)}</span></td><td>${esc(r.tenant_phone)||'—'}</td><td>${fdate(r.start_date)}</td><td>${fdate(r.end_date)}</td><td class="num">${money(r.rent_total)}</td><td>${statusBadge(r.status)}</td>
        <td><button class="btn neutral sm" onclick="rentalForm('${r.id}','${u.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
      </tbody></table></div></div>
+   ${u.rental_id?`<div class="card">${cardHead('rentals',T('rent_pay')+' — '+esc(u.tenant_name||''),activePays.length,`<button class="btn neutral sm" onclick="rentalProfile('${u.rental_id}')">${T('view')}</button>`)}
+     <div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
+     ${activePays.length?activePays.map(p=>`<tr><td>${esc(p.no)}</td><td>${fdate(p.due_date)}</td><td class="num">${money(p.amount)}</td><td class="num">${money(p.paid)}</td><td>${statusBadge(p.status)}</td>
+       <td style="text-align:end">${p.status!=='مدفوع'?`<button class="btn sm" onclick="markRentPaid('${p.id}',${p.amount},'U','${id}')">${T('mark_paid')}</button> `:''}<button class="btn neutral sm" onclick="rentPayForm('${p.id}','${u.rental_id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="6" class="empty">${T('noRows')}</td></tr>`}
+     </tbody></table></div></div>`:''}
    ${docsCard(docs,{unit_id:id})}`;
 }
 
@@ -375,13 +407,14 @@ function daysToolbar(p){const fn=p==='i'?'renderInst':'renderChkX';return `<inpu
 function renderInst(){
   const term=(document.getElementById('iSearch')?.value||'').trim(),fs=document.getElementById('iFilter')?.value||'';
   const ym=document.getElementById('iMonth')?.value||'',dd=document.getElementById('iDays')?.value||'';
+  const seq=seqMap(_inst);
   let rows=_inst.slice().sort((a,b)=>new Date(a.due_date)-new Date(b.due_date));
-  if(term)rows=rows.filter(i=>[i.compound,i.unit_number].some(x=>(x||'').includes(term)));
+  if(term)rows=rows.filter(i=>[i.compound,i.unit_number,i.cheque_no].some(x=>(x||'').includes(term)));
   if(fs)rows=rows.filter(i=>i.status===fs);if(ym)rows=rows.filter(i=>monthMatch(i.due_date,ym));if(dd)rows=rows.filter(i=>withinDays(i.due_date,dd));
   document.getElementById('iTbl').innerHTML=`<table><thead><tr>
-    <th>${T('col_unit')}</th><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
-   ${rows.length?rows.map(i=>`<tr><td>${esc(i.compound)||''} ${esc(i.unit_number)||''}</td><td>${esc(i.no)}${i.is_delayed?' ⏱':''}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.amount)}</td><td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td>
-     <td style="text-align:end"><button class="btn neutral sm" onclick="delayForm('${i.id}')">${T('delay')}</button> <button class="btn neutral sm" onclick="instForm('${i.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="8" class="empty">${T('noRows')}</td></tr>`}
+    <th>${T('col_unit')}</th><th>${T('col_no')}</th><th>${T('col_due')}</th><th>${T('col_cheque')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
+   ${rows.length?rows.map(i=>`<tr><td>${esc(i.compound)||''} ${esc(i.unit_number)||''}</td><td>${seq[i.id]||''}${i.is_delayed?' ⏱':''}</td><td>${fdate(i.due_date)}</td><td>${esc(i.cheque_no)||'—'}</td><td class="num">${money(i.amount)}</td><td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td>
+     <td style="text-align:end"><button class="btn neutral sm" onclick="delayForm('${i.id}')">${T('delay')}</button> <button class="btn neutral sm" onclick="instForm('${i.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">${T('noRows')}</td></tr>`}
    </tbody></table>`;
 }
 async function instForm(id,unitId){
@@ -391,13 +424,13 @@ async function instForm(id,unitId){
   modal(id?T('edit'):T('new'),`
    <div class="form-grid">
      <div class="field full"><label>${T('col_unit')} *</label><select id="f_unit">${opts}</select></div>
-     <div class="field"><label>${T('col_no')}</label><input id="f_no" type="number" value="${i.no??''}"></div>
      <div class="field"><label>${T('col_due')} *</label><input id="f_due" type="date" value="${i.due_date??''}"></div>
-     <div class="field"><label>${T('col_amount')}</label><input id="f_amt" type="number" value="${i.amount??''}"></div>
-     <div class="field"><label>${T('col_paid')}</label><input id="f_paid" type="number" value="${i.paid??0}"></div>
+     <div class="field"><label>${T('col_cheque')}</label><input id="f_chq" value="${esc(i.cheque_no)}"></div>
+     <div class="field"><label>${T('col_amount')}</label>${moneyInput('f_amt',i.amount)}</div>
+     <div class="field"><label>${T('col_paid')}</label>${moneyInput('f_paid',i.paid??0)}</div>
      <div class="field full"><label>${T('f_notes')}</label><input id="f_notes" value="${esc(i.notes)}"></div>
    </div>`,async()=>{
-     const rec={unit_id:val('f_unit'),no:num('f_no'),due_date:val('f_due'),amount:num('f_amt')||0,paid:num('f_paid')||0,notes:val('f_notes')};
+     const rec={unit_id:val('f_unit'),due_date:val('f_due'),cheque_no:val('f_chq'),amount:moneyVal('f_amt')||0,paid:moneyVal('f_paid')||0,notes:val('f_notes')};
      if(!rec.unit_id||!rec.due_date){toast(T('required'),true);return false;}
      const {error}=id?await sb.from('installments').update(rec).eq('id',id):await sb.from('installments').insert(rec);
      if(error){toast(error.message,true);return false;}toast(T('saved'));unitId?unitProfile(unitId):viewInst();return true;
@@ -409,10 +442,10 @@ async function delayForm(id,unitId){
    <p style="margin-top:0;color:var(--muted);font-size:13px">${T('col_due')}: <b>${fdate(i.due_date)}</b> — ${T('col_amount')}: <b>${money(i.amount)}</b></p>
    <div class="form-grid">
      <div class="field"><label>${T('delay_new_date')} *</label><input id="d_date" type="date" value="${i.due_date}"></div>
-     <div class="field"><label>${T('delay_new_amt')}</label><input id="d_amt" type="number" value="${i.amount}"></div>
+     <div class="field"><label>${T('delay_new_amt')}</label>${moneyInput('d_amt',i.amount)}</div>
      <div class="field full"><label>${T('delay_reason')}</label><input id="d_reason"></div>
    </div>`,async()=>{
-     const nd=val('d_date'),na=num('d_amt')??i.amount;if(!nd){toast(T('required'),true);return false;}
+     const nd=val('d_date'),na=moneyVal('d_amt')??i.amount;if(!nd){toast(T('required'),true);return false;}
      const e1=await sb.from('installment_delays').insert({installment_id:id,old_due_date:i.due_date,old_amount:i.amount,new_due_date:nd,new_amount:na,reason:val('d_reason')});
      if(e1.error){toast(e1.error.message,true);return false;}
      const e2=await sb.from('installments').update({due_date:nd,amount:na}).eq('id',id);
@@ -422,15 +455,37 @@ async function delayForm(id,unitId){
 }
 function importInst(unitId){
   modal(T('importT'),`
-   <p style="margin-top:0;color:var(--muted);font-size:13px">${T('paste_hint')}</p>
-   <div class="field"><label>CSV</label><input type="file" id="f_file" accept=".csv,.txt,.tsv" onchange="fillFromFile()"></div>
-   <div class="field"><textarea id="f_rows" oninput="previewRows()" style="width:100%;min-height:160px;font-family:monospace;direction:ltr;padding:10px;border:1px solid var(--line2);border-radius:.35rem" placeholder="2026-11-15\t99000&#10;2027-04-15\t161700"></textarea></div>
+   <p style="margin-top:0;color:var(--muted);font-size:13px">${T('paste_hint')} — <a class="link" onclick="downloadInstTemplate()">${T('dl_template')}</a><br>
+     <span style="direction:ltr;display:inline-block">${T('col_due')} , ${T('col_amount')} , ${T('col_paid')} , ${T('col_cheque')}</span></p>
+   <div class="field"><label>CSV / Excel</label><input type="file" id="f_file" accept=".csv,.txt,.tsv" onchange="fillFromFile()"></div>
+   <div class="field"><textarea id="f_rows" oninput="previewInst()" style="width:100%;min-height:160px;font-family:monospace;direction:ltr;padding:10px;border:1px solid var(--line2);border-radius:.35rem" placeholder="2026-11-15,99000,0,CHQ-001&#10;2027-04-15,161700,0,CHQ-002"></textarea></div>
    <div id="importPrev" style="font-size:13px;color:var(--muted);min-height:20px"></div>
-  `,async()=>{const rows=parseRows(document.getElementById('f_rows').value,unitId);if(!rows.length){toast(T('noRows'),true);return false;}
+  `,async()=>{const rows=parseInstRows(document.getElementById('f_rows').value).map(r=>Object.assign({unit_id:unitId},r));if(!rows.length){toast(T('noRows'),true);return false;}
      const {error}=await sb.from('installments').insert(rows);if(error){toast(error.message,true);return false;}toast(T('imported')+' '+rows.length);unitProfile(unitId);return true;});
 }
-function fillFromFile(){const f=document.getElementById('f_file').files[0];if(!f)return;const r=new FileReader();r.onload=()=>{document.getElementById('f_rows').value=r.result;previewRows();};r.readAsText(f);}
-function previewRows(){const rows=parseRows(document.getElementById('f_rows').value,'x');const total=rows.reduce((s,r)=>s+r.amount,0);document.getElementById('importPrev').innerHTML=rows.length?`✓ ${rows.length} ${T('rowsN')} — ${T('totalN')} ${money(total)}`:'';}
+function downloadInstTemplate(){const rows=[['تاريخ الاستحقاق / Due (YYYY-MM-DD)','القيمة / Amount','المدفوع / Paid','رقم الشيك / Cheque no.'],['2026-11-15','99000','0','CHQ-001'],['2027-04-15','161700','0','CHQ-002']];const blob=new Blob(['﻿'+rows.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='installments-template.csv';a.click();}
+function fillFromFile(){const f=document.getElementById('f_file').files[0];if(!f)return;const r=new FileReader();r.onload=()=>{document.getElementById('f_rows').value=r.result;previewInst();};r.readAsText(f);}
+function previewInst(){const rows=parseInstRows(document.getElementById('f_rows').value);const total=rows.reduce((s,r)=>s+r.amount,0);document.getElementById('importPrev').innerHTML=rows.length?`✓ ${rows.length} ${T('rowsN')} — ${T('totalN')} ${money(total)}`:'';}
+function parseInstRows(text){
+  const nd=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+  const out=[];
+  (text||'').split(/\r?\n/).forEach(raw=>{
+    const line=nd(raw).trim();if(!line)return;
+    const cells=line.split(line.includes('\t')?'\t':',').map(c=>c.trim());
+    const d0=parseDate(cells[0]);
+    if(d0){
+      const amount=Number((cells[1]||'').replace(/[^\d]/g,''))||0;
+      const paid=Number((cells[2]||'').replace(/[^\d]/g,''))||0;
+      const cheque=(cells[3]||'').trim()||null;
+      if(!amount&&!paid)return;
+      out.push({due_date:d0,amount,paid,cheque_no:cheque});
+    }else{
+      const di=cells.findIndex(c=>parseDate(c));if(di<0)return;const due=parseDate(cells[di]);
+      let amt=0,chq='';for(let k=0;k<cells.length;k++){if(k===di)continue;const dig=cells[k].replace(/[^\d]/g,'');if(dig&&!amt)amt=Number(dig);else if(cells[k]&&!/^\d/.test(cells[k])&&!parseDate(cells[k])&&!chq)chq=cells[k];}
+      if(!amt)return;out.push({due_date:due,amount:amt,paid:0,cheque_no:chq||null});
+    }
+  });return out;
+}
 function parseDate(s){s=s.trim();let m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);if(m){let y=m[3];if(y.length===2)y='20'+y;return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;}const d=new Date(s);return isNaN(d)?null:d.toISOString().slice(0,10);}
 function parseRows(text,unitId){const nd=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));const out=[];let n=0;(text||'').split(/\r?\n/).forEach(raw=>{const line=nd(raw).trim();if(!line)return;const dm=line.match(/(\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2})|(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4})/);if(!dm)return;const due=parseDate(dm[0]);if(!due)return;const post=line.slice(dm.index+dm[0].length),pre=line.slice(0,dm.index);const amtStr=(post.replace(/[^\d]/g,'')?post:pre);const amt=Number(amtStr.replace(/[^\d]/g,''));if(!amt)return;n++;out.push({unit_id:unitId,no:n,due_date:due,amount:amt,paid:0});});return out;}
 
@@ -465,18 +520,27 @@ async function rentalForm(id,unitId){
      <div class="field"><label>${T('r_start')}</label><input id="f_start" type="date" value="${r.start_date??''}"></div>
      <div class="field"><label>${T('r_end')}</label><input id="f_end" type="date" value="${r.end_date??''}"></div>
      <div class="field"><label>${T('r_renew')}</label><input id="f_renew" type="date" value="${r.renewal_date??''}"></div>
-     <div class="field"><label>${T('r_total')}</label><input id="f_rtotal" type="number" value="${r.rent_total??''}"></div>
-     <div class="field"><label>${T('r_deposit')}</label><input id="f_dep" type="number" value="${r.deposit??''}"></div>
+     <div class="field"><label>${T('r_total')}</label>${moneyInput('f_rtotal',r.rent_total)}</div>
+     <div class="field"><label>${T('r_deposit')}</label>${moneyInput('f_dep',r.deposit)}</div>
      <div class="field"><label>${T('r_freq')}</label><select id="f_freq">${fopts}</select></div>
      <div class="field"><label>${T('r_status')}</label><select id="f_status">${sopts}</select></div>
+     ${id?'':`<div class="field full" style="background:var(--blue-bg);padding:10px;border-radius:.35rem"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="f_gen" checked style="width:auto"> ${T('gen_schedule')}</label>
+       <div style="margin-top:8px"><label style="font-size:11px;color:var(--muted)">${T('pay_amount')}</label>${moneyInput('f_payamt','')}</div></div>`}
      <div class="field full"><label>${T('f_notes')}</label><input id="f_notes" value="${esc(r.notes)}"></div>
    </div>`,async()=>{
      const rec={unit_id:val('f_unit'),tenant_name:val('f_tname'),tenant_phone:val('f_tphone'),tenant_address:val('f_taddr'),tenant_id_no:val('f_tid'),
-       start_date:val('f_start')||null,end_date:val('f_end')||null,renewal_date:val('f_renew')||null,rent_total:num('f_rtotal'),deposit:num('f_dep'),
+       start_date:val('f_start')||null,end_date:val('f_end')||null,renewal_date:val('f_renew')||null,rent_total:moneyVal('f_rtotal'),deposit:moneyVal('f_dep'),
        frequency:val('f_freq'),status:val('f_status'),notes:val('f_notes')};
      if(!rec.unit_id||!rec.tenant_name){toast(T('required'),true);return false;}
-     const {error}=id?await sb.from('rentals').update(rec).eq('id',id):await sb.from('rentals').insert(rec);
-     if(error){toast(error.message,true);return false;}toast(T('saved'));unitId?unitProfile(unitId):viewRentals();return true;
+     let res;
+     if(id){res=await sb.from('rentals').update(rec).eq('id',id);}
+     else{res=await sb.from('rentals').insert(rec).select();}
+     if(res.error){toast(res.error.message,true);return false;}
+     if(!id&&document.getElementById('f_gen')?.checked){
+       const newId=res.data&&res.data[0]&&res.data[0].id;
+       if(newId){const sched=buildSchedule(rec,moneyVal('f_payamt'));if(sched.length){await sb.from('rent_payments').insert(sched.map(s=>Object.assign({rental_id:newId},s)));}}
+     }
+     toast(T('saved'));unitId?unitProfile(unitId):viewRentals();return true;
    }, id?()=>delRec('rentals',id,()=>unitId?unitProfile(unitId):viewRentals()):null);
 }
 async function rentalProfile(id){
@@ -484,7 +548,7 @@ async function rentalProfile(id){
   const pays=((await sb.from('v_rent_payments').select('*').eq('rental_id',id)).data||[]).sort((a,b)=>(a.no||0)-(b.no||0));
   const docs=(await sb.from('documents').select('*').eq('rental_id',id)).data||[];
   document.getElementById('view').innerHTML=`
-   <div class="page-head"><div class="pt"></div><div class="tools"><button class="btn neutral" onclick="viewRentals()">← ${T('back')}</button><button class="btn neutral" onclick="unitProfile('${r.unit_id}')">${T('unit')}</button><button class="btn" onclick="rentalForm('${r.id}')">${T('edit')}</button></div></div>
+   <div class="page-head"><div class="pt"></div><div class="tools"><button class="btn neutral" onclick="viewRentals()">← ${T('back')}</button><button class="btn neutral" onclick="unitProfile('${r.unit_id}')">${T('unit')}</button><button class="btn neutral" onclick="printContract('${r.id}')">🖨️ ${T('print_contract')}</button><button class="btn" onclick="rentalForm('${r.id}')">${T('edit')}</button></div></div>
    <div class="highlights">
      <div class="hl-top"><div class="ti" style="background:${tabColor('rentals')}">🔑</div><div><div class="t">${T('rental')} — ${esc(r.compound)||''} ${esc(r.unit_number)||''}</div><div class="n">${esc(r.tenant_name)}</div></div></div>
      <div class="hl-fields">
@@ -504,7 +568,7 @@ async function rentalProfile(id){
    <div class="card">${cardHead('rentals',T('rent_pay'),pays.length,`<button class="btn neutral sm" onclick="importRent('${r.id}')">⬆ ${T('importT')}</button><button class="btn sm" onclick="rentPayForm(null,'${r.id}')">${T('new')}</button>`)}
      <div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
      ${pays.length?pays.map(p=>`<tr><td>${esc(p.no)}</td><td>${fdate(p.due_date)}</td><td class="num">${money(p.amount)}</td><td class="num">${money(p.paid)}</td><td class="num">${money(p.remaining)}</td><td>${statusBadge(p.status)}</td>
-       <td><button class="btn neutral sm" onclick="rentPayForm('${p.id}','${r.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
+       <td style="text-align:end">${p.status!=='مدفوع'?`<button class="btn sm" onclick="markRentPaid('${p.id}',${p.amount},'R','${r.id}')">${T('mark_paid')}</button> `:''}<button class="btn neutral sm" onclick="rentPayForm('${p.id}','${r.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
      </tbody></table></div></div>
    ${docsCard(docs,{rental_id:id})}`;
 }
@@ -515,11 +579,11 @@ async function rentPayForm(id,rentalId){
    <div class="form-grid">
      <div class="field"><label>${T('col_no')}</label><input id="f_no" type="number" value="${p.no??''}"></div>
      <div class="field"><label>${T('col_due')} *</label><input id="f_due" type="date" value="${p.due_date??''}"></div>
-     <div class="field"><label>${T('col_amount')}</label><input id="f_amt" type="number" value="${p.amount??''}"></div>
-     <div class="field"><label>${T('col_paid')}</label><input id="f_paid" type="number" value="${p.paid??0}"></div>
+     <div class="field"><label>${T('col_amount')}</label>${moneyInput('f_amt',p.amount)}</div>
+     <div class="field"><label>${T('col_paid')}</label>${moneyInput('f_paid',p.paid??0)}</div>
      <div class="field full"><label>${T('f_notes')}</label><input id="f_notes" value="${esc(p.notes)}"></div>
    </div>`,async()=>{
-     const rec={rental_id:rentalId,no:num('f_no'),due_date:val('f_due'),amount:num('f_amt')||0,paid:num('f_paid')||0,notes:val('f_notes')};
+     const rec={rental_id:rentalId,no:num('f_no'),due_date:val('f_due'),amount:moneyVal('f_amt')||0,paid:moneyVal('f_paid')||0,notes:val('f_notes')};
      if(!rec.due_date){toast(T('required'),true);return false;}
      const {error}=id?await sb.from('rent_payments').update(rec).eq('id',id):await sb.from('rent_payments').insert(rec);
      if(error){toast(error.message,true);return false;}toast(T('saved'));rentalProfile(rentalId);return true;
@@ -532,6 +596,33 @@ function importRent(rentalId){
    async()=>{const raw=parseRows(document.getElementById('f_rows').value,'x');if(!raw.length){toast(T('noRows'),true);return false;}
      const rows=raw.map(r=>({rental_id:rentalId,no:r.no,due_date:r.due_date,amount:r.amount,paid:0}));
      const {error}=await sb.from('rent_payments').insert(rows);if(error){toast(error.message,true);return false;}toast(T('imported')+' '+rows.length);rentalProfile(rentalId);return true;});
+}
+
+async function markRentPaid(id,amount,mode,ref){await sb.from('rent_payments').update({paid:Number(amount),paid_date:new Date().toISOString().slice(0,10)}).eq('id',id);toast(T('saved'));mode==='U'?unitProfile(ref):rentalProfile(ref);}
+async function printContract(rentalId){
+  const r=(await view('v_rentals')).find(x=>x.id===rentalId);if(!r){toast(T('noRows'),true);return;}
+  const u=(await view('v_units')).find(x=>x.id===r.unit_id)||{};
+  const pays=((await sb.from('v_rent_payments').select('*').eq('rental_id',rentalId)).data||[]).sort((a,b)=>(a.no||0)-(b.no||0));
+  const rtl=L==='ar',row=(k,v)=>`<tr><td class="k">${k}</td><td>${v}</td></tr>`;
+  const html=`<!doctype html><html dir="${rtl?'rtl':'ltr'}" lang="${L}"><head><meta charset="utf-8"><title>${T('contract_title')}</title>
+   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+   <style>body{font-family:'Cairo',Arial,sans-serif;color:#111;padding:32px;max-width:820px;margin:auto}h1{text-align:center;font-size:22px;margin-bottom:4px}
+   .muted{color:#666;text-align:center;font-size:12px;margin-bottom:18px}h2{font-size:15px;border-bottom:2px solid #0176d3;padding-bottom:4px;margin:22px 0 10px}
+   table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:6px}td,th{border:1px solid #ccc;padding:7px 9px;text-align:${rtl?'right':'left'}}
+   td.k{background:#f5f5f5;font-weight:700;width:38%}.intro{font-size:13px;margin:12px 0;line-height:1.8}
+   .sign{display:flex;justify-content:space-between;margin-top:60px}.sign div{width:45%;text-align:center;border-top:1px solid #333;padding-top:8px;font-weight:700}
+   @media print{.noprint{display:none}}</style></head><body>
+   <button class="noprint" onclick="window.print()" style="padding:8px 16px;margin-bottom:14px;cursor:pointer">${T('print')}</button>
+   <h1>${T('contract_title')}</h1><div class="muted">${T('c_print_date')}: ${fdate(new Date().toISOString())}</div>
+   <p class="intro">${T('c_intro')}</p>
+   <h2>${T('c_landlord')}</h2><table>${row(T('c_name'),esc(rtl?LANDLORD.name_ar:LANDLORD.name_en))}${LANDLORD.phone?row(T('col_phone'),esc(LANDLORD.phone)):''}${LANDLORD.id_no?row(T('t_id'),esc(LANDLORD.id_no)):''}</table>
+   <h2>${T('c_tenant')}</h2><table>${row(T('c_name'),esc(r.tenant_name))}${row(T('col_phone'),esc(r.tenant_phone)||'—')}${row(T('t_addr'),esc(r.tenant_address)||'—')}${row(T('t_id'),esc(r.tenant_id_no)||'—')}</table>
+   <h2>${T('c_unit')}</h2><table>${row(T('f_type'),esc(lv(u.type)))}${row(T('f_compound'),esc(u.compound)||'—')}${row(T('f_unitno'),esc(u.unit_number)||'—')}${row(T('f_location'),esc(u.location)||'—')}${row(T('f_area'),u.area?fmt(u.area)+' '+AU():'—')}</table>
+   <h2>${T('c_terms')}</h2><table>${row(T('r_start'),fdate(r.start_date))}${row(T('r_end'),fdate(r.end_date))}${row(T('r_total'),money(r.rent_total))}${row(T('r_deposit'),money(r.deposit))}${row(T('r_freq'),esc(lv(r.frequency)))}</table>
+   ${pays.length?`<h2>${T('c_schedule')}</h2><table><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th>${T('col_amount')}</th></tr>${pays.map(p=>`<tr><td>${esc(p.no)}</td><td>${fdate(p.due_date)}</td><td>${money(p.amount)}</td></tr>`).join('')}</table>`:''}
+   <div class="sign"><div>${T('c_landlord')}<br>${T('c_sign')}</div><div>${T('c_tenant')}<br>${T('c_sign')}</div></div>
+   </body></html>`;
+  const w=window.open('','_blank');if(!w){toast('Popup blocked',true);return;}w.document.write(html);w.document.close();
 }
 
 /* ===================== DOCUMENTS ===================== */
@@ -566,12 +657,19 @@ async function openDoc(path){const {data,error}=await sb.storage.from('documents
 async function delDoc(id,path,ctx){if(!confirm(T('confirmDel')))return;await sb.storage.from('documents').remove([path]);await sb.from('documents').delete().eq('id',id);toast(T('deleted'));ctx.unit_id?unitProfile(ctx.unit_id):rentalProfile(ctx.rental_id);}
 
 /* ===================== REPORTS ===================== */
+let _rep=null;
 async function viewReports(){
-  const [units,rentals]=await Promise.all([view('v_units'),view('v_rentals')]);
-  const sum=(a,f)=>a.reduce((s,x)=>s+Number(x[f]||0),0);
-  const annualRent=rentals.filter(r=>r.status==='سارية').reduce((s,r)=>{const f=r.frequency;const per=f==='شهري'?12:f==='ربع سنوي'?4:f==='نصف سنوي'?2:1;return s+Number(r.rent_total||0)*(f==='مرة واحدة'?1:1);},0);
-  document.getElementById('view').innerHTML=pageHead('reports',T('tab_reports'),'','<button class="btn neutral" onclick="window.print()">🖨️ '+T('print')+'</button><button class="btn" onclick="exportAll()">⬇️ '+T('export')+'</button>')+
-   `<div class="grid kpis">
+  const [units,rentals,inst,rentp]=await Promise.all([view('v_units'),view('v_rentals'),view('v_installments'),view('v_rent_payments')]);
+  _rep={units,rentals,inst,rentp};
+  const uopts=units.map(u=>`<option value="${u.id}">${esc(u.compound)||''} ${esc(u.unit_number)||esc(u.code)||''}</option>`).join('');
+  document.getElementById('view').innerHTML=pageHead('reports',T('tab_reports'),'',
+    `<select class="search" id="repUnit" onchange="renderReport()" style="min-width:220px"><option value="">${T('rep_all')}</option>${uopts}</select><button class="btn neutral" onclick="window.print()">🖨️ ${T('print')}</button><button class="btn" onclick="exportAll()">⬇️ ${T('export')}</button>`)+`<div id="repBody"></div>`;
+  renderReport();
+}
+function renderReport(){const id=document.getElementById('repUnit')?.value||'';id?renderUnitReport(id):renderOverallReport();}
+function renderOverallReport(){
+  const {units,rentals}=_rep;const sum=(a,f)=>a.reduce((s,x)=>s+Number(x[f]||0),0);
+  document.getElementById('repBody').innerHTML=`<div class="grid kpis">
      ${kpi(T('k_units'),fmt(units.length))}
      ${kpi(T('k_purchase'),money(sum(units,'purchase_price')))}
      ${kpi(T('k_paid'),money(sum(units,'inst_paid')),'green')}
@@ -585,6 +683,44 @@ async function viewReports(){
      <th>${T('f_compound')}</th><th>${T('f_unitno')}</th><th>${T('f_type')}</th><th>${T('occupancy')}</th><th class="num">${T('f_price')}</th><th class="num">${T('k_paid')}</th><th class="num">${T('k_remaining')}</th><th>${T('tenant')}</th></tr></thead><tbody>
      ${units.map(u=>`<tr><td>${esc(u.compound)||'—'}</td><td>${esc(u.unit_number)||esc(u.code)||'—'}</td><td>${esc(lv(u.type))}</td><td>${statusBadge(u.occupancy)}</td><td class="num">${money(u.purchase_price)}</td><td class="num">${money(u.inst_paid)}</td><td class="num">${money(u.inst_remaining)}</td><td>${esc(u.tenant_name)||'—'}</td></tr>`).join('')}
    </tbody></table></div></div>`;
+}
+function renderUnitReport(id){
+  const {units,inst,rentals,rentp}=_rep;
+  const u=units.find(x=>x.id===id);if(!u){renderOverallReport();return;}
+  const myInst=inst.filter(i=>i.unit_id===id).sort((a,b)=>new Date(a.due_date)-new Date(b.due_date));
+  const myRentals=rentals.filter(r=>r.unit_id===id);
+  const activeR=myRentals.find(r=>r.status==='سارية')||myRentals[0];
+  const myPays=activeR?rentp.filter(p=>p.rental_id===activeR.id).sort((a,b)=>(a.no||0)-(b.no||0)):[];
+  document.getElementById('repBody').innerHTML=`
+   <div class="grid kpis">
+     ${kpi(T('f_price'),money(u.purchase_price))}
+     ${kpi(T('f_down'),money(u.down_payment))}
+     ${kpi(T('k_paid'),money(u.inst_paid),'green')}
+     ${kpi(T('k_remaining'),money(u.inst_remaining),'amber')}
+     ${kpi(T('occupancy'),lv(u.occupancy))}
+     ${kpi(T('purchase_inst'),fmt(u.inst_paid_count)+'/'+fmt(u.inst_count))}
+   </div>
+   <div class="card">${cardHead('units',T('rep_unit')+' — '+(esc(u.compound)||'')+' '+(esc(u.unit_number)||''),null)}
+     <div class="tbl-wrap"><table>
+       <tr><td class="num" style="background:var(--th-bg);font-weight:700;width:35%">${T('f_type')}</td><td>${esc(lv(u.type))}</td></tr>
+       <tr><td style="background:var(--th-bg);font-weight:700">${T('f_location')}</td><td>${esc(u.location)||'—'}</td></tr>
+       <tr><td style="background:var(--th-bg);font-weight:700">${T('f_area')}</td><td>${u.area?fmt(u.area)+' '+AU():'—'}${u.has_garden?' 🌿'+(u.garden_area?' '+fmt(u.garden_area)+' '+AU():''):''}</td></tr>
+       <tr><td style="background:var(--th-bg);font-weight:700">${T('f_pdate')}</td><td>${fdate(u.purchase_date)}</td></tr>
+       <tr><td style="background:var(--th-bg);font-weight:700">${T('f_seller')}</td><td>${esc(u.seller)||'—'}</td></tr>
+     </table></div></div>
+   <div class="card">${cardHead('inst',T('purchase_inst'),myInst.length)}<div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th>${T('col_cheque')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th></tr></thead><tbody>
+     ${myInst.length?myInst.map((i,ix)=>`<tr><td>${ix+1}</td><td>${fdate(i.due_date)}</td><td>${esc(i.cheque_no)||'—'}</td><td class="num">${money(i.amount)}</td><td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
+   </tbody></table></div></div>
+   ${activeR?`<div class="card">${cardHead('rentals',T('rental')+' — '+esc(activeR.tenant_name),null)}<div class="tbl-wrap"><table>
+       <tr><td style="background:var(--th-bg);font-weight:700;width:35%">${T('t_phone')}</td><td>${esc(activeR.tenant_phone)||'—'}</td></tr>
+       <tr><td style="background:var(--th-bg);font-weight:700">${T('r_start')}</td><td>${fdate(activeR.start_date)}</td></tr>
+       <tr><td style="background:var(--th-bg);font-weight:700">${T('r_end')}</td><td>${fdate(activeR.end_date)}</td></tr>
+       <tr><td style="background:var(--th-bg);font-weight:700">${T('r_total')}</td><td>${money(activeR.rent_total)}</td></tr>
+       <tr><td style="background:var(--th-bg);font-weight:700">${T('k_rentcol')}</td><td>${money(activeR.rent_collected)}</td></tr>
+     </table></div>
+     <div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th>${T('col_status')}</th></tr></thead><tbody>
+     ${myPays.length?myPays.map(p=>`<tr><td>${esc(p.no)}</td><td>${fdate(p.due_date)}</td><td class="num">${money(p.amount)}</td><td class="num">${money(p.paid)}</td><td>${statusBadge(p.status)}</td></tr>`).join(''):`<tr><td colspan="5" class="empty">${T('noRows')}</td></tr>`}
+     </tbody></table></div></div>`:''}`;
 }
 async function exportAll(){
   const [units,inst,rentals,rentp]=await Promise.all([view('v_units'),view('v_installments'),view('v_rentals'),view('v_rent_payments')]);
