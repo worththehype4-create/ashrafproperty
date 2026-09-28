@@ -535,9 +535,9 @@ function renderRentals(){
   const term=(document.getElementById('rSearch')?.value||'').trim();let rows=_rentals.slice().sort((a,b)=>new Date(b.start_date||0)-new Date(a.start_date||0));
   if(term)rows=rows.filter(r=>[r.tenant_name,r.compound,r.unit_number,r.tenant_phone].some(x=>(x||'').includes(term)));
   document.getElementById('rTbl').innerHTML=`<table><thead><tr>
-    <th>${T('t_name')}</th><th>${T('col_unit')}</th><th>${T('col_phone')}</th><th>${T('col_start')}</th><th>${T('col_end')}</th><th class="num">${T('r_total')}</th><th class="num">${T('k_rentcol')}</th><th>${T('r_status')}</th><th></th></tr></thead><tbody>
-   ${rows.length?rows.map(r=>`<tr><td><span class="link" onclick="rentalProfile('${r.id}')">${esc(r.tenant_name)}</span></td><td>${esc(r.compound)||''} ${esc(r.unit_number)||''}</td><td>${esc(r.tenant_phone)||'—'}</td><td>${fdate(r.start_date)}</td><td>${fdate(r.end_date)}</td><td class="num">${money(r.rent_total)}</td><td class="num">${money(r.rent_collected)}</td><td>${statusBadge(r.status)}</td>
-     <td><button class="btn neutral sm" onclick="rentalForm('${r.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">${T('noRows')}</td></tr>`}
+    <th>${T('t_name')}</th><th>${T('col_unit')}</th><th>${T('col_phone')}</th><th>${T('col_start')}</th><th>${T('col_end')}</th><th class="num">${T('r_total')}</th><th class="num">${T('k_rentcol')}</th><th>${T('r_increase')}</th><th>${T('r_freq')}</th><th>${T('r_status')}</th><th></th></tr></thead><tbody>
+   ${rows.length?rows.map(r=>`<tr><td><span class="link" onclick="rentalProfile('${r.id}')">${esc(r.tenant_name)}</span></td><td>${esc(r.compound)||''} ${esc(r.unit_number)||''}</td><td>${esc(r.tenant_phone)||'—'}</td><td>${fdate(r.start_date)}</td><td>${fdate(r.end_date)}</td><td class="num">${money(r.rent_total)}</td><td class="num">${money(r.rent_collected)}</td><td>${incShow(r)}</td><td>${esc(lv(r.frequency))}</td><td>${statusBadge(r.status)}</td>
+     <td><button class="btn neutral sm" onclick="rentalForm('${r.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="11" class="empty">${T('noRows')}</td></tr>`}
    </tbody></table>`;
 }
 async function rentalForm(id,unitId){
