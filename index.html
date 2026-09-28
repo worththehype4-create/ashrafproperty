@@ -3,191 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>متابعة الأملاك</title>
+<title>إدارة العقارات</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ===== Salesforce Lightning–inspired theme (RTL) ===== */
 :root{
   --brand:#0176d3; --brand-dark:#014486; --brand-light:#1b96ff;
-  --page:#f3f3f3; --card:#ffffff; --header:#ffffff;
-  --line:#e5e5e5; --line2:#dddbda; --row-hover:#f3f2f2; --th-bg:#fafaf9;
+  --page:#f3f3f3; --card:#fff; --line:#e5e5e5; --line2:#dddbda; --row-hover:#f3f2f2; --th-bg:#fafaf9;
   --ink:#080707; --ink2:#3e3e3c; --muted:#706e6b;
   --green:#2e844a; --green-bg:#eafbec; --amber:#a86403; --amber-bg:#fef8f0;
-  --red:#ba0517; --red-bg:#fef1f1; --blue-bg:#eef4ff;
-  --radius:.35rem; --shadow:0 2px 3px rgba(0,0,0,.08); --shadow2:0 4px 12px rgba(0,0,0,.12);
+  --red:#ba0517; --red-bg:#fef1f1; --blue-bg:#eef4ff; --radius:.35rem; --shadow:0 2px 3px rgba(0,0,0,.08); --shadow2:0 4px 12px rgba(0,0,0,.14);
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:'Cairo',system-ui,Arial,sans-serif;background:var(--page);color:var(--ink);font-size:14px}
 h1,h2,h3{margin:0}
 button{font-family:inherit;cursor:pointer}
-a,.link{color:var(--brand);text-decoration:none;cursor:pointer}
-.link:hover,a:hover{text-decoration:underline}
-input,select{font-family:inherit}
+a,.link{color:var(--brand);text-decoration:none;cursor:pointer}.link:hover{text-decoration:underline}
 .hidden{display:none!important}
 .num{font-variant-numeric:tabular-nums}
-
-/* ---------- Buttons (SLDS) ---------- */
-.btn{background:var(--brand);color:#fff;border:1px solid var(--brand);border-radius:var(--radius);
-  padding:7px 16px;font-weight:600;font-size:13px;line-height:1.4;transition:.12s}
+.btn{background:var(--brand);color:#fff;border:1px solid var(--brand);border-radius:var(--radius);padding:7px 15px;font-weight:600;font-size:13px;line-height:1.4}
 .btn:hover{background:var(--brand-dark);border-color:var(--brand-dark)}
-.btn.neutral{background:#fff;color:var(--brand);border-color:var(--line2)}
-.btn.neutral:hover{background:#f4f6f9}
-.btn.block{width:100%;justify-content:center}
-.btn.sm{padding:4px 11px;font-size:12px}
+.btn.neutral{background:#fff;color:var(--brand);border-color:var(--line2)}.btn.neutral:hover{background:#f4f6f9}
+.btn.block{width:100%;justify-content:center}.btn.sm{padding:4px 11px;font-size:12px}
 .btn.danger{background:var(--red);border-color:var(--red)}
-.btn.danger:hover{filter:brightness(.92)}
-
-/* ---------- Setup / Login ---------- */
 .center{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(180deg,#eef4fb,#f3f3f3)}
-.auth-card{background:#fff;border:1px solid var(--line2);border-radius:8px;padding:34px;width:100%;max-width:400px;box-shadow:var(--shadow2)}
-.auth-logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-light));
-  display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;margin:0 auto 14px}
-.auth-card h1{font-size:20px;text-align:center;margin-bottom:4px;color:var(--ink)}
-.auth-card p{color:var(--muted);text-align:center;margin:0 0 22px;font-size:13px}
+.auth-card{background:#fff;border:1px solid var(--line2);border-radius:12px;padding:34px;width:100%;max-width:400px;box-shadow:var(--shadow2)}
+.auth-logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-light));display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;margin:0 auto 14px}
+.auth-card h1{font-size:20px;text-align:center;margin-bottom:4px}.auth-card p{color:var(--muted);text-align:center;margin:0 0 22px;font-size:13px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:12px;color:var(--ink2);margin-bottom:5px;font-weight:600}
-.field input,.field select{width:100%;padding:9px 12px;background:#fff;border:1px solid var(--line2);border-radius:var(--radius);color:var(--ink);font-size:14px}
-.field input:focus,.field select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(1,118,211,.25)}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;background:#fff;border:1px solid var(--line2);border-radius:var(--radius);color:var(--ink);font-size:14px;font-family:inherit}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(1,118,211,.25)}
 .err{color:var(--red);font-size:13px;text-align:center;min-height:18px;margin-top:8px}
-
-/* ---------- Global header + tabs ---------- */
-.gheader{background:var(--header);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.gheader{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
 .gtop{display:flex;align-items:center;gap:14px;padding:9px 20px}
-.applogo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-light));
-  display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex:none}
-.appname{font-weight:700;font-size:16px;color:var(--ink)}
-.appname small{display:block;font-size:11px;color:var(--muted);font-weight:500}
+.applogo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-light));display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex:none}
+.appname{font-weight:700;font-size:16px}.appname small{display:block;font-size:11px;color:var(--muted);font-weight:500}
 .gtop .spacer{flex:1}
 .userchip{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink2)}
 .avatar{width:30px;height:30px;border-radius:50%;background:#5867e8;color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
-.tabs{display:flex;gap:2px;padding:0 14px;overflow-x:auto}
-.tab{display:flex;align-items:center;gap:8px;background:transparent;border:none;border-bottom:3px solid transparent;
-  padding:11px 14px;font-size:13.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
-.tab:hover{background:#f4f6f9;color:var(--brand)}
-.tab.active{color:var(--brand);border-bottom-color:var(--brand)}
-.tab .ti{width:22px;height:22px;border-radius:5px;display:grid;place-items:center;font-size:12px;color:#fff;flex:none}
-
-/* ---------- Page body ---------- */
-.main{padding:18px 22px;max-width:1400px;margin:0 auto}
+.tabs{display:flex;gap:2px;padding:0 12px;overflow-x:auto}
+.tab{display:flex;align-items:center;gap:8px;background:transparent;border:none;border-bottom:3px solid transparent;padding:11px 13px;font-size:13.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
+.tab:hover{background:#f4f6f9;color:var(--brand)}.tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+.tab .ti{width:22px;height:22px;border-radius:5px;display:grid;place-items:center;font-size:12px;color:#fff}
+.main{padding:18px 22px;max-width:1440px;margin:0 auto}
 .page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
 .page-head .pt{display:flex;align-items:center;gap:12px}
 .page-head .pt .ti{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:17px}
-.page-head h2{font-size:19px;color:var(--ink)}
-.page-head .sub{font-size:12px;color:var(--muted)}
+.page-head h2{font-size:19px}.page-head .sub{font-size:12px;color:var(--muted)}
 .tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.search{padding:7px 12px;background:#fff;border:1px solid var(--line2);border-radius:var(--radius);color:var(--ink);font-size:13px;min-width:190px}
-.search:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(1,118,211,.2)}
-
-/* ---------- KPI tiles ---------- */
-.grid{display:grid;gap:14px}
-.kpis{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.search{padding:7px 11px;background:#fff;border:1px solid var(--line2);border-radius:var(--radius);color:var(--ink);font-size:13px;min-width:150px}
+.grid{display:grid;gap:14px}.kpis{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
 .kpi{background:#fff;border:1px solid var(--line2);border-top:3px solid var(--brand);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
-.kpi .k{font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:600}
-.kpi .v{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:.2px}
+.kpi .k{font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:600}.kpi .v{font-size:21px;font-weight:700}
 .kpi .v small{font-size:12px;font-weight:600;color:var(--muted)}
-.kpi.green{border-top-color:var(--green)} .kpi.green .v{color:var(--green)}
-.kpi.red{border-top-color:var(--red)} .kpi.red .v{color:var(--red)}
-.kpi.amber{border-top-color:var(--amber)} .kpi.amber .v{color:var(--amber)}
-
-/* ---------- Card / list panel ---------- */
+.kpi.green{border-top-color:var(--green)}.kpi.green .v{color:var(--green)}
+.kpi.red{border-top-color:var(--red)}.kpi.red .v{color:var(--red)}
+.kpi.amber{border-top-color:var(--amber)}.kpi.amber .v{color:var(--amber)}
 .card{background:#fff;border:1px solid var(--line2);border-radius:var(--radius);margin-top:16px;box-shadow:var(--shadow);overflow:hidden}
 .card .chead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.card .chead h3{font-size:15px;color:var(--ink);display:flex;align-items:center;gap:9px}
+.card .chead h3{font-size:15px;display:flex;align-items:center;gap:9px}
 .card .chead .ti{width:26px;height:26px;border-radius:6px;display:grid;place-items:center;color:#fff;font-size:13px}
 .cnt{color:var(--muted);font-weight:600;font-size:12px}
-
-/* ---------- Tables (SLDS) ---------- */
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
-th,td{padding:9px 14px;text-align:right;border-bottom:1px solid var(--line)}
-th{color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px;background:var(--th-bg);position:sticky;top:0}
+th,td{padding:9px 13px;text-align:start;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;background:var(--th-bg)}
 tbody tr:hover{background:var(--row-hover)}
-.empty{padding:40px;text-align:center;color:var(--muted)}
-
-/* ---------- Badges (SLDS status) ---------- */
+.empty{padding:34px;text-align:center;color:var(--muted)}
 .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11.5px;font-weight:700;border:1px solid transparent}
 .b-green{background:var(--green-bg);color:var(--green);border-color:#b6e6c1}
 .b-amber{background:var(--amber-bg);color:var(--amber);border-color:#f6d9a8}
 .b-red{background:var(--red-bg);color:var(--red);border-color:#f5b9bd}
 .b-blue{background:var(--blue-bg);color:var(--brand);border-color:#bcd7fb}
 .b-gray{background:#f3f2f2;color:var(--ink2);border-color:#e0dede}
-
-/* ---------- Highlights panel (record home) ---------- */
-.highlights{background:#fff;border:1px solid var(--line2);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 18px;margin-bottom:4px}
+.highlights{background:#fff;border:1px solid var(--line2);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 18px}
 .hl-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .hl-top .ti{width:40px;height:40px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:19px}
-.hl-top .t{font-size:12px;color:var(--muted)}
-.hl-top .n{font-size:18px;font-weight:700;color:var(--ink)}
-.hl-fields{display:flex;gap:30px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px}
-.hl-fields .f{font-size:13px}
-.hl-fields .f .l{color:var(--muted);font-size:11px;margin-bottom:2px}
-.hl-fields .f .v{font-weight:700;color:var(--ink)}
-
-/* ---------- Modal ---------- */
+.hl-top .t{font-size:12px;color:var(--muted)}.hl-top .n{font-size:18px;font-weight:700}
+.hl-fields{display:flex;gap:26px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px}
+.hl-fields .f .l{color:var(--muted);font-size:11px;margin-bottom:2px}.hl-fields .f .v{font-weight:700;font-size:13px}
 .overlay{position:fixed;inset:0;background:rgba(8,7,7,.45);display:grid;place-items:center;padding:16px;z-index:60}
-.modal{background:#fff;border-radius:8px;width:100%;max-width:540px;max-height:92vh;overflow:auto;box-shadow:var(--shadow2)}
-.modal .mhead{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;border-bottom:1px solid var(--line);background:var(--th-bg);border-radius:8px 8px 0 0}
-.modal .mhead h3{font-size:16px;color:var(--ink)}
-.modal .mbody{padding:20px}
-.modal .x{background:none;border:none;color:var(--muted);font-size:22px;line-height:1}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.form-grid .full{grid-column:1/-1}
-.mfoot{display:flex;gap:10px;padding:14px 20px;border-top:1px solid var(--line);background:var(--th-bg);border-radius:0 0 8px 8px}
-
-.toast{position:fixed;bottom:22px;left:22px;background:#fff;border:1px solid var(--line2);border-right:4px solid var(--green);
-  padding:12px 18px;border-radius:var(--radius);box-shadow:var(--shadow2);z-index:90;font-size:13px;color:var(--ink)}
-.toast.err{border-right-color:var(--red)}
-
-@media(max-width:720px){
-  .main{padding:14px}
-  .form-grid{grid-template-columns:1fr}
-  .appname small{display:none}
-}
-@media print{
-  .gheader,.tools,.no-print{display:none!important}
-  body{background:#fff} .card,.kpi{box-shadow:none;border-color:#ccc}
-}
+.modal{background:#fff;border-radius:10px;width:100%;max-width:560px;max-height:92vh;overflow:auto;box-shadow:var(--shadow2)}
+.modal .mhead{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;border-bottom:1px solid var(--line);background:var(--th-bg)}
+.modal .mhead h3{font-size:16px}.modal .mbody{padding:20px}.modal .x{background:none;border:none;color:var(--muted);font-size:22px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-grid .full{grid-column:1/-1}
+.mfoot{display:flex;gap:10px;padding:14px 20px;border-top:1px solid var(--line);background:var(--th-bg)}
+.toast{position:fixed;bottom:22px;inset-inline-start:22px;background:#fff;border:1px solid var(--line2);border-inline-start:4px solid var(--green);padding:12px 18px;border-radius:var(--radius);box-shadow:var(--shadow2);z-index:90;font-size:13px}
+.toast.err{border-inline-start-color:var(--red)}
+@media(max-width:720px){.main{padding:14px}.form-grid{grid-template-columns:1fr}.appname small{display:none}}
+@media print{.gheader,.tools,.no-print{display:none!important}body{background:#fff}.card,.kpi{box-shadow:none;border-color:#ccc}}
 </style>
 </head>
 <body>
 
-<!-- ===== SETUP (only if not configured) ===== -->
 <div id="setup" class="center hidden">
-  <div class="auth-card">
-    <div class="auth-logo">أ</div>
-    <h1>ربط قاعدة البيانات</h1>
-    <p>أدخل رابط Supabase والمفتاح العام</p>
+  <div class="auth-card"><div class="auth-logo">ع</div><h1 id="s_title">ربط قاعدة البيانات</h1>
+    <p>Supabase URL + key</p>
     <div class="field"><label>Project URL</label><input id="cfgUrl" placeholder="https://xxxx.supabase.co"></div>
-    <div class="field"><label>Publishable / anon key</label><input id="cfgKey" placeholder="sb_publishable_..."></div>
-    <button class="btn block" onclick="saveCfg()">حفظ واتصال</button>
-    <div class="err" id="cfgErr"></div>
+    <div class="field"><label>anon / publishable key</label><input id="cfgKey"></div>
+    <button class="btn block" onclick="saveCfg()">حفظ</button><div class="err" id="cfgErr"></div>
   </div>
 </div>
 
-<!-- ===== LOGIN ===== -->
 <div id="login" class="center hidden">
   <form class="auth-card" onsubmit="doLogin(event)">
-    <div class="auth-logo">أ</div>
-    <h1>متابعة الأملاك</h1>
-    <p>تسجيل دخول الموظفين</p>
-    <div class="field"><label>البريد الإلكتروني</label><input id="email" type="email" required></div>
-    <div class="field"><label>كلمة المرور</label><input id="password" type="password" required></div>
-    <button class="btn block" type="submit">تسجيل الدخول</button>
-    <div class="err" id="loginErr"></div>
+    <div class="auth-logo">ع</div><h1 id="lg_title">إدارة العقارات</h1><p id="lg_sub">تسجيل الدخول</p>
+    <div class="field"><label id="lg_email">البريد الإلكتروني</label><input id="email" type="email" required></div>
+    <div class="field"><label id="lg_pass">كلمة المرور</label><input id="password" type="password" required></div>
+    <button class="btn block" type="submit" id="lg_btn">دخول</button><div class="err" id="loginErr"></div>
   </form>
 </div>
 
-<!-- ===== APP ===== -->
 <div id="app" class="hidden">
   <header class="gheader">
     <div class="gtop">
-      <div class="applogo">أ</div>
-      <div class="appname">متابعة الأملاك<small>م. أشرف عصمت</small></div>
+      <div class="applogo">ع</div>
+      <div class="appname"><span id="app_name">إدارة العقارات</span><small id="app_sub">م. أشرف عصمت</small></div>
       <div class="spacer"></div>
+      <button class="btn neutral sm" onclick="toggleLang()" id="langBtn">EN</button>
       <div class="userchip"><span id="who"></span><div class="avatar" id="avatar">؟</div>
-        <button class="btn neutral sm" onclick="logout()">خروج</button></div>
+        <button class="btn neutral sm" onclick="logout()" id="logoutBtn">خروج</button></div>
     </div>
     <nav class="tabs" id="tabs"></nav>
   </header>
@@ -196,30 +133,74 @@ tbody tr:hover{background:var(--row-hover)}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-/* ============================================================ CONFIG */
-const BAKED = { url: "https://wextfkewnnykljriqfsy.supabase.co", key: "sb_publishable_aZ10ul4aedqXxSpTFfiIlw_jcffQ7rq" };
-let sb=null, CFG=null, ME=null;
-function getCfg(){
-  if(BAKED.url && !BAKED.url.startsWith("__")) return {url:BAKED.url,key:BAKED.key};
-  try{const s=localStorage.getItem('amlak_cfg');if(s)return JSON.parse(s);}catch(e){}
-  return null;
-}
-function saveCfg(){
-  const url=document.getElementById('cfgUrl').value.trim(),key=document.getElementById('cfgKey').value.trim();
-  if(!url||!key){document.getElementById('cfgErr').textContent='من فضلك أدخل الرابط والمفتاح';return;}
-  try{localStorage.setItem('amlak_cfg',JSON.stringify({url,key}));}catch(e){}
-  location.reload();
-}
+/* ===================== CONFIG ===================== */
+const BAKED={url:"https://wextfkewnnykljriqfsy.supabase.co",key:"sb_publishable_aZ10ul4aedqXxSpTFfiIlw_jcffQ7rq"};
+let sb=null,CFG=null,ME=null;
+function getCfg(){if(BAKED.url&&!BAKED.url.startsWith("__"))return{url:BAKED.url,key:BAKED.key};try{const s=localStorage.getItem('re_cfg');if(s)return JSON.parse(s);}catch(e){}return null;}
+function saveCfg(){const url=document.getElementById('cfgUrl').value.trim(),key=document.getElementById('cfgKey').value.trim();if(!url||!key){document.getElementById('cfgErr').textContent='مطلوب';return;}try{localStorage.setItem('re_cfg',JSON.stringify({url,key}));}catch(e){}location.reload();}
 
-/* ---------- helpers ---------- */
-const fmt = n => (n==null||n==='')?'—':Number(n).toLocaleString('ar-EG',{maximumFractionDigits:0});
-const money = n => fmt(n)+' ج.م';
-const fdate = d => d? new Date(d).toLocaleDateString('ar-EG',{year:'numeric',month:'short',day:'numeric'}) : '—';
-const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function toast(msg,isErr){const t=document.createElement('div');t.className='toast'+(isErr?' err':'');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);}
+/* ===================== i18n ===================== */
+let L='ar'; try{L=localStorage.getItem('re_lang')||'ar';}catch(e){}
+const TR={
+ ar:{app:'إدارة العقارات',sub:'م. أشرف عصمت',login:'تسجيل الدخول',email:'البريد الإلكتروني',pass:'كلمة المرور',signin:'دخول',logout:'خروج',badcred:'بيانات الدخول غير صحيحة',
+  tab_dash:'لوحة التحكم',tab_units:'الوحدات',tab_rentals:'الإيجارات',tab_inst:'أقساط الشراء',tab_reports:'التقارير',
+  new:'جديد',edit:'تعديل',del:'حذف',save:'حفظ',cancel:'إلغاء',back:'رجوع',search:'بحث...',importT:'استيراد جدول',delay:'تأجيل',upload:'رفع مستند',view:'عرض',confirmDel:'تأكيد الحذف؟',saved:'تم الحفظ',deleted:'تم الحذف',none:'— بدون —',allStatus:'كل الحالات',allDur:'كل المدد',today:'مستحق اليوم',d7:'خلال ٧ أيام',d30:'خلال ٣٠ يوم',d90:'خلال ٩٠ يوم',late:'متأخر',month:'الشهر',print:'طباعة',export:'تصدير CSV',
+  dash_overview:'نظرة عامة على المحفظة',
+  s_inst_due:'أقساط شراء مستحقة / متأخرة',s_rent_due:'إيجارات مستحقة / متأخرة',s_expiring:'عقود قرب انتهائها',s_vacant:'وحدات شاغرة أو غير مُستلمة',
+  k_units:'عدد الوحدات',k_purchase:'إجمالي الشراء',k_paid:'المسدّد من الأقساط',k_remaining:'المتبقي على الأقساط',k_rented:'مؤجّرة',k_vacant:'شاغرة',k_undeliv:'غير مُستلمة',k_rentcol:'إيجار محصّل',
+  f_code:'كود',f_type:'النوع',f_compound:'الكمبوند / المشروع',f_location:'الموقع',f_unitno:'رقم الوحدة',f_floor:'الدور',f_area:'المساحة (م²)',f_garden:'حديقة؟',f_gardenA:'مساحة الحديقة (م²)',f_seller:'المطور / البائع',f_pdate:'تاريخ الشراء',f_price:'سعر الشراء',f_down:'المقدم',f_deliv:'تم الاستلام؟',f_ddate:'تاريخ الاستلام',f_vac:'سبب عدم التأجير',f_notes:'ملاحظات',
+  yes:'نعم',no:'لا',occupancy:'الإشغال',client:'العميل',
+  col_unit:'الوحدة',col_tenant:'المستأجر',col_due:'الاستحقاق',col_amount:'القيمة',col_paid:'المدفوع',col_remaining:'المتبقي',col_status:'الحالة',col_no:'#',col_countdown:'المتبقي للاستحقاق',col_end:'نهاية العقد',col_renew:'التجديد',col_phone:'الهاتف',col_start:'البداية',col_rent:'الإيجار',
+  units_all:'كل الوحدات',unit:'وحدة',purchase_inst:'أقساط الشراء',rentals:'الإيجارات',documents:'المستندات',delays_hist:'سجل التأجيلات',
+  add_rental:'عقد إيجار جديد',rental:'عقد إيجار',tenant:'المستأجر',t_name:'اسم المستأجر',t_phone:'الهاتف',t_addr:'العنوان',t_id:'الرقم القومي',r_start:'بداية العقد',r_end:'نهاية العقد',r_renew:'موعد التجديد',r_total:'إجمالي العقد',r_deposit:'التأمين',r_freq:'الدورية',r_status:'حالة العقد',rent_pay:'دفعات الإيجار',
+  doc_name:'اسم المستند',doc_cat:'التصنيف',doc_file:'الملف',
+  delay_new_date:'التاريخ الجديد',delay_new_amt:'القيمة الجديدة',delay_reason:'سبب التأجيل',
+  rep_total:'إجمالي المحفظة',rep_perunit:'ملخص لكل وحدة',rep_expected_rent:'إيجار متوقع (سنوي)',
+  paste_hint:'الصق من Excel: كل سطر = تاريخ ثم قيمة',importN:'استيراد',imported:'تم استيراد',rowsN:'صف',totalN:'الإجمالي',
+  required:'حقل مطلوب',noRows:'لا توجد بيانات',link_inst:'القسط المرتبط'},
+ en:{app:'Real-Estate Manager',sub:'Eng. Ashraf Esmat',login:'Sign in',email:'Email',pass:'Password',signin:'Sign in',logout:'Log out',badcred:'Invalid credentials',
+  tab_dash:'Dashboard',tab_units:'Units',tab_rentals:'Rentals',tab_inst:'Purchase Installments',tab_reports:'Reports',
+  new:'New',edit:'Edit',del:'Delete',save:'Save',cancel:'Cancel',back:'Back',search:'Search...',importT:'Import table',delay:'Postpone',upload:'Upload doc',view:'View',confirmDel:'Confirm delete?',saved:'Saved',deleted:'Deleted',none:'— none —',allStatus:'All statuses',allDur:'All periods',today:'Due today',d7:'Within 7 days',d30:'Within 30 days',d90:'Within 90 days',late:'Overdue',month:'Month',print:'Print',export:'Export CSV',
+  dash_overview:'Portfolio overview',
+  s_inst_due:'Purchase installments due / overdue',s_rent_due:'Rent due / overdue',s_expiring:'Contracts expiring soon',s_vacant:'Vacant or not-delivered units',
+  k_units:'Units',k_purchase:'Total purchase',k_paid:'Installments paid',k_remaining:'Installments remaining',k_rented:'Rented',k_vacant:'Vacant',k_undeliv:'Not delivered',k_rentcol:'Rent collected',
+  f_code:'Code',f_type:'Type',f_compound:'Compound / Project',f_location:'Location',f_unitno:'Unit no.',f_floor:'Floor',f_area:'Area (m²)',f_garden:'Garden?',f_gardenA:'Garden area (m²)',f_seller:'Developer / Seller',f_pdate:'Purchase date',f_price:'Purchase price',f_down:'Down payment',f_deliv:'Delivered?',f_ddate:'Delivery date',f_vac:'Reason not rented',f_notes:'Notes',
+  yes:'Yes',no:'No',occupancy:'Occupancy',client:'Owner',
+  col_unit:'Unit',col_tenant:'Tenant',col_due:'Due date',col_amount:'Amount',col_paid:'Paid',col_remaining:'Remaining',col_status:'Status',col_no:'#',col_countdown:'Time to due',col_end:'Contract end',col_renew:'Renewal',col_phone:'Phone',col_start:'Start',col_rent:'Rent',
+  units_all:'All units',unit:'Unit',purchase_inst:'Purchase installments',rentals:'Rentals',documents:'Documents',delays_hist:'Postponement history',
+  add_rental:'New rental contract',rental:'Rental contract',tenant:'Tenant',t_name:'Tenant name',t_phone:'Phone',t_addr:'Address',t_id:'National ID',r_start:'Contract start',r_end:'Contract end',r_renew:'Renewal date',r_total:'Contract total',r_deposit:'Deposit',r_freq:'Frequency',r_status:'Contract status',rent_pay:'Rent payments',
+  doc_name:'Document name',doc_cat:'Category',doc_file:'File',
+  delay_new_date:'New date',delay_new_amt:'New amount',delay_reason:'Reason',
+  rep_total:'Portfolio totals',rep_perunit:'Per-unit summary',rep_expected_rent:'Expected rent (yearly)',
+  paste_hint:'Paste from Excel: each line = date then amount',importN:'Import',imported:'Imported',rowsN:'rows',totalN:'Total',
+  required:'Required field',noRows:'No data',link_inst:'Linked installment'}
+};
+const T=k=>TR[L][k]||k;
+// value localization for enums stored in Arabic
+const ENVAL={'شقة':'Apartment','فيلا':'Villa','محل':'Shop','مكتب':'Office','أرض':'Land','دوبلكس':'Duplex','بنتهاوس':'Penthouse','أخرى':'Other',
+ 'مدفوع':'Paid','مدفوع جزئي':'Partial','متأخر':'Overdue','قادم':'Upcoming',
+ 'مؤجرة':'Rented','شاغرة':'Vacant','لم تُستلم':'Not delivered',
+ 'سارية':'Active','منتهية':'Ended','ملغاة':'Terminated',
+ 'شهري':'Monthly','ربع سنوي':'Quarterly','نصف سنوي':'Semi-annual','سنوي':'Yearly','مرة واحدة':'One-time',
+ 'عقد':'Contract','هوية':'ID','إيصال':'Receipt','مخطط':'Plan'};
+const lv=v=>L==='en'?(ENVAL[v]||v||''):(v||'');
 
-/* ============================================================ boot/auth */
+/* ===================== helpers ===================== */
+const CUR=()=>L==='ar'?'ج.م':'EGP';
+const fmt=n=>(n==null||n==='')?'—':Number(n).toLocaleString(L==='ar'?'ar-EG':'en-US',{maximumFractionDigits:0});
+const money=n=>(n==null||n==='')?'—':(L==='ar'?fmt(n)+' '+CUR():CUR()+' '+fmt(n));
+const fdate=d=>d?new Date(d).toLocaleDateString(L==='ar'?'ar-EG':'en-GB',{year:'numeric',month:'short',day:'numeric'}):'—';
+const AU=()=>L==='ar'?'م²':'m²';
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const daysTo=due=>Math.round((new Date(due)-new Date(new Date().toDateString()))/86400000);
+function monthMatch(due,ym){return !ym||(due||'').slice(0,7)===ym;}
+function withinDays(due,sel){if(!sel)return true;const d=daysTo(due);if(sel==='today')return d===0;if(sel==='late')return d<0;return d>=0&&d<=Number(sel);}
+function toast(m,e){const t=document.createElement('div');t.className='toast'+(e?' err':'');t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);}
+const statusBadge=s=>{const m={'مدفوع':'b-green','مدفوع جزئي':'b-amber','متأخر':'b-red','قادم':'b-blue','مؤجرة':'b-green','شاغرة':'b-amber','لم تُستلم':'b-gray','سارية':'b-green','منتهية':'b-gray','ملغاة':'b-red'};return `<span class="badge ${m[s]||'b-gray'}">${esc(lv(s))}</span>`;};
+
+/* ===================== boot / auth ===================== */
 async function boot(){
+  applyLangStatic();
   CFG=getCfg();
   if(!CFG){document.getElementById('setup').classList.remove('hidden');return;}
   sb=supabase.createClient(CFG.url,CFG.key);
@@ -228,422 +209,406 @@ async function boot(){
   sb.auth.onAuthStateChange((_e,s)=>{if(!s)showLogin();});
 }
 function showLogin(){document.getElementById('app').classList.add('hidden');document.getElementById('login').classList.remove('hidden');}
-async function doLogin(e){
-  e.preventDefault();
-  const email=document.getElementById('email').value,password=document.getElementById('password').value;
-  const {data,error}=await sb.auth.signInWithPassword({email,password});
-  if(error){document.getElementById('loginErr').textContent='بيانات الدخول غير صحيحة';return;}
-  ME=data.user;document.getElementById('login').classList.add('hidden');showApp();
-}
+async function doLogin(e){e.preventDefault();const email=document.getElementById('email').value,password=document.getElementById('password').value;const {data,error}=await sb.auth.signInWithPassword({email,password});if(error){document.getElementById('loginErr').textContent=T('badcred');return;}ME=data.user;document.getElementById('login').classList.add('hidden');showApp();}
 async function logout(){await sb.auth.signOut();location.reload();}
 
-/* ---------- tabs / navigation ---------- */
-const TABS=[
-  {id:'dash',   name:'لوحة التحكم', ico:'📊', c:'#5867e8'},
-  {id:'units',  name:'الوحدات',     ico:'🏢', c:'#0176d3'},
-  {id:'clients',name:'العملاء',     ico:'👥', c:'#04844b'},
-  {id:'inst',   name:'الأقساط',     ico:'💳', c:'#9050e9'},
-  {id:'chk',    name:'الشيكات',     ico:'🧾', c:'#ff9a3c'},
-  {id:'reports',name:'التقارير',    ico:'📈', c:'#c23934'},
-];
+/* ===================== language ===================== */
+function toggleLang(){L=L==='ar'?'en':'ar';try{localStorage.setItem('re_lang',L);}catch(e){}applyLangStatic();if(!document.getElementById('app').classList.contains('hidden')){buildTabs();go(CUR_TAB);}else{}}
+function applyLangStatic(){
+  document.documentElement.lang=L;document.documentElement.dir=L==='ar'?'rtl':'ltr';
+  document.getElementById('langBtn').textContent=L==='ar'?'EN':'ع';
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('app_name',T('app'));set('app_sub',T('sub'));set('logoutBtn',T('logout'));
+  set('lg_title',T('app'));set('lg_sub',T('login'));set('lg_email',T('email'));set('lg_pass',T('pass'));set('lg_btn',T('signin'));
+}
+
+/* ===================== tabs ===================== */
+const TABS=[{id:'dash',ic:'📊',c:'#5867e8'},{id:'units',ic:'🏢',c:'#0176d3'},{id:'rentals',ic:'🔑',c:'#04844b'},{id:'inst',ic:'💳',c:'#9050e9'},{id:'reports',ic:'📈',c:'#c23934'}];
 const tabColor=id=>TABS.find(t=>t.id===id)?.c||'#0176d3';
-const tabIco =id=>TABS.find(t=>t.id===id)?.ico||'●';
-let CUR='dash';
-function showApp(){
-  document.getElementById('app').classList.remove('hidden');
-  document.getElementById('who').textContent=ME?.email||'';
-  document.getElementById('avatar').textContent=(ME?.email||'؟').trim().charAt(0).toUpperCase();
-  const tabs=document.getElementById('tabs');tabs.innerHTML='';
-  TABS.forEach(t=>{
-    const b=document.createElement('button');b.className='tab';b.dataset.id=t.id;
-    b.innerHTML=`<span class="ti" style="background:${t.c}">${t.ico}</span>${t.name}`;
-    b.onclick=()=>go(t.id);tabs.appendChild(b);
-  });
-  go('dash');
-}
-function go(id){
-  CUR=id;
-  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
-  ({dash:viewDash,units:viewUnits,clients:viewClients,inst:viewInst,chk:viewChk,reports:viewReports}[id])();
-}
-const pageHead=(id,title,sub,tools='')=>`<div class="page-head">
-  <div class="pt"><div class="ti" style="background:${tabColor(id)}">${tabIco(id)}</div>
-    <div><h2>${title}</h2>${sub?`<div class="sub">${sub}</div>`:''}</div></div>
-  <div class="tools">${tools}</div></div>`;
-
-/* ---------- data ---------- */
-async function q(table){const {data,error}=await sb.from(table).select('*');if(error){toast(error.message,true);return[];}return data;}
-async function view(v){const {data,error}=await sb.from(v).select('*');if(error){toast(error.message,true);return[];}return data;}
-const statusBadge = s => {
-  const m={'مدفوع':'b-green','مدفوع جزئي':'b-amber','متأخر':'b-red','قادم':'b-blue',
-           'تم التحصيل':'b-green','مستحق اليوم':'b-amber','مرتجع':'b-gray','ملغي':'b-gray'};
-  return `<span class="badge ${m[s]||'b-gray'}">${esc(s)}</span>`;
-};
-const kpi=(k,v,cls)=>`<div class="kpi ${cls||''}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+const tabIco=id=>TABS.find(t=>t.id===id)?.ic||'●';
+let CUR_TAB='dash';
+function showApp(){document.getElementById('app').classList.remove('hidden');document.getElementById('who').textContent=ME?.email||'';document.getElementById('avatar').textContent=(ME?.email||'?').trim().charAt(0).toUpperCase();buildTabs();go('dash');}
+function buildTabs(){const tabs=document.getElementById('tabs');tabs.innerHTML='';TABS.forEach(t=>{const b=document.createElement('button');b.className='tab'+(t.id===CUR_TAB?' active':'');b.dataset.id=t.id;b.innerHTML=`<span class="ti" style="background:${t.c}">${t.ic}</span>${T('tab_'+t.id)}`;b.onclick=()=>go(t.id);tabs.appendChild(b);});}
+function go(id){CUR_TAB=id;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.id===id));({dash:viewDash,units:viewUnits,rentals:viewRentals,inst:viewInst,reports:viewReports}[id])();}
+const pageHead=(id,title,sub,tools='')=>`<div class="page-head"><div class="pt"><div class="ti" style="background:${tabColor(id)}">${tabIco(id)}</div><div><h2>${title}</h2>${sub?`<div class="sub">${sub}</div>`:''}</div></div><div class="tools">${tools}</div></div>`;
 const cardHead=(id,title,cnt,tools='')=>`<div class="chead"><h3><span class="ti" style="background:${tabColor(id)}">${tabIco(id)}</span>${title} ${cnt!=null?`<span class="cnt">(${cnt})</span>`:''}</h3><div class="tools">${tools}</div></div>`;
+const kpi=(k,v,cls)=>`<div class="kpi ${cls||''}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+async function view(v){const {data,error}=await sb.from(v).select('*');if(error){toast(error.message,true);return[];}return data;}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function num(id){const v=document.getElementById(id)?.value;return v===''||v==null?null:Number(v);}
 
-/* ============================================================ DASHBOARD */
+/* ===================== DASHBOARD ===================== */
 async function viewDash(){
-  const V=document.getElementById('view');
-  V.innerHTML=pageHead('dash','لوحة التحكم','نظرة عامة على المحفظة')+`<div id="dk"></div>`;
-  const d=(await view('v_dashboard'))[0]||{};
-  const chk=await view('v_cheques'),inst=await view('v_installments');
-  const upcoming=chk.filter(c=>c.status!=='تم التحصيل'&&c.days_remaining>=0).sort((a,b)=>a.days_remaining-b.days_remaining).slice(0,10);
-  const lateInst=inst.filter(i=>i.status==='متأخر').sort((a,b)=>b.days_late-a.days_late);
+  const V=document.getElementById('view');V.innerHTML=pageHead('dash',T('tab_dash'),T('dash_overview'))+`<div id="dk"></div>`;
+  const [units,inst,rentp,rentals]=await Promise.all([view('v_units'),view('v_installments'),view('v_rent_payments'),view('v_rentals')]);
+  const sum=(a,f)=>a.reduce((s,x)=>s+Number(x[f]||0),0);
+  const rented=units.filter(u=>u.occupancy==='مؤجرة').length, vacant=units.filter(u=>u.occupancy==='شاغرة').length, undeliv=units.filter(u=>u.occupancy==='لم تُستلم').length;
+  const instDue=inst.filter(i=>i.status!=='مدفوع'&&(i.days_remaining<0||i.days_remaining<=60)).sort((a,b)=>a.days_remaining-b.days_remaining);
+  const rentDue=rentp.filter(p=>p.status!=='مدفوع'&&(p.days_remaining<0||p.days_remaining<=60)).sort((a,b)=>a.days_remaining-b.days_remaining);
+  const expiring=rentals.filter(r=>r.status==='سارية'&&r.end_date&&r.days_to_end>=0&&r.days_to_end<=90).sort((a,b)=>a.days_to_end-b.days_to_end);
+  const vac=units.filter(u=>u.occupancy!=='مؤجرة');
+  const cd=d=>d<0?`<span class="badge b-red">${T('late')} ${fmt(-d)}</span>`:`<span class="badge ${d<=14?'b-amber':'b-blue'}">${fmt(d)} ${L==='ar'?'يوم':'d'}</span>`;
   document.getElementById('dk').innerHTML=`
    <div class="grid kpis">
-    ${kpi('عدد الوحدات',fmt(d.units_count))}
-    ${kpi('إجمالي العقود',money(d.total_contracts))}
-    ${kpi('إجمالي المحصّل',money(d.total_collected),'green')}
-    ${kpi('إجمالي المتبقي',money(d.total_remaining),'amber')}
-    ${kpi('أقساط متأخرة',fmt(d.inst_late)+' <small>('+money(d.inst_late_val)+')</small>','red')}
-    ${kpi('شيكات متأخرة',fmt(d.chk_late)+' <small>('+money(d.chk_late_val)+')</small>','red')}
-    ${kpi('شيكات خلال ٧ أيام',fmt(d.chk_7d)+' <small>('+money(d.chk_7d_val)+')</small>','amber')}
-    ${kpi('شيكات خلال ٣٠ يوم',fmt(d.chk_30d)+' <small>('+money(d.chk_30d_val)+')</small>')}
+    ${kpi(T('k_units'),fmt(units.length))}
+    ${kpi(T('k_purchase'),money(sum(units,'purchase_price')))}
+    ${kpi(T('k_paid'),money(sum(units,'inst_paid')),'green')}
+    ${kpi(T('k_remaining'),money(sum(units,'inst_remaining')),'amber')}
+    ${kpi(T('k_rented'),fmt(rented),'green')}
+    ${kpi(T('k_vacant'),fmt(vacant),'amber')}
+    ${kpi(T('k_undeliv'),fmt(undeliv),'red')}
+    ${kpi(T('k_rentcol'),money(sum(rentals,'rent_collected')),'green')}
    </div>
-   <div class="card">${cardHead('chk','أقرب الشيكات استحقاقًا',upcoming.length)}
-     <div class="tbl-wrap"><table><thead><tr>
-       <th>رقم الشيك</th><th>العميل</th><th>الوحدة</th><th>الاستحقاق</th><th class="num">القيمة</th><th>المتبقي للاستحقاق</th><th>الحالة</th></tr></thead><tbody>
-     ${upcoming.length?upcoming.map(c=>`<tr><td>${esc(c.cheque_no)}</td><td>${esc(c.client_name)}</td><td>${esc(c.unit_code)}</td>
-        <td>${fdate(c.due_date)}</td><td class="num">${money(c.amount)}</td><td>${esc(c.countdown)}</td><td>${statusBadge(c.status)}</td></tr>`).join(''):`<tr><td colspan="7" class="empty">لا توجد شيكات قادمة</td></tr>`}
+   <div class="card">${cardHead('inst',T('s_inst_due'),instDue.length)}<div class="tbl-wrap"><table><thead><tr>
+     <th>${T('col_unit')}</th><th>${T('col_no')}</th><th>${T('col_due')}</th><th>${T('col_remaining')}</th><th>${T('col_countdown')}</th><th>${T('col_status')}</th></tr></thead><tbody>
+     ${instDue.length?instDue.map(i=>`<tr><td>${esc(i.compound)||''} ${esc(i.unit_number)||''}</td><td>${esc(i.no)}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.remaining)}</td><td>${cd(i.days_remaining)}</td><td>${statusBadge(i.status)}</td></tr>`).join(''):`<tr><td colspan="6" class="empty">${T('noRows')}</td></tr>`}
      </tbody></table></div></div>
-   <div class="card">${cardHead('inst','أقساط متأخرة',lateInst.length)}
-     <div class="tbl-wrap"><table><thead><tr>
-       <th>العميل</th><th>الوحدة</th><th>القسط</th><th>الاستحقاق</th><th class="num">المتبقي</th><th>أيام التأخير</th></tr></thead><tbody>
-     ${lateInst.length?lateInst.map(i=>`<tr><td>${esc(i.client_name)}</td><td>${esc(i.unit_code)}</td><td>#${esc(i.no)}</td>
-        <td>${fdate(i.due_date)}</td><td class="num">${money(i.remaining)}</td><td><span class="badge b-red">${fmt(i.days_late)} يوم</span></td></tr>`).join(''):`<tr><td colspan="6" class="empty">لا توجد أقساط متأخرة 🎉</td></tr>`}
+   <div class="card">${cardHead('rentals',T('s_rent_due'),rentDue.length)}<div class="tbl-wrap"><table><thead><tr>
+     <th>${T('col_tenant')}</th><th>${T('col_unit')}</th><th>${T('col_due')}</th><th>${T('col_remaining')}</th><th>${T('col_countdown')}</th><th>${T('col_status')}</th></tr></thead><tbody>
+     ${rentDue.length?rentDue.map(p=>`<tr><td>${esc(p.tenant_name)}</td><td>${esc(p.compound)||''} ${esc(p.unit_number)||''}</td><td>${fdate(p.due_date)}</td><td class="num">${money(p.remaining)}</td><td>${cd(p.days_remaining)}</td><td>${statusBadge(p.status)}</td></tr>`).join(''):`<tr><td colspan="6" class="empty">${T('noRows')}</td></tr>`}
+     </tbody></table></div></div>
+   <div class="card">${cardHead('rentals',T('s_expiring'),expiring.length)}<div class="tbl-wrap"><table><thead><tr>
+     <th>${T('col_tenant')}</th><th>${T('col_unit')}</th><th>${T('col_end')}</th><th>${T('col_renew')}</th><th>${T('col_countdown')}</th></tr></thead><tbody>
+     ${expiring.length?expiring.map(r=>`<tr><td>${esc(r.tenant_name)}</td><td>${esc(r.compound)||''} ${esc(r.unit_number)||''}</td><td>${fdate(r.end_date)}</td><td>${fdate(r.renewal_date)}</td><td>${cd(r.days_to_end)}</td></tr>`).join(''):`<tr><td colspan="5" class="empty">${T('noRows')}</td></tr>`}
+     </tbody></table></div></div>
+   <div class="card">${cardHead('units',T('s_vacant'),vac.length)}<div class="tbl-wrap"><table><thead><tr>
+     <th>${T('col_unit')}</th><th>${T('f_type')}</th><th>${T('occupancy')}</th><th>${T('f_vac')}</th></tr></thead><tbody>
+     ${vac.length?vac.map(u=>`<tr><td><span class="link" onclick="unitProfile('${u.id}')">${esc(u.compound)||''} ${esc(u.unit_number)||esc(u.code)||''}</span></td><td>${esc(lv(u.type))}</td><td>${statusBadge(u.occupancy)}</td><td>${esc(u.vacancy_reason)||'—'}</td></tr>`).join(''):`<tr><td colspan="4" class="empty">${T('noRows')}</td></tr>`}
      </tbody></table></div></div>`;
 }
 
-/* ============================================================ UNITS */
-let _units=[],_clients=[];
+/* ===================== UNITS ===================== */
+let _units=[];
 async function viewUnits(){
-  const V=document.getElementById('view');
-  V.innerHTML=pageHead('units','الوحدات','','<input class="search" id="uSearch" placeholder="بحث..." oninput="renderUnits()"><button class="btn" onclick="unitForm()">جديد</button>')+
-    `<div class="card">${cardHead('units','كل الوحدات',null)}<div class="tbl-wrap" id="uTbl"></div></div>`;
-  _units=await view('v_units');_clients=await q('clients');renderUnits();
+  document.getElementById('view').innerHTML=pageHead('units',T('tab_units'),'',`<input class="search" id="uSearch" placeholder="${T('search')}" oninput="renderUnits()"><button class="btn" onclick="unitForm()">${T('new')}</button>`)+`<div class="card">${cardHead('units',T('units_all'),null)}<div class="tbl-wrap" id="uTbl"></div></div>`;
+  _units=await view('v_units');renderUnits();
 }
 function renderUnits(){
   const term=(document.getElementById('uSearch')?.value||'').trim();
-  let rows=_units;
-  if(term)rows=rows.filter(u=>[u.code,u.client_name,u.project,u.unit_no].some(x=>(x||'').includes(term)));
-  document.querySelector('#uTbl').closest('.card').querySelector('.cnt')?.remove();
+  let rows=_units;if(term)rows=rows.filter(u=>[u.compound,u.unit_number,u.code,u.location,u.tenant_name].some(x=>(x||'').includes(term)));
   document.getElementById('uTbl').innerHTML=`<table><thead><tr>
-    <th>الكود</th><th>النوع</th><th>المساحة</th><th>الحديقة</th><th>المشروع</th><th>العميل</th><th class="num">قيمة العقد</th>
-    <th class="num">المحصّل</th><th class="num">المتبقي</th><th>أقساط</th><th></th></tr></thead><tbody>
+    <th>${T('f_compound')}</th><th>${T('f_unitno')}</th><th>${T('f_type')}</th><th>${T('f_area')}</th><th>${T('occupancy')}</th><th class="num">${T('f_price')}</th><th class="num">${T('col_remaining')}</th><th>${T('purchase_inst')}</th><th></th></tr></thead><tbody>
    ${rows.length?rows.map(u=>`<tr>
-     <td><span class="link" onclick="unitProfile('${u.id}')">${esc(u.code)}</span></td>
-     <td>${esc(u.type)}</td><td>${u.area?fmt(u.area)+' م²':'—'}</td><td>${u.has_garden?'🌿'+(u.garden_area?' '+fmt(u.garden_area)+' م²':''):'—'}</td>
-     <td>${esc(u.project)}</td><td>${esc(u.client_name)||'—'}</td>
-     <td class="num">${money(u.contract_value)}</td><td class="num">${money(u.collected)}</td>
-     <td class="num">${money(u.remaining)}</td><td>${fmt(u.installments_count)}</td>
-     <td><button class="btn neutral sm" onclick="unitForm('${u.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="11" class="empty">لا توجد وحدات</td></tr>`}
+     <td><span class="link" onclick="unitProfile('${u.id}')">${esc(u.compound)||'—'}</span></td>
+     <td>${esc(u.unit_number)||esc(u.code)||'—'}</td><td>${esc(lv(u.type))}</td><td>${u.area?fmt(u.area)+' '+AU():'—'}</td>
+     <td>${statusBadge(u.occupancy)}</td><td class="num">${money(u.purchase_price)}</td><td class="num">${money(u.inst_remaining)}</td>
+     <td>${fmt(u.inst_paid_count)}/${fmt(u.inst_count)}</td>
+     <td><button class="btn neutral sm" onclick="unitForm('${u.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">${T('noRows')}</td></tr>`}
    </tbody></table>`;
 }
 function unitForm(id){
   const u=id?_units.find(x=>x.id===id):{};
-  const opts=_clients.map(c=>`<option value="${c.id}" ${u.client_id===c.id?'selected':''}>${esc(c.name)}</option>`).join('');
-  modal(id?'تعديل وحدة':'وحدة جديدة',`
+  const typeOpts=['شقة','فيلا','محل','مكتب','أرض','دوبلكس','بنتهاوس','أخرى'].map(t=>`<option value="${t}" ${u.type===t?'selected':''}>${lv(t)}</option>`).join('');
+  modal(id?T('edit'):T('new'),`
    <div class="form-grid">
-     <div class="field"><label>كود الوحدة *</label><input id="f_code" value="${esc(u.code)}"></div>
-     <div class="field"><label>النوع</label><select id="f_type">${['شقة','محل','مكتب','فيلا','أرض','أخرى'].map(t=>`<option ${u.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
-     <div class="field"><label>رقم الوحدة</label><input id="f_unitno" value="${esc(u.unit_no)}"></div>
-     <div class="field"><label>المشروع / العنوان</label><input id="f_project" value="${esc(u.project)}"></div>
-     <div class="field full"><label>العميل</label><select id="f_client"><option value="">— بدون —</option>${opts}</select></div>
-     <div class="field"><label>قيمة العقد</label><input id="f_cv" type="number" value="${u.contract_value??''}"></div>
-     <div class="field"><label>المقدم</label><input id="f_dp" type="number" value="${u.down_payment??''}"></div>
-     <div class="field"><label>تاريخ التعاقد</label><input id="f_cd" type="date" value="${u.contract_date??''}"></div>
-     <div class="field"><label>مدة التقسيط (شهور)</label><input id="f_m" type="number" value="${u.months??''}"></div>
-     <div class="field"><label>مساحة الشقة (م²)</label><input id="f_area" type="number" step="0.01" value="${u.area??''}"></div>
-     <div class="field"><label>بحديقة؟</label><select id="f_garden" onchange="document.getElementById('gardenBox').style.display=this.value==='نعم'?'block':'none'"><option ${!u.has_garden?'selected':''}>لا</option><option ${u.has_garden?'selected':''}>نعم</option></select></div>
-     <div class="field full" id="gardenBox" style="display:${u.has_garden?'block':'none'}"><label>مساحة الحديقة (م²)</label><input id="f_garea" type="number" step="0.01" value="${u.garden_area??''}"></div>
-     <div class="field full"><label>ملاحظات</label><input id="f_notes" value="${esc(u.notes)}"></div>
+     <div class="field"><label>${T('f_type')}</label><select id="f_type">${typeOpts}</select></div>
+     <div class="field"><label>${T('f_unitno')}</label><input id="f_unitno" value="${esc(u.unit_number)}"></div>
+     <div class="field"><label>${T('f_compound')}</label><input id="f_compound" value="${esc(u.compound)}"></div>
+     <div class="field"><label>${T('f_location')}</label><input id="f_location" value="${esc(u.location)}"></div>
+     <div class="field"><label>${T('f_floor')}</label><input id="f_floor" value="${esc(u.floor)}"></div>
+     <div class="field"><label>${T('f_area')}</label><input id="f_area" type="number" step="0.01" value="${u.area??''}"></div>
+     <div class="field"><label>${T('f_garden')}</label><select id="f_garden" onchange="document.getElementById('gbox').style.display=this.value==='y'?'block':'none'"><option value="n" ${!u.has_garden?'selected':''}>${T('no')}</option><option value="y" ${u.has_garden?'selected':''}>${T('yes')}</option></select></div>
+     <div class="field" id="gbox" style="display:${u.has_garden?'block':'none'}"><label>${T('f_gardenA')}</label><input id="f_garea" type="number" step="0.01" value="${u.garden_area??''}"></div>
+     <div class="field"><label>${T('f_seller')}</label><input id="f_seller" value="${esc(u.seller)}"></div>
+     <div class="field"><label>${T('f_pdate')}</label><input id="f_pdate" type="date" value="${u.purchase_date??''}"></div>
+     <div class="field"><label>${T('f_price')}</label><input id="f_price" type="number" value="${u.purchase_price??''}"></div>
+     <div class="field"><label>${T('f_down')}</label><input id="f_down" type="number" value="${u.down_payment??''}"></div>
+     <div class="field"><label>${T('f_deliv')}</label><select id="f_deliv" onchange="document.getElementById('dbox').style.display=this.value==='y'?'block':'none'"><option value="n" ${!u.delivered?'selected':''}>${T('no')}</option><option value="y" ${u.delivered?'selected':''}>${T('yes')}</option></select></div>
+     <div class="field" id="dbox" style="display:${u.delivered?'block':'none'}"><label>${T('f_ddate')}</label><input id="f_ddate" type="date" value="${u.delivery_date??''}"></div>
+     <div class="field full"><label>${T('f_vac')}</label><input id="f_vac" value="${esc(u.vacancy_reason)}"></div>
+     <div class="field full"><label>${T('f_notes')}</label><input id="f_notes" value="${esc(u.notes)}"></div>
    </div>`,async()=>{
-     const garden=val('f_garden')==='نعم';
-     const rec={code:val('f_code'),type:val('f_type'),unit_no:val('f_unitno'),project:val('f_project'),
-       client_id:val('f_client')||null,contract_value:num('f_cv'),down_payment:num('f_dp'),
-       contract_date:val('f_cd')||null,months:num('f_m'),area:num('f_area'),
-       has_garden:garden,garden_area:garden?num('f_garea'):null,notes:val('f_notes')};
-     if(!rec.code){toast('الكود مطلوب',true);return false;}
+     const g=val('f_garden')==='y',dl=val('f_deliv')==='y';
+     const rec={type:val('f_type'),unit_number:val('f_unitno'),compound:val('f_compound'),location:val('f_location'),floor:val('f_floor'),
+       area:num('f_area'),has_garden:g,garden_area:g?num('f_garea'):null,seller:val('f_seller'),purchase_date:val('f_pdate')||null,
+       purchase_price:num('f_price'),down_payment:num('f_down'),delivered:dl,delivery_date:dl?(val('f_ddate')||null):null,
+       vacancy_reason:val('f_vac'),notes:val('f_notes')};
      const {error}=id?await sb.from('units').update(rec).eq('id',id):await sb.from('units').insert(rec);
-     if(error){toast(error.message,true);return false;}
-     toast('تم الحفظ');viewUnits();return true;
+     if(error){toast(error.message,true);return false;}toast(T('saved'));viewUnits();return true;
    }, id?()=>delRec('units',id,viewUnits):null);
 }
 async function unitProfile(id){
-  const u=_units.find(x=>x.id===id)||(await view('v_units')).find(x=>x.id===id);
+  const u=(await view('v_units')).find(x=>x.id===id);_units=_units.length?_units:[u];
   const inst=(await view('v_installments')).filter(i=>i.unit_id===id).sort((a,b)=>(a.no||0)-(b.no||0));
-  const chk=(await view('v_cheques')).filter(c=>c.unit_id===id);
+  const rentals=(await view('v_rentals')).filter(r=>r.unit_id===id).sort((a,b)=>new Date(b.start_date||0)-new Date(a.start_date||0));
+  const docs=(await sb.from('documents').select('*').eq('unit_id',id)).data||[];
   document.getElementById('view').innerHTML=`
-   <div class="page-head"><div class="pt"></div><div class="tools">
-     <button class="btn neutral" onclick="viewUnits()">← رجوع</button><button class="btn" onclick="unitForm('${u.id}')">تعديل</button></div></div>
+   <div class="page-head"><div class="pt"></div><div class="tools"><button class="btn neutral" onclick="viewUnits()">← ${T('back')}</button><button class="btn" onclick="unitForm('${u.id}')">${T('edit')}</button></div></div>
    <div class="highlights">
-     <div class="hl-top"><div class="ti" style="background:${tabColor('units')}">🏢</div>
-       <div><div class="t">وحدة</div><div class="n">${esc(u.code)}</div></div></div>
+     <div class="hl-top"><div class="ti" style="background:${tabColor('units')}">🏢</div><div><div class="t">${T('unit')} — ${esc(lv(u.type))}</div><div class="n">${esc(u.compound)||''} ${esc(u.unit_number)||esc(u.code)||''}</div></div></div>
      <div class="hl-fields">
-       <div class="f"><div class="l">العميل</div><div class="v">${esc(u.client_name)||'—'}</div></div>
-       <div class="f"><div class="l">الهاتف</div><div class="v">${esc(u.client_phone)||'—'}</div></div>
-       <div class="f"><div class="l">النوع</div><div class="v">${esc(u.type)}</div></div>
-       <div class="f"><div class="l">المشروع</div><div class="v">${esc(u.project)||'—'}</div></div>
-       <div class="f"><div class="l">المساحة</div><div class="v">${u.area?fmt(u.area)+' م²':'—'}</div></div>
-       <div class="f"><div class="l">الحديقة</div><div class="v">${u.has_garden?'نعم'+(u.garden_area?' ('+fmt(u.garden_area)+' م²)':''):'لا'}</div></div>
-       <div class="f"><div class="l">قيمة العقد</div><div class="v">${money(u.contract_value)}</div></div>
-       <div class="f"><div class="l">المقدم</div><div class="v">${money(u.down_payment)}</div></div>
-       <div class="f"><div class="l">المحصّل</div><div class="v" style="color:var(--green)">${money(u.collected)}</div></div>
-       <div class="f"><div class="l">المتبقي</div><div class="v" style="color:var(--amber)">${money(u.remaining)}</div></div>
+       <div class="f"><div class="l">${T('occupancy')}</div><div class="v">${statusBadge(u.occupancy)}</div></div>
+       <div class="f"><div class="l">${T('f_location')}</div><div class="v">${esc(u.location)||'—'}</div></div>
+       <div class="f"><div class="l">${T('f_area')}</div><div class="v">${u.area?fmt(u.area)+' '+AU():'—'}${u.has_garden?' 🌿'+(u.garden_area?' '+fmt(u.garden_area)+' '+AU():''):''}</div></div>
+       <div class="f"><div class="l">${T('f_pdate')}</div><div class="v">${fdate(u.purchase_date)}</div></div>
+       <div class="f"><div class="l">${T('f_price')}</div><div class="v">${money(u.purchase_price)}</div></div>
+       <div class="f"><div class="l">${T('f_down')}</div><div class="v">${money(u.down_payment)}</div></div>
+       <div class="f"><div class="l">${T('k_paid')}</div><div class="v" style="color:var(--green)">${money(u.inst_paid)}</div></div>
+       <div class="f"><div class="l">${T('k_remaining')}</div><div class="v" style="color:var(--amber)">${money(u.inst_remaining)}</div></div>
+       <div class="f"><div class="l">${T('purchase_inst')}</div><div class="v">${fmt(u.inst_paid_count)}/${fmt(u.inst_count)}</div></div>
+       ${u.occupancy==='مؤجرة'?`<div class="f"><div class="l">${T('tenant')}</div><div class="v">${esc(u.tenant_name)} — ${fdate(u.rental_end)}</div></div>`:''}
+       ${u.occupancy==='شاغرة'&&u.vacancy_reason?`<div class="f"><div class="l">${T('f_vac')}</div><div class="v">${esc(u.vacancy_reason)}</div></div>`:''}
      </div>
    </div>
-   <div class="card">${cardHead('inst','الأقساط',inst.length,`<button class="btn neutral sm" onclick="importInst('${u.id}')">⬆ استيراد جدول</button><button class="btn sm" onclick="instForm(null,'${u.id}')">جديد</button>`)}
-     <div class="tbl-wrap"><table><thead><tr><th>#</th><th>الاستحقاق</th><th class="num">القيمة</th><th class="num">المدفوع</th><th class="num">المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
-     ${inst.length?inst.map(i=>`<tr><td>${esc(i.no)}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.amount)}</td>
-       <td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td>
-       <td><button class="btn neutral sm" onclick="instForm('${i.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">لا أقساط</td></tr>`}
+   <div class="card">${cardHead('inst',T('purchase_inst'),inst.length,`<button class="btn neutral sm" onclick="importInst('${u.id}')">⬆ ${T('importT')}</button><button class="btn sm" onclick="instForm(null,'${u.id}')">${T('new')}</button>`)}
+     <div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
+     ${inst.length?inst.map(i=>`<tr><td>${esc(i.no)}${i.is_delayed?' ⏱':''}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.amount)}</td><td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td>
+       <td style="text-align:end"><button class="btn neutral sm" onclick="delayForm('${i.id}','${u.id}')">${T('delay')}</button> <button class="btn neutral sm" onclick="instForm('${i.id}','${u.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
      </tbody></table></div></div>
-   <div class="card">${cardHead('chk','الشيكات',chk.length,`<button class="btn sm" onclick="chkForm(null,'${u.id}')">جديد</button>`)}
-     <div class="tbl-wrap"><table><thead><tr><th>رقم الشيك</th><th>البنك</th><th>الاستحقاق</th><th class="num">القيمة</th><th>المتبقي للاستحقاق</th><th>الحالة</th><th></th></tr></thead><tbody>
-     ${chk.length?chk.map(c=>`<tr><td>${esc(c.cheque_no)}</td><td>${esc(c.bank)||'—'}</td><td>${fdate(c.due_date)}</td>
-       <td class="num">${money(c.amount)}</td><td>${esc(c.countdown)}</td><td>${statusBadge(c.status)}</td>
-       <td><button class="btn neutral sm" onclick="chkForm('${c.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">لا شيكات</td></tr>`}
-     </tbody></table></div></div>`;
+   <div class="card">${cardHead('rentals',T('rentals'),rentals.length,`<button class="btn sm" onclick="rentalForm(null,'${u.id}')">${T('add_rental')}</button>`)}
+     <div class="tbl-wrap"><table><thead><tr><th>${T('t_name')}</th><th>${T('col_phone')}</th><th>${T('col_start')}</th><th>${T('col_end')}</th><th class="num">${T('r_total')}</th><th>${T('r_status')}</th><th></th></tr></thead><tbody>
+     ${rentals.length?rentals.map(r=>`<tr><td><span class="link" onclick="rentalProfile('${r.id}')">${esc(r.tenant_name)}</span></td><td>${esc(r.tenant_phone)||'—'}</td><td>${fdate(r.start_date)}</td><td>${fdate(r.end_date)}</td><td class="num">${money(r.rent_total)}</td><td>${statusBadge(r.status)}</td>
+       <td><button class="btn neutral sm" onclick="rentalForm('${r.id}','${u.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
+     </tbody></table></div></div>
+   ${docsCard(docs,{unit_id:id})}`;
 }
 
-/* ============================================================ CLIENTS */
-let _clist=[];
-async function viewClients(){
-  document.getElementById('view').innerHTML=pageHead('clients','العملاء','','<input class="search" id="cSearch" placeholder="بحث..." oninput="renderClients()"><button class="btn" onclick="clientForm()">جديد</button>')+
-    `<div class="card">${cardHead('clients','كل العملاء',null)}<div class="tbl-wrap" id="cTbl"></div></div>`;
-  _clist=await view('v_units');_clients=await q('clients');renderClients();
-}
-function renderClients(){
-  const term=(document.getElementById('cSearch')?.value||'').trim();
-  let rows=_clients;
-  if(term)rows=rows.filter(c=>[c.name,c.phone].some(x=>(x||'').includes(term)));
-  document.getElementById('cTbl').innerHTML=`<table><thead><tr>
-    <th>الاسم</th><th>الهاتف</th><th>عدد الوحدات</th><th class="num">إجمالي المتبقي</th><th></th></tr></thead><tbody>
-   ${rows.length?rows.map(c=>{const us=_clist.filter(u=>u.client_id===c.id);const rem=us.reduce((s,u)=>s+Number(u.remaining||0),0);
-     return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.phone)||'—'}</td><td>${us.length}</td>
-       <td class="num">${money(rem)}</td><td><button class="btn neutral sm" onclick="clientForm('${c.id}')">تعديل</button></td></tr>`;}).join(''):`<tr><td colspan="5" class="empty">لا يوجد عملاء</td></tr>`}
-   </tbody></table>`;
-}
-function clientForm(id){
-  const c=id?_clients.find(x=>x.id===id):{};
-  modal(id?'تعديل عميل':'عميل جديد',`
-   <div class="form-grid">
-     <div class="field full"><label>الاسم *</label><input id="f_name" value="${esc(c.name)}"></div>
-     <div class="field"><label>الهاتف</label><input id="f_phone" value="${esc(c.phone)}"></div>
-     <div class="field"><label>الرقم القومي</label><input id="f_nid" value="${esc(c.national_id)}"></div>
-     <div class="field full"><label>ملاحظات</label><input id="f_notes" value="${esc(c.notes)}"></div>
-   </div>`,async()=>{
-     const rec={name:val('f_name'),phone:val('f_phone'),national_id:val('f_nid'),notes:val('f_notes')};
-     if(!rec.name){toast('الاسم مطلوب',true);return false;}
-     const {error}=id?await sb.from('clients').update(rec).eq('id',id):await sb.from('clients').insert(rec);
-     if(error){toast(error.message,true);return false;}
-     toast('تم الحفظ');viewClients();return true;
-   }, id?()=>delRec('clients',id,viewClients):null);
-}
-
-/* ============================================================ INSTALLMENTS */
+/* ===================== INSTALLMENTS (global) ===================== */
 let _inst=[];
 async function viewInst(){
-  document.getElementById('view').innerHTML=pageHead('inst','الأقساط','',
-    `<select class="search" id="iFilter" onchange="renderInst()"><option value="">كل الحالات</option><option>قادم</option><option>متأخر</option><option>مدفوع جزئي</option><option>مدفوع</option></select><input class="search" id="iSearch" placeholder="بحث..." oninput="renderInst()">`)+
-    `<div class="card">${cardHead('inst','كل الأقساط',null)}<div class="tbl-wrap" id="iTbl"></div></div>`;
+  document.getElementById('view').innerHTML=pageHead('inst',T('tab_inst'),'',
+    `<select class="search" id="iFilter" onchange="renderInst()"><option value="">${T('allStatus')}</option><option value="قادم">${lv('قادم')}</option><option value="متأخر">${lv('متأخر')}</option><option value="مدفوع جزئي">${lv('مدفوع جزئي')}</option><option value="مدفوع">${lv('مدفوع')}</option></select>${daysToolbar('i')}<input class="search" id="iSearch" placeholder="${T('search')}" oninput="renderInst()">`)+
+    `<div class="card">${cardHead('inst',T('tab_inst'),null)}<div class="tbl-wrap" id="iTbl"></div></div>`;
   _inst=await view('v_installments');_units=await view('v_units');renderInst();
 }
+function daysToolbar(p){const fn=p==='i'?'renderInst':'renderChkX';return `<input type="month" class="search" id="${p}Month" onchange="renderInst()" style="min-width:150px"><select class="search" id="${p}Days" onchange="renderInst()"><option value="">${T('allDur')}</option><option value="today">${T('today')}</option><option value="7">${T('d7')}</option><option value="30">${T('d30')}</option><option value="90">${T('d90')}</option><option value="late">${T('late')}</option></select>`;}
 function renderInst(){
-  const term=(document.getElementById('iSearch')?.value||'').trim();const fs=document.getElementById('iFilter')?.value||'';
+  const term=(document.getElementById('iSearch')?.value||'').trim(),fs=document.getElementById('iFilter')?.value||'';
+  const ym=document.getElementById('iMonth')?.value||'',dd=document.getElementById('iDays')?.value||'';
   let rows=_inst.slice().sort((a,b)=>new Date(a.due_date)-new Date(b.due_date));
-  if(term)rows=rows.filter(i=>[i.client_name,i.unit_code].some(x=>(x||'').includes(term)));
-  if(fs)rows=rows.filter(i=>i.status===fs);
+  if(term)rows=rows.filter(i=>[i.compound,i.unit_number].some(x=>(x||'').includes(term)));
+  if(fs)rows=rows.filter(i=>i.status===fs);if(ym)rows=rows.filter(i=>monthMatch(i.due_date,ym));if(dd)rows=rows.filter(i=>withinDays(i.due_date,dd));
   document.getElementById('iTbl').innerHTML=`<table><thead><tr>
-    <th>العميل</th><th>الوحدة</th><th>#</th><th>الاستحقاق</th><th class="num">القيمة</th><th class="num">المدفوع</th>
-    <th class="num">المتبقي</th><th>الحالة</th><th>تأخير</th><th></th></tr></thead><tbody>
-   ${rows.length?rows.map(i=>`<tr><td>${esc(i.client_name)}</td><td>${esc(i.unit_code)}</td><td>${esc(i.no)}</td><td>${fdate(i.due_date)}</td>
-     <td class="num">${money(i.amount)}</td><td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td>
-     <td>${statusBadge(i.status)}</td><td>${i.days_late>0?'<span class="badge b-red">'+fmt(i.days_late)+' يوم</span>':'—'}</td>
-     <td><button class="btn neutral sm" onclick="instForm('${i.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="10" class="empty">لا أقساط</td></tr>`}
+    <th>${T('col_unit')}</th><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
+   ${rows.length?rows.map(i=>`<tr><td>${esc(i.compound)||''} ${esc(i.unit_number)||''}</td><td>${esc(i.no)}${i.is_delayed?' ⏱':''}</td><td>${fdate(i.due_date)}</td><td class="num">${money(i.amount)}</td><td class="num">${money(i.paid)}</td><td class="num">${money(i.remaining)}</td><td>${statusBadge(i.status)}</td>
+     <td style="text-align:end"><button class="btn neutral sm" onclick="delayForm('${i.id}')">${T('delay')}</button> <button class="btn neutral sm" onclick="instForm('${i.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="8" class="empty">${T('noRows')}</td></tr>`}
    </tbody></table>`;
 }
 async function instForm(id,unitId){
   if(!_units.length)_units=await view('v_units');
-  const i=id?_inst.find(x=>x.id===id)||(await view('v_installments')).find(x=>x.id===id):{unit_id:unitId,paid:0};
-  const opts=_units.map(u=>`<option value="${u.id}" ${i.unit_id===u.id?'selected':''}>${esc(u.code)} — ${esc(u.client_name)||''}</option>`).join('');
-  modal(id?'تعديل قسط':'قسط جديد',`
+  const i=id?(_inst.find(x=>x.id===id)||(await view('v_installments')).find(x=>x.id===id)):{unit_id:unitId,paid:0};
+  const opts=_units.map(u=>`<option value="${u.id}" ${i.unit_id===u.id?'selected':''}>${esc(u.compound)||''} ${esc(u.unit_number)||esc(u.code)||''}</option>`).join('');
+  modal(id?T('edit'):T('new'),`
    <div class="form-grid">
-     <div class="field full"><label>الوحدة *</label><select id="f_unit">${opts}</select></div>
-     <div class="field"><label>رقم القسط</label><input id="f_no" type="number" value="${i.no??''}"></div>
-     <div class="field"><label>تاريخ الاستحقاق *</label><input id="f_due" type="date" value="${i.due_date??''}"></div>
-     <div class="field"><label>قيمة القسط</label><input id="f_amt" type="number" value="${i.amount??''}"></div>
-     <div class="field"><label>المدفوع</label><input id="f_paid" type="number" value="${i.paid??0}"></div>
-     <div class="field full"><label>ملاحظات</label><input id="f_notes" value="${esc(i.notes)}"></div>
+     <div class="field full"><label>${T('col_unit')} *</label><select id="f_unit">${opts}</select></div>
+     <div class="field"><label>${T('col_no')}</label><input id="f_no" type="number" value="${i.no??''}"></div>
+     <div class="field"><label>${T('col_due')} *</label><input id="f_due" type="date" value="${i.due_date??''}"></div>
+     <div class="field"><label>${T('col_amount')}</label><input id="f_amt" type="number" value="${i.amount??''}"></div>
+     <div class="field"><label>${T('col_paid')}</label><input id="f_paid" type="number" value="${i.paid??0}"></div>
+     <div class="field full"><label>${T('f_notes')}</label><input id="f_notes" value="${esc(i.notes)}"></div>
    </div>`,async()=>{
      const rec={unit_id:val('f_unit'),no:num('f_no'),due_date:val('f_due'),amount:num('f_amt')||0,paid:num('f_paid')||0,notes:val('f_notes')};
-     if(!rec.unit_id||!rec.due_date){toast('الوحدة وتاريخ الاستحقاق مطلوبان',true);return false;}
+     if(!rec.unit_id||!rec.due_date){toast(T('required'),true);return false;}
      const {error}=id?await sb.from('installments').update(rec).eq('id',id):await sb.from('installments').insert(rec);
-     if(error){toast(error.message,true);return false;}
-     toast('تم الحفظ');(CUR==='units'?unitProfile(rec.unit_id):viewInst());return true;
-   }, id?()=>delRec('installments',id,viewInst):null);
+     if(error){toast(error.message,true);return false;}toast(T('saved'));unitId?unitProfile(unitId):viewInst();return true;
+   }, id?()=>delRec('installments',id,()=>unitId?unitProfile(unitId):viewInst()):null);
 }
-
-/* ---------- bulk import installments (paste from Excel or CSV) ---------- */
-function importInst(unitId){
-  modal('استيراد جدول الأقساط',`
-   <p style="margin-top:0;color:var(--muted);font-size:13px;line-height:1.7">
-     الصق الجدول من Excel، أو اختر ملف CSV. كل سطر = <b>تاريخ الاستحقاق</b> ثم <b>القيمة</b>.<br>
-     تُقبل التواريخ مثل 2026-11-15 أو 15/11/2026، وكل قسط ممكن يكون بقيمة مختلفة.</p>
-   <div class="field"><label>اختيار ملف CSV / Excel (اختياري)</label><input type="file" id="f_file" accept=".csv,.txt,.tsv" onchange="fillFromFile()"></div>
-   <div class="field"><label>الأقساط</label>
-     <textarea id="f_rows" oninput="previewRows('${unitId}')" placeholder="2026-11-15\t99000
-2027-04-15\t161700
-2027-11-15\t99000" style="width:100%;min-height:170px;padding:10px;border:1px solid var(--line2);border-radius:.35rem;font-family:monospace;direction:ltr;font-size:13px"></textarea></div>
-   <div id="importPrev" style="font-size:13px;color:var(--muted);min-height:20px"></div>
-  `,async()=>{
-     const rows=parseRows(document.getElementById('f_rows').value, unitId);
-     if(!rows.length){toast('لا توجد صفوف صحيحة',true);return false;}
-     const {error}=await sb.from('installments').insert(rows);
-     if(error){toast(error.message,true);return false;}
-     toast('تم استيراد '+rows.length+' قسط');(CUR==='units'?unitProfile(unitId):viewInst());return true;
-  });
-}
-function fillFromFile(){
-  const f=document.getElementById('f_file').files[0];if(!f)return;
-  const r=new FileReader();r.onload=()=>{document.getElementById('f_rows').value=r.result;previewRows();};r.readAsText(f);
-}
-function previewRows(){
-  const rows=parseRows(document.getElementById('f_rows').value,'x');
-  const total=rows.reduce((s,r)=>s+r.amount,0);
-  document.getElementById('importPrev').innerHTML=rows.length?`✓ ${rows.length} قسط — إجمالي ${fmt(total)} ج.م`:'';
-}
-function parseDate(s){
-  s=s.trim();
-  let m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
-  if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
-  m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);
-  if(m){let y=m[3];if(y.length===2)y='20'+y;return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;}
-  const d=new Date(s);return isNaN(d)?null:d.toISOString().slice(0,10);
-}
-function parseRows(text,unitId){
-  const nd=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-  const out=[];let n=0;
-  (text||'').split(/\r?\n/).forEach(raw=>{
-    const line=nd(raw).trim();if(!line)return;
-    const dm=line.match(/(\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2})|(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4})/);
-    if(!dm)return;
-    const due=parseDate(dm[0]);if(!due)return;
-    const post=line.slice(dm.index+dm[0].length), pre=line.slice(0,dm.index);
-    const amtStr=(post.replace(/[^\d]/g,'')?post:pre);
-    const amt=Number(amtStr.replace(/[^\d]/g,''));
-    if(!amt)return;
-    n++;out.push({unit_id:unitId,no:n,due_date:due,amount:amt,paid:0});
-  });
-  return out;
-}
-
-/* ============================================================ CHEQUES */
-let _chk=[];
-async function viewChk(){
-  document.getElementById('view').innerHTML=pageHead('chk','الشيكات','',
-    `<select class="search" id="kFilter" onchange="renderChk()"><option value="">كل الحالات</option><option>قادم</option><option>مستحق اليوم</option><option>تم التحصيل</option><option>مرتجع</option><option>ملغي</option></select><input class="search" id="kSearch" placeholder="بحث..." oninput="renderChk()">`)+
-    `<div class="card">${cardHead('chk','كل الشيكات',null)}<div class="tbl-wrap" id="kTbl"></div></div>`;
-  _chk=await view('v_cheques');_units=await view('v_units');renderChk();
-}
-function renderChk(){
-  const term=(document.getElementById('kSearch')?.value||'').trim();const fs=document.getElementById('kFilter')?.value||'';
-  let rows=_chk.slice().sort((a,b)=>a.days_remaining-b.days_remaining);
-  if(term)rows=rows.filter(c=>[c.cheque_no,c.client_name,c.unit_code].some(x=>(x||'').includes(term)));
-  if(fs)rows=rows.filter(c=>c.status===fs);
-  document.getElementById('kTbl').innerHTML=`<table><thead><tr>
-    <th>رقم الشيك</th><th>العميل</th><th>الوحدة</th><th>البنك</th><th>الاستحقاق</th>
-    <th class="num">القيمة</th><th>المتبقي للاستحقاق</th><th>الحالة</th><th></th></tr></thead><tbody>
-   ${rows.length?rows.map(c=>`<tr><td>${esc(c.cheque_no)}</td><td>${esc(c.client_name)}</td><td>${esc(c.unit_code)}</td><td>${esc(c.bank)||'—'}</td>
-     <td>${fdate(c.due_date)}</td><td class="num">${money(c.amount)}</td><td>${esc(c.countdown)}</td><td>${statusBadge(c.status)}</td>
-     <td><button class="btn neutral sm" onclick="chkForm('${c.id}')">تعديل</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">لا شيكات</td></tr>`}
-   </tbody></table>`;
-}
-async function chkForm(id,unitId){
-  if(!_units.length)_units=await view('v_units');
-  const c=id?_chk.find(x=>x.id===id)||(await view('v_cheques')).find(x=>x.id===id):{unit_id:unitId,status:'قادم'};
-  const opts=_units.map(u=>`<option value="${u.id}" ${c.unit_id===u.id?'selected':''}>${esc(u.code)} — ${esc(u.client_name)||''}</option>`).join('');
-  modal(id?'تعديل شيك':'شيك جديد',`
+async function delayForm(id,unitId){
+  const i=(_inst.find(x=>x.id===id))||(await view('v_installments')).find(x=>x.id===id);
+  modal(T('delay'),`
+   <p style="margin-top:0;color:var(--muted);font-size:13px">${T('col_due')}: <b>${fdate(i.due_date)}</b> — ${T('col_amount')}: <b>${money(i.amount)}</b></p>
    <div class="form-grid">
-     <div class="field full"><label>الوحدة *</label><select id="f_unit">${opts}</select></div>
-     <div class="field"><label>رقم الشيك</label><input id="f_no" value="${esc(c.cheque_no)}"></div>
-     <div class="field"><label>البنك</label><input id="f_bank" value="${esc(c.bank)}"></div>
-     <div class="field"><label>تاريخ الاستلام</label><input id="f_rec" type="date" value="${c.received_date??''}"></div>
-     <div class="field"><label>تاريخ الاستحقاق *</label><input id="f_due" type="date" value="${c.due_date??''}"></div>
-     <div class="field"><label>القيمة</label><input id="f_amt" type="number" value="${c.amount??''}"></div>
-     <div class="field"><label>الحالة</label><select id="f_status">${['قادم','مستحق اليوم','تم التحصيل','مرتجع','ملغي'].map(s=>`<option ${c.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
-     <div class="field full"><label>ملاحظات</label><input id="f_notes" value="${esc(c.notes)}"></div>
+     <div class="field"><label>${T('delay_new_date')} *</label><input id="d_date" type="date" value="${i.due_date}"></div>
+     <div class="field"><label>${T('delay_new_amt')}</label><input id="d_amt" type="number" value="${i.amount}"></div>
+     <div class="field full"><label>${T('delay_reason')}</label><input id="d_reason"></div>
    </div>`,async()=>{
-     const rec={unit_id:val('f_unit'),cheque_no:val('f_no'),bank:val('f_bank'),received_date:val('f_rec')||null,
-       due_date:val('f_due'),amount:num('f_amt')||0,status:val('f_status'),notes:val('f_notes')};
-     if(!rec.unit_id||!rec.due_date){toast('الوحدة وتاريخ الاستحقاق مطلوبان',true);return false;}
-     const {error}=id?await sb.from('cheques').update(rec).eq('id',id):await sb.from('cheques').insert(rec);
-     if(error){toast(error.message,true);return false;}
-     toast('تم الحفظ');(CUR==='units'?unitProfile(rec.unit_id):viewChk());return true;
-   }, id?()=>delRec('cheques',id,viewChk):null);
+     const nd=val('d_date'),na=num('d_amt')??i.amount;if(!nd){toast(T('required'),true);return false;}
+     const e1=await sb.from('installment_delays').insert({installment_id:id,old_due_date:i.due_date,old_amount:i.amount,new_due_date:nd,new_amount:na,reason:val('d_reason')});
+     if(e1.error){toast(e1.error.message,true);return false;}
+     const e2=await sb.from('installments').update({due_date:nd,amount:na}).eq('id',id);
+     if(e2.error){toast(e2.error.message,true);return false;}
+     toast(T('saved'));unitId?unitProfile(unitId):viewInst();return true;
+   });
+}
+function importInst(unitId){
+  modal(T('importT'),`
+   <p style="margin-top:0;color:var(--muted);font-size:13px">${T('paste_hint')}</p>
+   <div class="field"><label>CSV</label><input type="file" id="f_file" accept=".csv,.txt,.tsv" onchange="fillFromFile()"></div>
+   <div class="field"><textarea id="f_rows" oninput="previewRows()" style="width:100%;min-height:160px;font-family:monospace;direction:ltr;padding:10px;border:1px solid var(--line2);border-radius:.35rem" placeholder="2026-11-15\t99000&#10;2027-04-15\t161700"></textarea></div>
+   <div id="importPrev" style="font-size:13px;color:var(--muted);min-height:20px"></div>
+  `,async()=>{const rows=parseRows(document.getElementById('f_rows').value,unitId);if(!rows.length){toast(T('noRows'),true);return false;}
+     const {error}=await sb.from('installments').insert(rows);if(error){toast(error.message,true);return false;}toast(T('imported')+' '+rows.length);unitProfile(unitId);return true;});
+}
+function fillFromFile(){const f=document.getElementById('f_file').files[0];if(!f)return;const r=new FileReader();r.onload=()=>{document.getElementById('f_rows').value=r.result;previewRows();};r.readAsText(f);}
+function previewRows(){const rows=parseRows(document.getElementById('f_rows').value,'x');const total=rows.reduce((s,r)=>s+r.amount,0);document.getElementById('importPrev').innerHTML=rows.length?`✓ ${rows.length} ${T('rowsN')} — ${T('totalN')} ${money(total)}`:'';}
+function parseDate(s){s=s.trim();let m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);if(m){let y=m[3];if(y.length===2)y='20'+y;return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;}const d=new Date(s);return isNaN(d)?null:d.toISOString().slice(0,10);}
+function parseRows(text,unitId){const nd=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));const out=[];let n=0;(text||'').split(/\r?\n/).forEach(raw=>{const line=nd(raw).trim();if(!line)return;const dm=line.match(/(\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2})|(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4})/);if(!dm)return;const due=parseDate(dm[0]);if(!due)return;const post=line.slice(dm.index+dm[0].length),pre=line.slice(0,dm.index);const amtStr=(post.replace(/[^\d]/g,'')?post:pre);const amt=Number(amtStr.replace(/[^\d]/g,''));if(!amt)return;n++;out.push({unit_id:unitId,no:n,due_date:due,amount:amt,paid:0});});return out;}
+
+/* ===================== RENTALS ===================== */
+let _rentals=[];
+async function viewRentals(){
+  document.getElementById('view').innerHTML=pageHead('rentals',T('tab_rentals'),'',`<input class="search" id="rSearch" placeholder="${T('search')}" oninput="renderRentals()"><button class="btn" onclick="rentalForm()">${T('new')}</button>`)+`<div class="card">${cardHead('rentals',T('rentals'),null)}<div class="tbl-wrap" id="rTbl"></div></div>`;
+  _rentals=await view('v_rentals');_units=await view('v_units');renderRentals();
+}
+function renderRentals(){
+  const term=(document.getElementById('rSearch')?.value||'').trim();let rows=_rentals.slice().sort((a,b)=>new Date(b.start_date||0)-new Date(a.start_date||0));
+  if(term)rows=rows.filter(r=>[r.tenant_name,r.compound,r.unit_number,r.tenant_phone].some(x=>(x||'').includes(term)));
+  document.getElementById('rTbl').innerHTML=`<table><thead><tr>
+    <th>${T('t_name')}</th><th>${T('col_unit')}</th><th>${T('col_phone')}</th><th>${T('col_start')}</th><th>${T('col_end')}</th><th class="num">${T('r_total')}</th><th class="num">${T('k_rentcol')}</th><th>${T('r_status')}</th><th></th></tr></thead><tbody>
+   ${rows.length?rows.map(r=>`<tr><td><span class="link" onclick="rentalProfile('${r.id}')">${esc(r.tenant_name)}</span></td><td>${esc(r.compound)||''} ${esc(r.unit_number)||''}</td><td>${esc(r.tenant_phone)||'—'}</td><td>${fdate(r.start_date)}</td><td>${fdate(r.end_date)}</td><td class="num">${money(r.rent_total)}</td><td class="num">${money(r.rent_collected)}</td><td>${statusBadge(r.status)}</td>
+     <td><button class="btn neutral sm" onclick="rentalForm('${r.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="9" class="empty">${T('noRows')}</td></tr>`}
+   </tbody></table>`;
+}
+async function rentalForm(id,unitId){
+  if(!_units.length)_units=await view('v_units');
+  const r=id?(_rentals.find(x=>x.id===id)||(await view('v_rentals')).find(x=>x.id===id)):{unit_id:unitId,status:'سارية',frequency:'شهري'};
+  const uopts=_units.map(u=>`<option value="${u.id}" ${r.unit_id===u.id?'selected':''}>${esc(u.compound)||''} ${esc(u.unit_number)||esc(u.code)||''}</option>`).join('');
+  const fopts=['شهري','ربع سنوي','نصف سنوي','سنوي','مرة واحدة','أخرى'].map(f=>`<option value="${f}" ${r.frequency===f?'selected':''}>${lv(f)}</option>`).join('');
+  const sopts=['سارية','منتهية','ملغاة'].map(s=>`<option value="${s}" ${r.status===s?'selected':''}>${lv(s)}</option>`).join('');
+  modal(id?T('edit'):T('add_rental'),`
+   <div class="form-grid">
+     <div class="field full"><label>${T('col_unit')} *</label><select id="f_unit">${uopts}</select></div>
+     <div class="field"><label>${T('t_name')} *</label><input id="f_tname" value="${esc(r.tenant_name)}"></div>
+     <div class="field"><label>${T('t_phone')}</label><input id="f_tphone" value="${esc(r.tenant_phone)}"></div>
+     <div class="field"><label>${T('t_addr')}</label><input id="f_taddr" value="${esc(r.tenant_address)}"></div>
+     <div class="field"><label>${T('t_id')}</label><input id="f_tid" value="${esc(r.tenant_id_no)}"></div>
+     <div class="field"><label>${T('r_start')}</label><input id="f_start" type="date" value="${r.start_date??''}"></div>
+     <div class="field"><label>${T('r_end')}</label><input id="f_end" type="date" value="${r.end_date??''}"></div>
+     <div class="field"><label>${T('r_renew')}</label><input id="f_renew" type="date" value="${r.renewal_date??''}"></div>
+     <div class="field"><label>${T('r_total')}</label><input id="f_rtotal" type="number" value="${r.rent_total??''}"></div>
+     <div class="field"><label>${T('r_deposit')}</label><input id="f_dep" type="number" value="${r.deposit??''}"></div>
+     <div class="field"><label>${T('r_freq')}</label><select id="f_freq">${fopts}</select></div>
+     <div class="field"><label>${T('r_status')}</label><select id="f_status">${sopts}</select></div>
+     <div class="field full"><label>${T('f_notes')}</label><input id="f_notes" value="${esc(r.notes)}"></div>
+   </div>`,async()=>{
+     const rec={unit_id:val('f_unit'),tenant_name:val('f_tname'),tenant_phone:val('f_tphone'),tenant_address:val('f_taddr'),tenant_id_no:val('f_tid'),
+       start_date:val('f_start')||null,end_date:val('f_end')||null,renewal_date:val('f_renew')||null,rent_total:num('f_rtotal'),deposit:num('f_dep'),
+       frequency:val('f_freq'),status:val('f_status'),notes:val('f_notes')};
+     if(!rec.unit_id||!rec.tenant_name){toast(T('required'),true);return false;}
+     const {error}=id?await sb.from('rentals').update(rec).eq('id',id):await sb.from('rentals').insert(rec);
+     if(error){toast(error.message,true);return false;}toast(T('saved'));unitId?unitProfile(unitId):viewRentals();return true;
+   }, id?()=>delRec('rentals',id,()=>unitId?unitProfile(unitId):viewRentals()):null);
+}
+async function rentalProfile(id){
+  const r=(await view('v_rentals')).find(x=>x.id===id);
+  const pays=((await sb.from('v_rent_payments').select('*').eq('rental_id',id)).data||[]).sort((a,b)=>(a.no||0)-(b.no||0));
+  const docs=(await sb.from('documents').select('*').eq('rental_id',id)).data||[];
+  document.getElementById('view').innerHTML=`
+   <div class="page-head"><div class="pt"></div><div class="tools"><button class="btn neutral" onclick="viewRentals()">← ${T('back')}</button><button class="btn neutral" onclick="unitProfile('${r.unit_id}')">${T('unit')}</button><button class="btn" onclick="rentalForm('${r.id}')">${T('edit')}</button></div></div>
+   <div class="highlights">
+     <div class="hl-top"><div class="ti" style="background:${tabColor('rentals')}">🔑</div><div><div class="t">${T('rental')} — ${esc(r.compound)||''} ${esc(r.unit_number)||''}</div><div class="n">${esc(r.tenant_name)}</div></div></div>
+     <div class="hl-fields">
+       <div class="f"><div class="l">${T('t_phone')}</div><div class="v">${esc(r.tenant_phone)||'—'}</div></div>
+       <div class="f"><div class="l">${T('t_addr')}</div><div class="v">${esc(r.tenant_address)||'—'}</div></div>
+       <div class="f"><div class="l">${T('r_start')}</div><div class="v">${fdate(r.start_date)}</div></div>
+       <div class="f"><div class="l">${T('r_end')}</div><div class="v">${fdate(r.end_date)}${r.days_to_end!=null?` <span class="badge ${r.days_to_end<0?'b-red':(r.days_to_end<=60?'b-amber':'b-gray')}">${r.days_to_end<0?T('late'):fmt(r.days_to_end)+' '+(L==='ar'?'يوم':'d')}</span>`:''}</div></div>
+       <div class="f"><div class="l">${T('r_renew')}</div><div class="v">${fdate(r.renewal_date)}</div></div>
+       <div class="f"><div class="l">${T('r_total')}</div><div class="v">${money(r.rent_total)}</div></div>
+       <div class="f"><div class="l">${T('r_deposit')}</div><div class="v">${money(r.deposit)}</div></div>
+       <div class="f"><div class="l">${T('r_freq')}</div><div class="v">${esc(lv(r.frequency))}</div></div>
+       <div class="f"><div class="l">${T('k_rentcol')}</div><div class="v" style="color:var(--green)">${money(r.rent_collected)}</div></div>
+       <div class="f"><div class="l">${T('col_remaining')}</div><div class="v" style="color:var(--amber)">${money(r.rent_remaining)}</div></div>
+       <div class="f"><div class="l">${T('r_status')}</div><div class="v">${statusBadge(r.status)}</div></div>
+     </div>
+   </div>
+   <div class="card">${cardHead('rentals',T('rent_pay'),pays.length,`<button class="btn neutral sm" onclick="importRent('${r.id}')">⬆ ${T('importT')}</button><button class="btn sm" onclick="rentPayForm(null,'${r.id}')">${T('new')}</button>`)}
+     <div class="tbl-wrap"><table><thead><tr><th>${T('col_no')}</th><th>${T('col_due')}</th><th class="num">${T('col_amount')}</th><th class="num">${T('col_paid')}</th><th class="num">${T('col_remaining')}</th><th>${T('col_status')}</th><th></th></tr></thead><tbody>
+     ${pays.length?pays.map(p=>`<tr><td>${esc(p.no)}</td><td>${fdate(p.due_date)}</td><td class="num">${money(p.amount)}</td><td class="num">${money(p.paid)}</td><td class="num">${money(p.remaining)}</td><td>${statusBadge(p.status)}</td>
+       <td><button class="btn neutral sm" onclick="rentPayForm('${p.id}','${r.id}')">${T('edit')}</button></td></tr>`).join(''):`<tr><td colspan="7" class="empty">${T('noRows')}</td></tr>`}
+     </tbody></table></div></div>
+   ${docsCard(docs,{rental_id:id})}`;
+}
+async function rentPayForm(id,rentalId){
+  let p={rental_id:rentalId,paid:0};
+  if(id){p=(await sb.from('v_rent_payments').select('*').eq('id',id)).data[0];}
+  modal(id?T('edit'):T('new'),`
+   <div class="form-grid">
+     <div class="field"><label>${T('col_no')}</label><input id="f_no" type="number" value="${p.no??''}"></div>
+     <div class="field"><label>${T('col_due')} *</label><input id="f_due" type="date" value="${p.due_date??''}"></div>
+     <div class="field"><label>${T('col_amount')}</label><input id="f_amt" type="number" value="${p.amount??''}"></div>
+     <div class="field"><label>${T('col_paid')}</label><input id="f_paid" type="number" value="${p.paid??0}"></div>
+     <div class="field full"><label>${T('f_notes')}</label><input id="f_notes" value="${esc(p.notes)}"></div>
+   </div>`,async()=>{
+     const rec={rental_id:rentalId,no:num('f_no'),due_date:val('f_due'),amount:num('f_amt')||0,paid:num('f_paid')||0,notes:val('f_notes')};
+     if(!rec.due_date){toast(T('required'),true);return false;}
+     const {error}=id?await sb.from('rent_payments').update(rec).eq('id',id):await sb.from('rent_payments').insert(rec);
+     if(error){toast(error.message,true);return false;}toast(T('saved'));rentalProfile(rentalId);return true;
+   }, id?()=>delRec('rent_payments',id,()=>rentalProfile(rentalId)):null);
+}
+function importRent(rentalId){
+  modal(T('importT'),`<p style="margin-top:0;color:var(--muted);font-size:13px">${T('paste_hint')}</p>
+   <div class="field"><textarea id="f_rows" oninput="previewRows()" style="width:100%;min-height:160px;font-family:monospace;direction:ltr;padding:10px;border:1px solid var(--line2);border-radius:.35rem" placeholder="2026-01-01\t5000"></textarea></div>
+   <div id="importPrev" style="font-size:13px;color:var(--muted);min-height:20px"></div>`,
+   async()=>{const raw=parseRows(document.getElementById('f_rows').value,'x');if(!raw.length){toast(T('noRows'),true);return false;}
+     const rows=raw.map(r=>({rental_id:rentalId,no:r.no,due_date:r.due_date,amount:r.amount,paid:0}));
+     const {error}=await sb.from('rent_payments').insert(rows);if(error){toast(error.message,true);return false;}toast(T('imported')+' '+rows.length);rentalProfile(rentalId);return true;});
 }
 
-/* ============================================================ REPORTS */
+/* ===================== DOCUMENTS ===================== */
+function docsCard(docs,ctx){
+  const add=`<button class="btn sm" onclick='docForm(${JSON.stringify(ctx)})'>⬆ ${T('upload')}</button>`;
+  return `<div class="card">${cardHead('units',T('documents'),docs.length,add)}
+    <div class="tbl-wrap"><table><thead><tr><th>${T('doc_name')}</th><th>${T('doc_cat')}</th><th>${T('col_due')}</th><th></th></tr></thead><tbody>
+    ${docs.length?docs.map(d=>`<tr><td>${esc(d.name)||'—'}</td><td>${esc(lv(d.category))}</td><td>${fdate(d.created_at)}</td>
+      <td style="text-align:end"><button class="btn neutral sm" onclick="openDoc('${d.file_path}')">${T('view')}</button> <button class="btn neutral sm" onclick="delDoc('${d.id}','${d.file_path}',${JSON.stringify(ctx).replace(/"/g,'&quot;')})">${T('del')}</button></td></tr>`).join(''):`<tr><td colspan="4" class="empty">${T('noRows')}</td></tr>`}
+    </tbody></table></div></div>`;
+}
+function docForm(ctx){
+  const cats=['عقد','هوية','إيصال','مخطط','أخرى'].map(c=>`<option value="${c}">${lv(c)}</option>`).join('');
+  modal(T('upload'),`
+   <div class="field"><label>${T('doc_name')}</label><input id="d_name"></div>
+   <div class="field"><label>${T('doc_cat')}</label><select id="d_cat">${cats}</select></div>
+   <div class="field"><label>${T('doc_file')} *</label><input type="file" id="d_file"></div>`,
+   async()=>{
+     const f=document.getElementById('d_file').files[0];if(!f){toast(T('required'),true);return false;}
+     const ext=(f.name.split('.').pop()||'bin').toLowerCase();
+     const folder=ctx.unit_id?('units/'+ctx.unit_id):('rentals/'+ctx.rental_id);
+     const path=`${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+     const up=await sb.storage.from('documents').upload(path,f);
+     if(up.error){toast(up.error.message,true);return false;}
+     const rec=Object.assign({name:val('d_name')||f.name,category:val('d_cat'),file_path:path},ctx);
+     const {error}=await sb.from('documents').insert(rec);
+     if(error){toast(error.message,true);return false;}toast(T('saved'));
+     ctx.unit_id?unitProfile(ctx.unit_id):rentalProfile(ctx.rental_id);return true;
+   });
+}
+async function openDoc(path){const {data,error}=await sb.storage.from('documents').createSignedUrl(path,3600);if(error){toast(error.message,true);return;}window.open(data.signedUrl,'_blank');}
+async function delDoc(id,path,ctx){if(!confirm(T('confirmDel')))return;await sb.storage.from('documents').remove([path]);await sb.from('documents').delete().eq('id',id);toast(T('deleted'));ctx.unit_id?unitProfile(ctx.unit_id):rentalProfile(ctx.rental_id);}
+
+/* ===================== REPORTS ===================== */
 async function viewReports(){
-  const d=(await view('v_dashboard'))[0]||{};
-  document.getElementById('view').innerHTML=pageHead('reports','التقارير','',
-    '<button class="btn neutral" onclick="window.print()">🖨️ طباعة</button><button class="btn" onclick="exportAll()">⬇️ تصدير CSV</button>')+
+  const [units,rentals]=await Promise.all([view('v_units'),view('v_rentals')]);
+  const sum=(a,f)=>a.reduce((s,x)=>s+Number(x[f]||0),0);
+  const annualRent=rentals.filter(r=>r.status==='سارية').reduce((s,r)=>{const f=r.frequency;const per=f==='شهري'?12:f==='ربع سنوي'?4:f==='نصف سنوي'?2:1;return s+Number(r.rent_total||0)*(f==='مرة واحدة'?1:1);},0);
+  document.getElementById('view').innerHTML=pageHead('reports',T('tab_reports'),'','<button class="btn neutral" onclick="window.print()">🖨️ '+T('print')+'</button><button class="btn" onclick="exportAll()">⬇️ '+T('export')+'</button>')+
    `<div class="grid kpis">
-    ${kpi('عدد الوحدات',fmt(d.units_count))}
-    ${kpi('عدد العملاء','—')}
-    ${kpi('إجمالي العقود',money(d.total_contracts))}
-    ${kpi('إجمالي الأقساط',money(d.total_installments))}
-    ${kpi('إجمالي المحصّل',money(d.total_collected),'green')}
-    ${kpi('إجمالي المتبقي',money(d.total_remaining),'amber')}
-    ${kpi('قيمة الشيكات',money(d.cheques_value))}
-    ${kpi('شيكات متأخرة (قيمة)',money(d.chk_late_val),'red')}
+     ${kpi(T('k_units'),fmt(units.length))}
+     ${kpi(T('k_purchase'),money(sum(units,'purchase_price')))}
+     ${kpi(T('k_paid'),money(sum(units,'inst_paid')),'green')}
+     ${kpi(T('k_remaining'),money(sum(units,'inst_remaining')),'amber')}
+     ${kpi(T('k_rented'),fmt(units.filter(u=>u.occupancy==='مؤجرة').length),'green')}
+     ${kpi(T('k_vacant'),fmt(units.filter(u=>u.occupancy==='شاغرة').length),'amber')}
+     ${kpi(T('k_undeliv'),fmt(units.filter(u=>u.occupancy==='لم تُستلم').length),'red')}
+     ${kpi(T('k_rentcol'),money(sum(rentals,'rent_collected')),'green')}
    </div>
-   <div class="card">${cardHead('reports','ملخص لكل وحدة',null)}<div class="tbl-wrap" id="rTbl"></div></div>`;
-  const clients=await q('clients');document.querySelectorAll('.kpi .v')[1].textContent=fmt(clients.length);
-  const units=await view('v_units');
-  document.getElementById('rTbl').innerHTML=`<table><thead><tr>
-    <th>الكود</th><th>العميل</th><th>المشروع</th><th class="num">العقد</th><th class="num">المقدم</th>
-    <th class="num">المحصّل</th><th class="num">المتبقي</th></tr></thead><tbody>
-   ${units.map(u=>`<tr><td>${esc(u.code)}</td><td>${esc(u.client_name)||'—'}</td><td>${esc(u.project)||'—'}</td>
-     <td class="num">${money(u.contract_value)}</td><td class="num">${money(u.down_payment)}</td>
-     <td class="num">${money(u.collected)}</td><td class="num">${money(u.remaining)}</td></tr>`).join('')}
-   </tbody></table>`;
+   <div class="card">${cardHead('reports',T('rep_perunit'),null)}<div class="tbl-wrap"><table><thead><tr>
+     <th>${T('f_compound')}</th><th>${T('f_unitno')}</th><th>${T('f_type')}</th><th>${T('occupancy')}</th><th class="num">${T('f_price')}</th><th class="num">${T('k_paid')}</th><th class="num">${T('k_remaining')}</th><th>${T('tenant')}</th></tr></thead><tbody>
+     ${units.map(u=>`<tr><td>${esc(u.compound)||'—'}</td><td>${esc(u.unit_number)||esc(u.code)||'—'}</td><td>${esc(lv(u.type))}</td><td>${statusBadge(u.occupancy)}</td><td class="num">${money(u.purchase_price)}</td><td class="num">${money(u.inst_paid)}</td><td class="num">${money(u.inst_remaining)}</td><td>${esc(u.tenant_name)||'—'}</td></tr>`).join('')}
+   </tbody></table></div></div>`;
 }
 async function exportAll(){
-  const units=await view('v_units'),inst=await view('v_installments'),chk=await view('v_cheques');
-  csv('units.csv',units,['code','type','project','client_name','contract_value','down_payment','collected','remaining']);
-  csv('installments.csv',inst,['unit_code','client_name','no','due_date','amount','paid','remaining','status','days_late']);
-  csv('cheques.csv',chk,['cheque_no','unit_code','client_name','bank','due_date','amount','status','days_remaining']);
-  toast('تم تصدير 3 ملفات');
+  const [units,inst,rentals,rentp]=await Promise.all([view('v_units'),view('v_installments'),view('v_rentals'),view('v_rent_payments')]);
+  csv('units.csv',units,['compound','unit_number','type','occupancy','area','purchase_date','purchase_price','down_payment','inst_paid','inst_remaining','tenant_name']);
+  csv('installments.csv',inst,['compound','unit_number','no','due_date','amount','paid','remaining','status']);
+  csv('rentals.csv',rentals,['compound','unit_number','tenant_name','tenant_phone','start_date','end_date','rent_total','rent_collected','status']);
+  csv('rent_payments.csv',rentp,['tenant_name','compound','unit_number','no','due_date','amount','paid','remaining','status']);
+  toast(T('imported'));
 }
-function csv(name,rows,cols){
-  const body=rows.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob=new Blob(['﻿'+cols.join(',')+'\n'+body],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
-}
+function csv(name,rows,cols){const body=rows.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob(['﻿'+cols.join(',')+'\n'+body],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();}
 
-/* ============================================================ modal + utils */
-function val(id){return document.getElementById(id).value.trim();}
-function num(id){const v=document.getElementById(id).value;return v===''?null:Number(v);}
+/* ===================== modal + utils ===================== */
 function modal(title,body,onSave,onDelete){
   const o=document.createElement('div');o.className='overlay';
-  o.innerHTML=`<div class="modal"><div class="mhead"><h3>${title}</h3><button class="x">×</button></div>
-    <div class="mbody">${body}</div>
-    <div class="mfoot"><button class="btn" id="mSave">حفظ</button><button class="btn neutral" id="mCancel">إلغاء</button>
-      ${onDelete?'<button class="btn danger" id="mDel" style="margin-inline-start:auto">حذف</button>':''}</div></div>`;
-  document.body.appendChild(o);
-  const close=()=>o.remove();
+  o.innerHTML=`<div class="modal"><div class="mhead"><h3>${title}</h3><button class="x">×</button></div><div class="mbody">${body}</div>
+    <div class="mfoot"><button class="btn" id="mSave">${T('save')}</button><button class="btn neutral" id="mCancel">${T('cancel')}</button>
+      ${onDelete?`<button class="btn danger" id="mDel" style="margin-inline-start:auto">${T('del')}</button>`:''}</div></div>`;
+  document.body.appendChild(o);const close=()=>o.remove();
   o.querySelector('.x').onclick=close;o.querySelector('#mCancel').onclick=close;
   o.querySelector('#mSave').onclick=async()=>{const ok=await onSave();if(ok!==false)close();};
-  if(onDelete)o.querySelector('#mDel').onclick=async()=>{if(confirm('تأكيد الحذف؟')){await onDelete();close();}};
+  if(onDelete)o.querySelector('#mDel').onclick=async()=>{if(confirm(T('confirmDel'))){await onDelete();close();}};
   o.onclick=e=>{if(e.target===o)close();};
 }
-async function delRec(table,id,after){
-  const {error}=await sb.from(table).delete().eq('id',id);
-  if(error){toast(error.message,true);return;}
-  toast('تم الحذف');after();
-}
+async function delRec(table,id,after){const {error}=await sb.from(table).delete().eq('id',id);if(error){toast(error.message,true);return;}toast(T('deleted'));after();}
 boot();
 </script>
 </body>
