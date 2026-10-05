@@ -196,7 +196,7 @@ const lv=v=>L==='en'?(ENVAL[v]||v||''):(v||'');
 
 /* ===================== helpers ===================== */
 const CUR=()=>L==='ar'?'ج.م':'EGP';
-const fmt=n=>(n==null||n==='')?'—':Number(n).toLocaleString(L==='ar'?'ar-EG':'en-US',{maximumFractionDigits:0});
+const fmt=n=>(n==null||n==='')?'—':Number(n).toLocaleString(L==='ar'?'ar-EG':'en-US',{maximumFractionDigits:2});
 const money=n=>(n==null||n==='')?'—':(L==='ar'?fmt(n)+' '+CUR():CUR()+' '+fmt(n));
 const fdate=d=>d?new Date(d).toLocaleDateString(L==='ar'?'ar-EG':'en-GB',{year:'numeric',month:'short',day:'numeric'}):'—';
 const AU=()=>L==='ar'?'م²':'m²';
@@ -247,7 +247,7 @@ function val(id){const e=document.getElementById(id);return e?e.value.trim():'';
 function num(id){const v=document.getElementById(id)?.value;return v===''||v==null?null:Number(v);}
 // money inputs with thousands separators
 function moneyVal(id){const v=document.getElementById(id)?.value||'';const n=Number(v.replace(/[^\d.]/g,''));return v.trim()===''?null:(isNaN(n)?null:n);}
-function fmtMoneyInput(el){let d=el.value.replace(/[^\d]/g,'');el.value=d?Number(d).toLocaleString('en-US'):'';}
+function fmtMoneyInput(el){let v=el.value.replace(/[^\d.]/g,'');const i=v.indexOf('.');const intp=(i>=0?v.slice(0,i):v);const dec=(i>=0?'.'+v.slice(i+1).replace(/\./g,'').slice(0,2):'');el.value=intp?Number(intp).toLocaleString('en-US')+dec:dec;}
 const moneyInput=(id,v)=>`<input id="${id}" inputmode="numeric" value="${(v!=null&&v!=='')?Number(v).toLocaleString('en-US'):''}" oninput="fmtMoneyInput(this)">`;
 // auto installment numbering by due-date order, per unit
 function seqMap(list){const by={};list.forEach(i=>{(by[i.unit_id]=by[i.unit_id]||[]).push(i);});const m={};Object.values(by).forEach(arr=>{arr.slice().sort((a,b)=>new Date(a.due_date)-new Date(b.due_date)).forEach((i,ix)=>m[i.id]=ix+1);});return m;}
@@ -329,7 +329,7 @@ async function viewDash(){
 /* ===================== UNITS ===================== */
 let _units=[];
 async function viewUnits(){
-  document.getElementById('view').innerHTML=pageHead('units',T('tab_units'),'',`<input class="search" id="uSearch" placeholder="${T('search')}" oninput="renderUnits()"><button class="btn" onclick="unitForm()">${T('new')}</button>`)+`<div class="card">${cardHead('units',T('units_all'),null)}<div class="tbl-wrap" id="uTbl"></div></div>`;
+  document.getElementById('view').innerHTML=pageHead('units',T('tab_units'),'',`<input class="search" id="uSearch" placeholder="${T('search')}" oninput="renderUnits()"><button class="btn neutral" onclick="window.print()">🖨️ ${T('print')}</button><button class="btn" onclick="unitForm()">${T('new')}</button>`)+`<div class="card">${cardHead('units',T('units_all'),null)}<div class="tbl-wrap" id="uTbl"></div></div>`;
   _units=await view('v_units');renderUnits();
 }
 function renderUnits(){
@@ -424,7 +424,7 @@ async function unitProfile(id){
 let _inst=[];
 async function viewInst(){
   document.getElementById('view').innerHTML=pageHead('inst',T('tab_inst'),'',
-    `<select class="search" id="iFilter" onchange="renderInst()"><option value="">${T('allStatus')}</option><option value="قادم">${lv('قادم')}</option><option value="متأخر">${lv('متأخر')}</option><option value="مدفوع جزئي">${lv('مدفوع جزئي')}</option><option value="مدفوع">${lv('مدفوع')}</option></select>${daysToolbar('i')}<input class="search" id="iSearch" placeholder="${T('search')}" oninput="renderInst()">`)+
+    `<select class="search" id="iFilter" onchange="renderInst()"><option value="">${T('allStatus')}</option><option value="قادم">${lv('قادم')}</option><option value="متأخر">${lv('متأخر')}</option><option value="مدفوع جزئي">${lv('مدفوع جزئي')}</option><option value="مدفوع">${lv('مدفوع')}</option></select>${daysToolbar('i')}<input class="search" id="iSearch" placeholder="${T('search')}" oninput="renderInst()"><button class="btn neutral" onclick="window.print()">🖨️ ${T('print')}</button>`)+
     `<div class="card">${cardHead('inst',T('tab_inst'),null)}<div class="tbl-wrap" id="iTbl"></div></div>`;
   _inst=await view('v_installments');_units=await view('v_units');renderInst();
 }
@@ -510,25 +510,25 @@ function parseInstRows(text){
     const cells=(raw.includes('\t')?raw.split('\t'):splitCSV(raw)).map(c=>nd(c).trim());
     const d0=parseDate(cells[0]);
     if(d0){
-      const amount=Number((cells[1]||'').replace(/[^\d]/g,''))||0;
-      const paid=Number((cells[2]||'').replace(/[^\d]/g,''))||0;
+      const amount=Number((cells[1]||'').replace(/[^\d.]/g,''))||0;
+      const paid=Number((cells[2]||'').replace(/[^\d.]/g,''))||0;
       const cheque=(cells[3]||'').trim()||null;
       if(!amount&&!paid&&!cheque)return;
       out.push({due_date:d0,amount,paid,cheque_no:cheque});
     }else{
       const di=cells.findIndex(c=>parseDate(c));if(di<0)return;const due=parseDate(cells[di]);
-      let amt=0,chq='';for(let k=0;k<cells.length;k++){if(k===di)continue;const dig=cells[k].replace(/[^\d]/g,'');if(dig&&!amt)amt=Number(dig);else if(cells[k]&&!/^\d/.test(cells[k])&&!parseDate(cells[k])&&!chq)chq=cells[k];}
+      let amt=0,chq='';for(let k=0;k<cells.length;k++){if(k===di)continue;const dig=cells[k].replace(/[^\d.]/g,'');if(dig&&!amt)amt=Number(dig);else if(cells[k]&&!/^\d/.test(cells[k])&&!parseDate(cells[k])&&!chq)chq=cells[k];}
       if(!amt)return;out.push({due_date:due,amount:amt,paid:0,cheque_no:chq||null});
     }
   });return out;
 }
 function parseDate(s){s=s.trim();let m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);if(m){let y=m[3];if(y.length===2)y='20'+y;return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;}const d=new Date(s);return isNaN(d)?null:d.toISOString().slice(0,10);}
-function parseRows(text,unitId){const nd=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));const out=[];let n=0;(text||'').split(/\r?\n/).forEach(raw=>{const line=nd(raw).trim();if(!line)return;const dm=line.match(/(\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2})|(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4})/);if(!dm)return;const due=parseDate(dm[0]);if(!due)return;const post=line.slice(dm.index+dm[0].length),pre=line.slice(0,dm.index);const amtStr=(post.replace(/[^\d]/g,'')?post:pre);const amt=Number(amtStr.replace(/[^\d]/g,''));if(!amt)return;n++;out.push({unit_id:unitId,no:n,due_date:due,amount:amt,paid:0});});return out;}
+function parseRows(text,unitId){const nd=s=>s.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));const out=[];let n=0;(text||'').split(/\r?\n/).forEach(raw=>{const line=nd(raw).trim();if(!line)return;const dm=line.match(/(\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2})|(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4})/);if(!dm)return;const due=parseDate(dm[0]);if(!due)return;const post=line.slice(dm.index+dm[0].length),pre=line.slice(0,dm.index);const amtStr=(post.replace(/[^\d.]/g,'')?post:pre);const amt=Number(amtStr.replace(/[^\d.]/g,''));if(!amt)return;n++;out.push({unit_id:unitId,no:n,due_date:due,amount:amt,paid:0});});return out;}
 
 /* ===================== RENTALS ===================== */
 let _rentals=[];
 async function viewRentals(){
-  document.getElementById('view').innerHTML=pageHead('rentals',T('tab_rentals'),'',`<input class="search" id="rSearch" placeholder="${T('search')}" oninput="renderRentals()"><button class="btn" onclick="rentalForm()">${T('new')}</button>`)+`<div class="card">${cardHead('rentals',T('rentals'),null)}<div class="tbl-wrap" id="rTbl"></div></div>`;
+  document.getElementById('view').innerHTML=pageHead('rentals',T('tab_rentals'),'',`<input class="search" id="rSearch" placeholder="${T('search')}" oninput="renderRentals()"><button class="btn neutral" onclick="window.print()">🖨️ ${T('print')}</button><button class="btn" onclick="rentalForm()">${T('new')}</button>`)+`<div class="card">${cardHead('rentals',T('rentals'),null)}<div class="tbl-wrap" id="rTbl"></div></div>`;
   _rentals=await view('v_rentals');_units=await view('v_units');renderRentals();
 }
 function renderRentals(){
